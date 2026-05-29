@@ -76,17 +76,17 @@ def _make_job():
 
 def _make_config():
     cfg = MagicMock()
-    cfg.anthropic_api_key = "fake"
-    cfg.llm_model = "claude-sonnet-4-6"
+    cfg.groq_api_key = "fake"
+    cfg.llm_model = "llama-3.3-70b-versatile"
     cfg.max_tokens_tailoring = 2000
     return cfg
 
 
-@patch("src.tailor.anthropic.Anthropic")
-def test_tailor_cv_returns_model(mock_anthropic):
-    mock_msg = MagicMock()
-    mock_msg.content = [MagicMock(text=json.dumps(CV_RESPONSE))]
-    mock_anthropic.return_value.messages.create.return_value = mock_msg
+@patch("src.tailor.Groq")
+def test_tailor_cv_returns_model(mock_groq):
+    mock_resp = MagicMock()
+    mock_resp.choices = [MagicMock(message=MagicMock(content=json.dumps(CV_RESPONSE)))]
+    mock_groq.return_value.chat.completions.create.return_value = mock_resp
 
     result = tailor_cv(_make_job(), SAMPLE_PROFILE, _make_config())
     assert isinstance(result, TailoredCV)
@@ -95,11 +95,11 @@ def test_tailor_cv_returns_model(mock_anthropic):
     assert result.experience[0].company == "Test Co"
 
 
-@patch("src.tailor.anthropic.Anthropic")
-def test_tailor_cover_letter_returns_model(mock_anthropic):
-    mock_msg = MagicMock()
-    mock_msg.content = [MagicMock(text=json.dumps(CL_RESPONSE))]
-    mock_anthropic.return_value.messages.create.return_value = mock_msg
+@patch("src.tailor.Groq")
+def test_tailor_cover_letter_returns_model(mock_groq):
+    mock_resp = MagicMock()
+    mock_resp.choices = [MagicMock(message=MagicMock(content=json.dumps(CL_RESPONSE)))]
+    mock_groq.return_value.chat.completions.create.return_value = mock_resp
 
     result = tailor_cover_letter(_make_job(), SAMPLE_PROFILE, _make_config())
     assert isinstance(result, TailoredCoverLetter)
@@ -118,13 +118,13 @@ def test_parse_json_valid_json():
     assert result["score"] == 7
 
 
-@patch("src.tailor.anthropic.Anthropic")
-def test_tailor_cv_education_passthrough(mock_anthropic):
-    """If Claude returns empty education, it falls back to profile's education."""
+@patch("src.tailor.Groq")
+def test_tailor_cv_education_passthrough(mock_groq):
+    """If LLM returns empty education, it falls back to profile's education."""
     response = dict(CV_RESPONSE, education=[])
-    mock_msg = MagicMock()
-    mock_msg.content = [MagicMock(text=json.dumps(response))]
-    mock_anthropic.return_value.messages.create.return_value = mock_msg
+    mock_resp = MagicMock()
+    mock_resp.choices = [MagicMock(message=MagicMock(content=json.dumps(response)))]
+    mock_groq.return_value.chat.completions.create.return_value = mock_resp
 
     result = tailor_cv(_make_job(), SAMPLE_PROFILE, _make_config())
     assert len(result.education) > 0

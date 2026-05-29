@@ -39,8 +39,9 @@ scraping:
   timeout_seconds: 15
 
 llm:
-  model: "claude-sonnet-4-6"
-  scoring_model: "claude-haiku-4-5-20251001"
+  # Groq free models — see console.groq.com/docs/models
+  model: "llama-3.3-70b-versatile"        # tailoring: best quality free model
+  scoring_model: "llama-3.1-8b-instant"   # scoring: fast + free, sufficient for 0-10 scoring
   max_tokens_scoring: 300
   max_tokens_tailoring: 2000
 

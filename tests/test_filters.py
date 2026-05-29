@@ -13,9 +13,9 @@ def _make_config(**overrides):
     cfg.exclude_companies = ["scam corp ltd"]
     cfg.max_age_hours = 72
     cfg.min_fit_score = 6
-    cfg.scoring_model = "claude-haiku-4-5-20251001"
+    cfg.scoring_model = "llama-3.1-8b-instant"
     cfg.max_tokens_scoring = 300
-    cfg.anthropic_api_key = "fake"
+    cfg.groq_api_key = "fake"
     for k, v in overrides.items():
         setattr(cfg, k, v)
     return cfg
@@ -82,11 +82,11 @@ def test_passes_no_posted_date():
 # ──────────────────────────────────────────────────────────────────
 # score_fit tests
 
-@patch("src.filters.anthropic.Anthropic")
-def test_score_fit_returns_tuple(mock_anthropic):
-    mock_msg = MagicMock()
-    mock_msg.content = [MagicMock(text='{"score": 7, "reason": "Good Python match"}')]
-    mock_anthropic.return_value.messages.create.return_value = mock_msg
+@patch("src.filters.Groq")
+def test_score_fit_returns_tuple(mock_groq):
+    mock_choice = MagicMock()
+    mock_choice.choices = [MagicMock(message=MagicMock(content='{"score": 7, "reason": "Good Python match"}'))]
+    mock_groq.return_value.chat.completions.create.return_value = mock_choice
 
     job = _make_job()
     profile = {
@@ -107,9 +107,9 @@ def test_score_fit_short_jd_returns_5():
     assert "short" in reason.lower()
 
 
-@patch("src.filters.anthropic.Anthropic")
-def test_score_fit_api_error_returns_5(mock_anthropic):
-    mock_anthropic.return_value.messages.create.side_effect = Exception("API down")
+@patch("src.filters.Groq")
+def test_score_fit_api_error_returns_5(mock_groq):
+    mock_groq.return_value.chat.completions.create.side_effect = Exception("API down")
     job = _make_job()
     score, reason = score_fit(job, {}, _make_config())
     assert score == 5

@@ -1,15 +1,15 @@
 """
-CV and cover letter tailoring via Claude API.
+CV and cover letter tailoring via Groq API (free).
 
 tailor_cv() and tailor_cover_letter() are the two main entry points.
-Both call Claude with structured prompts and parse JSON responses.
+Models used: llama-3.3-70b-versatile (best free model for complex tasks).
 """
 import json
 import logging
 import re
 import sys
 import yaml
-import anthropic
+from groq import Groq
 from src.models import ScoredJob, TailoredCV, TailoredCoverLetter
 from src.utils import truncate_text
 
@@ -83,16 +83,14 @@ Respond ONLY in valid JSON with no markdown fences:
 
 
 def tailor_cv(job: ScoredJob, profile: dict, config) -> TailoredCV:
-    client = anthropic.Anthropic(api_key=config.anthropic_api_key)
+    client = Groq(api_key=config.groq_api_key)
     jd_snippet = truncate_text(job.jd_text, 3000)
     profile_yaml = yaml.dump(profile, allow_unicode=True)
 
     user = f"## Job Description\n{jd_snippet}\n\n## Master Profile\n{profile_yaml}"
-
-    raw = _call_with_retry(client, config.llm_model, config.max_tokens_tailoring, CV_SYSTEM, user)
+    raw = _call(client, config.llm_model, config.max_tokens_tailoring, CV_SYSTEM, user)
     data = _parse_json(raw, client, config.llm_model)
 
-    # Pass education + certifications through from profile
     if not data.get("education"):
         data["education"] = profile.get("education", [])
     if not data.get("certifications"):
@@ -102,7 +100,7 @@ def tailor_cv(job: ScoredJob, profile: dict, config) -> TailoredCV:
 
 
 def tailor_cover_letter(job: ScoredJob, profile: dict, config) -> TailoredCoverLetter:
-    client = anthropic.Anthropic(api_key=config.anthropic_api_key)
+    client = Groq(api_key=config.groq_api_key)
     jd_snippet = truncate_text(job.jd_text, 2000)
     name = profile.get("personal", {}).get("name", "")
     bullets_sample = _extract_top_bullets(profile, 6)
@@ -113,42 +111,40 @@ def tailor_cover_letter(job: ScoredJob, profile: dict, config) -> TailoredCoverL
         f"## Job Title\n{job.title} at {job.company}\n\n"
         f"## Job Description\n{jd_snippet}"
     )
-
-    raw = _call_with_retry(client, config.llm_model, 600, CL_SYSTEM, user)
+    raw = _call(client, config.llm_model, 600, CL_SYSTEM, user)
     data = _parse_json(raw, client, config.llm_model)
-
     return TailoredCoverLetter(**data)
 
 
 # ------------------------------------------------------------------ #
 
-def _call_with_retry(client, model, max_tokens, system, user) -> str:
-    msg = client.messages.create(
+def _call(client: Groq, model: str, max_tokens: int, system: str, user: str) -> str:
+    resp = client.chat.completions.create(
         model=model,
         max_tokens=max_tokens,
-        system=system,
-        messages=[{"role": "user", "content": user}],
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
     )
-    return msg.content[0].text.strip()
+    return resp.choices[0].message.content.strip()
 
 
-def _parse_json(text: str, client, model: str) -> dict:
+def _parse_json(text: str, client: Groq, model: str) -> dict:
     clean = re.sub(r"^```(?:json)?\s*|\s*```$", "", text, flags=re.DOTALL).strip()
     try:
         return json.loads(clean)
     except json.JSONDecodeError:
-        log.warning("JSON parse failed — retrying with explicit JSON instruction")
-        retry_msg = client.messages.create(
+        log.warning("JSON parse failed — retrying with explicit instruction")
+        resp = client.chat.completions.create(
             model=model,
             max_tokens=200,
             messages=[
-                {"role": "user", "content": "Respond in valid JSON only. No markdown fences."},
-                {"role": "assistant", "content": text},
-                {"role": "user", "content": "Please reformat that as valid JSON only."},
+                {"role": "user", "content": "Reformat the following as valid JSON only, no markdown:\n\n" + text},
             ],
         )
         clean2 = re.sub(r"^```(?:json)?\s*|\s*```$", "",
-                        retry_msg.content[0].text.strip(), flags=re.DOTALL)
+                        resp.choices[0].message.content.strip(), flags=re.DOTALL)
         return json.loads(clean2)
 
 

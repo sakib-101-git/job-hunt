@@ -10,7 +10,7 @@ load_dotenv(ROOT / ".env")
 
 
 class AppConfig(BaseModel):
-    anthropic_api_key: str
+    groq_api_key: str
     telegram_bot_token: str
     telegram_chat_id: str
     imap_host: str | None = None
@@ -30,8 +30,8 @@ class AppConfig(BaseModel):
     max_retries: int = 2
     timeout_seconds: int = 15
 
-    llm_model: str = "claude-sonnet-4-6"
-    scoring_model: str = "claude-haiku-4-5-20251001"
+    llm_model: str = "llama-3.3-70b-versatile"
+    scoring_model: str = "llama-3.1-8b-instant"
     max_tokens_scoring: int = 300
     max_tokens_tailoring: int = 2000
 
@@ -58,21 +58,22 @@ def load_config() -> AppConfig:
     llm = cfg.get("llm", {})
     notifications = cfg.get("notifications", {})
 
-    anthropic_key = os.getenv("ANTHROPIC_API_KEY", "")
+    groq_key = os.getenv("GROQ_API_KEY", "")
     telegram_token = os.getenv("TELEGRAM_BOT_TOKEN", "")
 
     missing = []
-    if not anthropic_key:
-        missing.append("ANTHROPIC_API_KEY")
+    if not groq_key:
+        missing.append("GROQ_API_KEY")
     if not telegram_token:
         missing.append("TELEGRAM_BOT_TOKEN")
     if missing:
         print(f"ERROR: Missing required env vars: {', '.join(missing)}", file=sys.stderr)
         print("Copy .env.example to .env and fill in your secrets.", file=sys.stderr)
+        print("Get a free Groq key at: https://console.groq.com", file=sys.stderr)
         sys.exit(1)
 
     return AppConfig(
-        anthropic_api_key=anthropic_key,
+        groq_api_key=groq_key,
         telegram_bot_token=telegram_token,
         telegram_chat_id=os.getenv("TELEGRAM_CHAT_ID", ""),
         imap_host=os.getenv("IMAP_HOST"),
@@ -92,8 +93,8 @@ def load_config() -> AppConfig:
         max_retries=scraping.get("max_retries", 2),
         timeout_seconds=scraping.get("timeout_seconds", 15),
 
-        llm_model=llm.get("model", "claude-sonnet-4-6"),
-        scoring_model=llm.get("scoring_model", "claude-haiku-4-5-20251001"),
+        llm_model=llm.get("model", "llama-3.3-70b-versatile"),
+        scoring_model=llm.get("scoring_model", "llama-3.1-8b-instant"),
         max_tokens_scoring=llm.get("max_tokens_scoring", 300),
         max_tokens_tailoring=llm.get("max_tokens_tailoring", 2000),
 
