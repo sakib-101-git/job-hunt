@@ -1,19 +1,48 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{10pt}
 
 \begin{document}
 
-\noindent {{ profile.personal.name }}\\
-{{ profile.personal.email }}\\
-{{ profile.personal.phone }}\\[12pt]
+%% ─── SENDER INFO ─────────────────────────────────────────────────────────────
+\begin{flushright}
+{{ personal.name | latex_escape }}\\
+{{ personal.email | latex_escape }}\\
+{{ personal.phone | latex_escape }}\\
+{{ personal.location | latex_escape }}
+\end{flushright}
 
-\noindent {{ job.company }}\\[12pt]
+\vspace{6pt}
+\today
 
-\noindent Dear Hiring Manager,\\[8pt]
+\vspace{12pt}
 
-{{ cover_letter_body }}
+%% ─── SALUTATION ──────────────────────────────────────────────────────────────
+{% if job_title %}
+Re: Application for \textbf{ {{- job_title | latex_escape -}} }
+{% if company %}
+at \textbf{ {{- company | latex_escape -}} }
+{% endif %}
 
-\noindent Sincerely,\\[24pt]
-\noindent {{ profile.personal.name }}
+{% endif %}
+
+{{ letter.greeting | latex_escape }}
+
+%% ─── BODY ────────────────────────────────────────────────────────────────────
+{{ letter.body | latex_escape }}
+
+%% ─── CLOSING ─────────────────────────────────────────────────────────────────
+{{ letter.closing | latex_escape }}
+
+\vspace{24pt}
+{{ personal.name | latex_escape }}
 
 \end{document}

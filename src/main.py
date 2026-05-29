@@ -1,92 +1,113 @@
-import click
-from src import db, filters, tailor, notify
-from src.utils import load_config, load_profile
-from src.scrapers.bdjobs import BDJobsScraper
-from src.scrapers.shomvob import ShomvobScraper
-from src.scrapers.linkedin_email import LinkedInEmailScraper
-from src.scrapers.skilljobs import SkillJobsScraper
+"""
+Main orchestration cycle. Called by cron every 2 hours.
+Usage: python -m src.main
+"""
+import logging
+import sys
+from src.config import load_config
+from src.utils import setup_logging
+from src import db
+from src.filters import hard_filter, score_fit
+from src.tailor import tailor_cv, tailor_cover_letter
+from src.render import render_cv, render_cover_letter
+from src.notify import send_job_alert
+from src.scrapers import ALL_SCRAPERS
+from src.models import ScoredJob
 
-SCRAPERS = {
-    "bdjobs": BDJobsScraper,
-    "shomvob": ShomvobScraper,
-    "linkedin_email": LinkedInEmailScraper,
-    "skilljobs": SkillJobsScraper,
-}
-
-
-@click.group(invoke_without_command=True)
-@click.pass_context
-def cli(ctx):
-    if ctx.invoked_subcommand is None:
-        ctx.invoke(run)
+log = logging.getLogger("jobhunt.main")
 
 
-@cli.command()
-def run():
-    """Full pipeline: scrape → filter → score → notify."""
+def run_cycle():
     config = load_config()
-    profile = load_profile()
-    db.init_db()
+    setup_logging(config.log_level)
+    log.info("=" * 60)
+    log.info("JobHunt cycle starting")
 
-    click.echo("Scraping jobs...")
-    all_jobs = _scrape(config)
-    all_jobs = filters.apply_hard_filters(all_jobs, config)
+    db.init_db(config.db_path)
 
-    new_count = 0
-    for job in all_jobs:
-        row_id = db.upsert_job(job)
-        if row_id:
-            new_count += 1
-    click.echo(f"  {new_count} new jobs saved")
-
-    click.echo("Scoring jobs...")
-    filters.score_jobs(profile, config)
-
-    cfg_notify = config.get("notifications", {})
-    if cfg_notify.get("on_new_job"):
-        from src import db as _db
-        scored = [dict(r) for r in _db.get_unscored_jobs()]
-        notify.notify_new_jobs(scored, cfg_notify.get("min_score_to_notify", 70))
-
-    click.echo("Done.")
-
-
-@cli.command()
-def scrape():
-    """Scrape only, no scoring."""
-    config = load_config()
-    db.init_db()
-    jobs = _scrape(config)
-    jobs = filters.apply_hard_filters(jobs, config)
-    count = sum(1 for j in jobs if db.upsert_job(j))
-    click.echo(f"{count} new jobs saved")
-
-
-@cli.command()
-@click.argument("job_id", type=int)
-def tailor_cmd(job_id):
-    """Generate tailored CV + cover letter for JOB_ID."""
-    profile = load_profile()
-    tailor.tailor_job(job_id, profile)
-
-
-def _scrape(config: dict) -> list[dict]:
-    keywords = config["search"]["keywords"]
-    locations = config["search"]["locations"]
-    sources = config["search"]["sources"]
-    jobs = []
-    for source in sources:
-        cls = SCRAPERS.get(source)
-        if not cls:
-            click.echo(f"  unknown source: {source}", err=True)
-            continue
+    # ── Step 1: Scrape ──────────────────────────────────────────────
+    all_jobs = []
+    for scraper_cls in ALL_SCRAPERS:
+        scraper = scraper_cls(config)
         try:
-            click.echo(f"  {source}...")
-            jobs.extend(cls().scrape(keywords, locations))
+            jobs = scraper.fetch_listings()
+            all_jobs.extend(jobs)
+            log.info(f"{scraper.name}: fetched {len(jobs)} listings")
         except Exception as exc:
-            click.echo(f"  {source} failed: {exc}", err=True)
-    return jobs
+            log.error(f"{scraper.name} failed entirely: {exc}")
+
+    log.info(f"Total scraped: {len(all_jobs)}")
+
+    # ── Step 2: Deduplicate ─────────────────────────────────────────
+    new_jobs = []
+    for job in all_jobs:
+        if not db.job_exists(config.db_path, job.source, job.source_job_id):
+            job_id = db.insert_job(config.db_path, job)
+            job.db_id = job_id
+            new_jobs.append(job)
+
+    log.info(f"New after dedup: {len(new_jobs)}")
+
+    # ── Step 3: Hard filter ─────────────────────────────────────────
+    filtered = [j for j in new_jobs if hard_filter(j, config)]
+    log.info(f"After hard filter: {len(filtered)}")
+
+    # ── Step 4: Fetch full JD for filtered jobs ─────────────────────
+    scraper_map = {cls(config).name: cls(config) for cls in ALL_SCRAPERS}
+    for job in filtered:
+        if not job.jd_text or len(job.jd_text) < 50:
+            scraper = scraper_map.get(job.source)
+            if scraper:
+                try:
+                    job.jd_text = scraper.fetch_job_detail(job.url)
+                    log.debug(f"Fetched JD for {job.title} ({len(job.jd_text)} chars)")
+                except Exception as exc:
+                    log.warning(f"JD fetch failed for {job.url}: {exc}")
+
+    # ── Step 5: LLM scoring ─────────────────────────────────────────
+    above_threshold: list[ScoredJob] = []
+    for job in filtered:
+        try:
+            score, reason = score_fit(job, config.profile, config)
+            db.update_score(config.db_path, job.db_id, score, reason)
+            log.info(f"  [{score:2d}/10] {job.title} @ {job.company} — {reason}")
+            if score >= config.min_fit_score:
+                scored = ScoredJob(**job.model_dump(), fit_score=score, fit_reason=reason)
+                above_threshold.append(scored)
+        except Exception as exc:
+            log.error(f"Scoring failed for '{job.title}': {exc}")
+
+    log.info(f"Above threshold ({config.min_fit_score}): {len(above_threshold)}")
+
+    # ── Steps 6+7: Tailor CV + notify ───────────────────────────────
+    for job in above_threshold:
+        cv_path = cl_path = None
+        try:
+            tailored_cv = tailor_cv(job, config.profile, config)
+            tailored_cl = tailor_cover_letter(job, config.profile, config)
+            cv_path = render_cv(tailored_cv, config.profile, config.output_dir)
+            cl_path = render_cover_letter(
+                tailored_cl, config.profile, config.output_dir,
+                job_title=job.title, company=job.company,
+            )
+            db.update_cv_paths(config.db_path, job.db_id, cv_path, cl_path)
+            log.info(f"Tailored: {job.title} @ {job.company}")
+        except Exception as exc:
+            log.error(f"Tailoring/render failed for '{job.title}': {exc}")
+
+        if config.telegram_enabled:
+            try:
+                sent = send_job_alert(job, cv_path, cl_path, config)
+                if sent:
+                    db.update_status(config.db_path, job.db_id, "notified")
+            except Exception as exc:
+                log.error(f"Notification failed for '{job.title}': {exc}")
+
+    # ── Step 8: Summary log ─────────────────────────────────────────
+    stats = db.get_stats(config.db_path)
+    log.info(f"Cycle complete. DB stats: {stats}")
+    log.info("=" * 60)
 
 
 if __name__ == "__main__":
-    cli()
+    run_cycle()

@@ -1,41 +1,116 @@
-\documentclass[11pt,a4paper]{article}
-\usepackage[margin=1in]{geometry}
-\usepackage{hyperref}
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=0.6in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
 \usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{array}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+% Section headings: bold, rule underneath, tight spacing
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+\titlespacing*{\section}{0pt}{8pt}{4pt}
+
+% Compact bullet lists
+\setlist[itemize]{leftmargin=1.5em, noitemsep, topsep=2pt, parsep=0pt}
 
 \begin{document}
 
+%% ─── HEADER ────────────────────────────────────────────────────────────────
 \begin{center}
-    {\LARGE \textbf{ {{- profile.personal.name -}} }}\\[4pt]
-    {{ profile.personal.email }} $\cdot$
-    {{ profile.personal.phone }} $\cdot$
-    \href{ {{- profile.personal.linkedin -}} }{LinkedIn} $\cdot$
-    \href{ {{- profile.personal.github -}} }{GitHub}
+{\LARGE\bfseries {{ personal.name | latex_escape }}}\\[4pt]
+{\small
+{{ personal.email | latex_escape }} \textbar{}
+{{ personal.phone | latex_escape }} \textbar{}
+{{ personal.location | latex_escape }}
+{% if personal.linkedin %}
+\textbar{} \href{https://{{ personal.linkedin | latex_escape }}}{\nolinkurl{ {{- personal.linkedin | latex_escape -}} }}
+{% endif %}
+{% if personal.github %}
+\textbar{} \href{https://{{ personal.github | latex_escape }}}{\nolinkurl{ {{- personal.github | latex_escape -}} }}
+{% endif %}
+}\\[3pt]
+{\itshape {{ tailored.headline | latex_escape }}}
 \end{center}
 
+%% ─── SUMMARY ────────────────────────────────────────────────────────────────
 \section*{Summary}
-{{ tailored_summary }}
+{{ tailored.selected_summary | latex_escape }}
 
+%% ─── EXPERIENCE ─────────────────────────────────────────────────────────────
 \section*{Experience}
-{% for job in profile.experience %}
-\textbf{ {{- job.title -}} } \hfill {{ job.start }} -- {{ job.end }}\\
-\textit{ {{- job.company -}} }
-\begin{itemize}[noitemsep]
-{% for bullet in job.bullets %}
-    \item {{ bullet }}
+{% for exp in tailored.experience %}
+\textbf{ {{- exp.company | latex_escape -}} }
+\hfill {\small {{ exp.dates | latex_escape }}}\\
+{\itshape {{ exp.role | latex_escape }}}
+{% if exp.location %}
+--- {\small {{ exp.location | latex_escape }}}
+{% endif %}
+\begin{itemize}
+{% for bullet in exp.selected_bullets %}
+  \item {{ bullet | latex_escape }}
 {% endfor %}
 \end{itemize}
+{% if not loop.last %}\vspace{2pt}{% endif %}
 {% endfor %}
 
-\section*{Education}
-{% for edu in profile.education %}
-\textbf{ {{- edu.institution -}} } \hfill {{ edu.year }}\\
-{{ edu.degree }}
+%% ─── PROJECTS ───────────────────────────────────────────────────────────────
+{% if tailored.projects %}
+\section*{Projects}
+{% for proj in tailored.projects %}
+\textbf{ {{- proj.name | latex_escape -}} }
+{% if proj.url %}
+{\small (\href{https://{{ proj.url | latex_escape }}}{\nolinkurl{ {{- proj.url | latex_escape -}} }})}
+{% endif %}
+\begin{itemize}
+{% for bullet in proj.selected_bullets %}
+  \item {{ bullet | latex_escape }}
 {% endfor %}
+\end{itemize}
+{% if not loop.last %}\vspace{2pt}{% endif %}
+{% endfor %}
+{% endif %}
 
+%% ─── SKILLS ─────────────────────────────────────────────────────────────────
 \section*{Skills}
-\textbf{Languages:} {{ profile.skills.languages | join(', ') }}\\
-\textbf{Frameworks:} {{ profile.skills.frameworks | join(', ') }}\\
-\textbf{Tools:} {{ profile.skills.tools | join(', ') }}
+{% set skills = tailored.selected_skills %}
+{% if skills.languages %}
+\textbf{Languages:} {{ skills.languages | join(', ') | latex_escape }}\\
+{% endif %}
+{% if skills.frameworks %}
+\textbf{Frameworks:} {{ skills.frameworks | join(', ') | latex_escape }}\\
+{% endif %}
+{% if skills.databases %}
+\textbf{Databases:} {{ skills.databases | join(', ') | latex_escape }}\\
+{% endif %}
+{% if skills.tools %}
+\textbf{Tools:} {{ skills.tools | join(', ') | latex_escape }}
+{% endif %}
+
+%% ─── EDUCATION ──────────────────────────────────────────────────────────────
+\section*{Education}
+{% for edu in tailored.education %}
+\textbf{ {{- edu.institution | latex_escape -}} }
+\hfill {\small {{ edu.dates | latex_escape }}}\\
+{\itshape {{ edu.degree | latex_escape }}}
+{% if edu.gpa %}
+\hspace{1em}{\small GPA: {{ edu.gpa | latex_escape }}}
+{% endif %}
+{% endfor %}
+
+%% ─── CERTIFICATIONS ─────────────────────────────────────────────────────────
+{% if tailored.certifications %}
+\section*{Certifications}
+{% for cert in tailored.certifications %}
+{{ cert.name | latex_escape }}
+{% if cert.year %}{\small ({{ cert.year }})}{% endif %}\\
+{% endfor %}
+{% endif %}
 
 \end{document}

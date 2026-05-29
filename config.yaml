@@ -1,24 +1,49 @@
 search:
   keywords:
-    - "software engineer"
-    - "backend developer"
-    - "python developer"
-  locations:
-    - "Dhaka"
-    - "Remote"
-  sources:
-    - bdjobs
-    - shomvob
-    - linkedin_email
-    - skilljobs
+    - python developer
+    - python engineer
+    - junior developer
+    - senior developer
+    - frontend developer
+    - frontend engineer
+    - backend developer
+    - backend engineer
+    - software engineer
+    - software developer
+    - django developer
+    - fastapi developer
+    - full stack developer
+    - full-stack developer
 
-filters:
-  min_score: 60          # LLM relevance score threshold (0-100)
+  locations:
+    - bangladesh
+    - dhaka
+    - chittagong
+    - remote
+    - anywhere
+
   exclude_keywords:
-    - "unpaid"
-    - "internship"
+    - principal
+    - director
+
+  exclude_companies:
+    - "Scam Corp Ltd"
+
+  max_age_hours: 72
+  min_fit_score: 6
+
+scraping:
+  request_delay_seconds: 3
+  user_agent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  max_retries: 2
+  timeout_seconds: 15
+
+llm:
+  model: "claude-sonnet-4-6"
+  scoring_model: "claude-haiku-4-5-20251001"
+  max_tokens_scoring: 300
+  max_tokens_tailoring: 2000
 
 notifications:
-  on_new_job: true
-  on_cv_ready: true
-  min_score_to_notify: 70
+  telegram_enabled: true
+  email_enabled: false
