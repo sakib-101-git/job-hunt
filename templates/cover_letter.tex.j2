@@ -1,0 +1,19 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+\noindent {{ profile.personal.name }}\\
+{{ profile.personal.email }}\\
+{{ profile.personal.phone }}\\[12pt]
+
+\noindent {{ job.company }}\\[12pt]
+
+\noindent Dear Hiring Manager,\\[8pt]
+
+{{ cover_letter_body }}
+
+\noindent Sincerely,\\[24pt]
+\noindent {{ profile.personal.name }}
+
+\end{document}

@@ -1,0 +1,24 @@
+search:
+  keywords:
+    - "software engineer"
+    - "backend developer"
+    - "python developer"
+  locations:
+    - "Dhaka"
+    - "Remote"
+  sources:
+    - bdjobs
+    - shomvob
+    - linkedin_email
+    - skilljobs
+
+filters:
+  min_score: 60          # LLM relevance score threshold (0-100)
+  exclude_keywords:
+    - "unpaid"
+    - "internship"
+
+notifications:
+  on_new_job: true
+  on_cv_ready: true
+  min_score_to_notify: 70

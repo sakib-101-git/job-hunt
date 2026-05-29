@@ -1,0 +1,41 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{ {{- profile.personal.name -}} }}\\[4pt]
+    {{ profile.personal.email }} $\cdot$
+    {{ profile.personal.phone }} $\cdot$
+    \href{ {{- profile.personal.linkedin -}} }{LinkedIn} $\cdot$
+    \href{ {{- profile.personal.github -}} }{GitHub}
+\end{center}
+
+\section*{Summary}
+{{ tailored_summary }}
+
+\section*{Experience}
+{% for job in profile.experience %}
+\textbf{ {{- job.title -}} } \hfill {{ job.start }} -- {{ job.end }}\\
+\textit{ {{- job.company -}} }
+\begin{itemize}[noitemsep]
+{% for bullet in job.bullets %}
+    \item {{ bullet }}
+{% endfor %}
+\end{itemize}
+{% endfor %}
+
+\section*{Education}
+{% for edu in profile.education %}
+\textbf{ {{- edu.institution -}} } \hfill {{ edu.year }}\\
+{{ edu.degree }}
+{% endfor %}
+
+\section*{Skills}
+\textbf{Languages:} {{ profile.skills.languages | join(', ') }}\\
+\textbf{Frameworks:} {{ profile.skills.frameworks | join(', ') }}\\
+\textbf{Tools:} {{ profile.skills.tools | join(', ') }}
+
+\end{document}
