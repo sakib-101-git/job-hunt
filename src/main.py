@@ -1,15 +1,13 @@
 """
 Main orchestration cycle. Called by cron every 2 hours.
+Scrape → dedup → filter → score → Telegram notify. No CV/cover-letter generation.
 Usage: python -m src.main
 """
 import logging
-import sys
 from src.config import load_config
 from src.utils import setup_logging
 from src import db
 from src.filters import hard_filter, score_fit
-from src.tailor import tailor_cv, tailor_cover_letter
-from src.render import render_cv, render_cover_letter
 from src.notify import send_job_alert
 from src.scrapers import ALL_SCRAPERS
 from src.models import ScoredJob
@@ -38,7 +36,7 @@ def run_cycle():
 
     log.info(f"Total scraped: {len(all_jobs)}")
 
-    # ── Step 2: Deduplicate ─────────────────────────────────────────
+    # ── Step 2: Deduplicate (never notify the same post twice) ───────
     new_jobs = []
     for job in all_jobs:
         if not db.job_exists(config.db_path, job.source, job.source_job_id):
@@ -79,31 +77,19 @@ def run_cycle():
 
     log.info(f"Above threshold ({config.min_fit_score}): {len(above_threshold)}")
 
-    # ── Steps 6+7: Tailor CV + notify ───────────────────────────────
+    # ── Step 6: Telegram notify (dedup guarantees one alert per job) ──
+    above_threshold.sort(key=lambda j: j.fit_score, reverse=True)
     for job in above_threshold:
-        cv_path = cl_path = None
+        if not config.telegram_enabled:
+            break
         try:
-            tailored_cv = tailor_cv(job, config.profile, config)
-            tailored_cl = tailor_cover_letter(job, config.profile, config)
-            cv_path = render_cv(tailored_cv, config.profile, config.output_dir)
-            cl_path = render_cover_letter(
-                tailored_cl, config.profile, config.output_dir,
-                job_title=job.title, company=job.company,
-            )
-            db.update_cv_paths(config.db_path, job.db_id, cv_path, cl_path)
-            log.info(f"Tailored: {job.title} @ {job.company}")
+            sent = send_job_alert(job, config)
+            if sent:
+                db.update_status(config.db_path, job.db_id, "notified")
         except Exception as exc:
-            log.error(f"Tailoring/render failed for '{job.title}': {exc}")
+            log.error(f"Notification failed for '{job.title}': {exc}")
 
-        if config.telegram_enabled:
-            try:
-                sent = send_job_alert(job, cv_path, cl_path, config)
-                if sent:
-                    db.update_status(config.db_path, job.db_id, "notified")
-            except Exception as exc:
-                log.error(f"Notification failed for '{job.title}': {exc}")
-
-    # ── Step 8: Summary log ─────────────────────────────────────────
+    # ── Step 7: Summary log ─────────────────────────────────────────
     stats = db.get_stats(config.db_path)
     log.info(f"Cycle complete. DB stats: {stats}")
     log.info("=" * 60)

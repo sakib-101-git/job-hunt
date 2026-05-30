@@ -8,6 +8,22 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 
+class _SafeStreamHandler(logging.StreamHandler):
+    """StreamHandler that replaces un-encodable chars instead of crashing on Windows cp1252."""
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+            enc = getattr(self.stream, "encoding", None) or "ascii"
+            try:
+                self.stream.write(msg + self.terminator)
+            except UnicodeEncodeError:
+                safe = msg.encode(enc, errors="replace").decode(enc)
+                self.stream.write(safe + self.terminator)
+            self.flush()
+        except Exception:
+            self.handleError(record)
+
+
 def setup_logging(log_level: str = "INFO", log_dir: str = "logs") -> logging.Logger:
     Path(log_dir).mkdir(exist_ok=True)
     logger = logging.getLogger("jobhunt")
@@ -15,8 +31,7 @@ def setup_logging(log_level: str = "INFO", log_dir: str = "logs") -> logging.Log
 
     if not logger.handlers:
         fmt = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
-
-        sh = logging.StreamHandler()
+        sh = _SafeStreamHandler()
         sh.setFormatter(fmt)
         logger.addHandler(sh)
 

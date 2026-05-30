@@ -1,30 +1,106 @@
 search:
+  # Remote-only: reject any job that isn't WFH / remote / work-from-home
+  remote_only: true
+  # English-only: reject listings with >20% non-ASCII characters (for sources
+  # not already guaranteed English)
+  require_english: true
+
+  # Broad role net across SWE, web, data, and ML/research. Seniority is handled
+  # by exclude_keywords + the LLM scorer (which targets 0-1 yr / entry level).
   keywords:
-    - python developer
-    - python engineer
-    - junior developer
-    - senior developer
-    - frontend developer
-    - frontend engineer
-    - backend developer
-    - backend engineer
+    # General software
     - software engineer
     - software developer
-    - django developer
-    - fastapi developer
+    - software development
+    - web developer
+    - web development
+    - frontend developer
+    - front end developer
+    - front-end developer
+    - backend developer
+    - back end developer
+    - back-end developer
     - full stack developer
     - full-stack developer
+    - application developer
+    - api developer
+    # Stack-specific
+    - python developer
+    - python engineer
+    - javascript developer
+    - typescript developer
+    - react developer
+    - react engineer
+    - next.js developer
+    - node developer
+    - node.js developer
+    - django developer
+    - fastapi developer
+    # QA / automation
+    - qa engineer
+    - test engineer
+    - automation engineer
+    # Data
+    - data analyst
+    - data engineer
+    - data scientist
+    # Machine learning / AI / research
+    - machine learning engineer
+    - machine learning intern
+    - ml engineer
+    - ml intern
+    - ai engineer
+    - ai intern
+    - nlp engineer
+    - computer vision engineer
+    - deep learning
+    - research assistant
+    - research engineer
+    - research intern
+    - research scientist
+    - data science intern
+    # Entry-level markers (catch any title that signals junior/intern)
+    - junior
+    - graduate
+    - entry level
+    - entry-level
+    - associate
+    - trainee
+    - intern
+    - internship
+    - apprentice
 
+  # Used only when remote_only is false (legacy BD mode)
   locations:
     - bangladesh
     - dhaka
     - chittagong
     - remote
     - anywhere
+    - worldwide
 
+  # Drop anything above entry-level
   exclude_keywords:
+    - senior
+    - sr.
+    - "sr "
+    - mid-level
+    - mid level
+    - midlevel
+    - lead
     - principal
     - director
+    - manager
+    - head of
+    - vp
+    - vice president
+    - staff engineer
+    - distinguished
+    - architect
+    - expert
+    - chief
+    - "iii"
+    - " iv"
 
   exclude_companies:
     - "Scam Corp Ltd"
@@ -40,10 +116,8 @@ scraping:
 
 llm:
   # Groq free models — see console.groq.com/docs/models
-  model: "llama-3.3-70b-versatile"        # tailoring: best quality free model
   scoring_model: "llama-3.1-8b-instant"   # scoring: fast + free, sufficient for 0-10 scoring
   max_tokens_scoring: 300
-  max_tokens_tailoring: 2000
 
 notifications:
   telegram_enabled: true

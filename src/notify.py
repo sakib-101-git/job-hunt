@@ -24,16 +24,16 @@ log = logging.getLogger("jobhunt.notify")
 # ------------------------------------------------------------------ #
 # Sending (called from main.py — runs synchronously via asyncio.run)
 
-def send_job_alert(job, cv_path: str | None, cl_path: str | None, config) -> bool:
+def send_job_alert(job, config) -> bool:
     try:
-        asyncio.run(_send_alert_async(job, cv_path, cl_path, config))
+        asyncio.run(_send_alert_async(job, config))
         return True
     except Exception as exc:
         log.error(f"Telegram alert failed for '{job.title}': {exc}")
         return False
 
 
-async def _send_alert_async(job, cv_path, cl_path, config):
+async def _send_alert_async(job, config):
     bot = Bot(token=config.telegram_bot_token)
 
     posted = ""
@@ -41,11 +41,14 @@ async def _send_alert_async(job, cv_path, cl_path, config):
         age_h = int((datetime.now(timezone.utc) - job.posted_date).total_seconds() / 3600)
         posted = f"\n⏰ Posted: {age_h}h ago"
 
+    salary = f"\n💰 {_md(job.salary_range)}" if getattr(job, "salary_range", None) else ""
+
     text = (
         f"🎯 *{_md(job.title)}* at *{_md(job.company)}*\n"
         f"📍 {_md(job.location or 'Location not specified')}\n"
         f"⭐ Fit Score: {job.fit_score}/10\n"
-        f"💬 \"{_md(job.fit_reason)}\"\n"
+        f"💬 \"{_md(job.fit_reason)}\""
+        f"{salary}\n"
         f"🔗 [View Job]({job.url})"
         f"{posted}"
     )
@@ -65,15 +68,6 @@ async def _send_alert_async(job, cv_path, cl_path, config):
         reply_markup=keyboard,
         disable_web_page_preview=True,
     )
-
-    for path, label in [(cv_path, "CV"), (cl_path, "Cover Letter")]:
-        if path and Path(path).exists():
-            with open(path, "rb") as f:
-                await bot.send_document(
-                    chat_id=config.telegram_chat_id,
-                    document=f,
-                    filename=f"{label}_{job.company}.pdf",
-                )
 
 
 def send_daily_summary(config):
@@ -188,7 +182,7 @@ if __name__ == "__main__":
             fit_score=8, fit_reason="Strong Python match", db_id=999,
             posted_date=datetime.now(timezone.utc),
         )
-        send_job_alert(test_job, None, None, cfg)
+        send_job_alert(test_job, cfg)
         print("Test alert sent.")
     else:
         run_bot(cfg)

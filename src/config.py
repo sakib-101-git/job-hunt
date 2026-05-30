@@ -24,6 +24,8 @@ class AppConfig(BaseModel):
     exclude_companies: list[str] = []
     max_age_hours: int = 72
     min_fit_score: int = 6
+    remote_only: bool = False
+    require_english: bool = False
 
     request_delay: int = 3
     user_agent: str = "Mozilla/5.0"
@@ -87,6 +89,8 @@ def load_config() -> AppConfig:
         exclude_companies=search.get("exclude_companies", []),
         max_age_hours=search.get("max_age_hours", 72),
         min_fit_score=search.get("min_fit_score", 6),
+        remote_only=search.get("remote_only", False),
+        require_english=search.get("require_english", False),
 
         request_delay=scraping.get("request_delay_seconds", 3),
         user_agent=scraping.get("user_agent", "Mozilla/5.0"),

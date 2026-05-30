@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class ScrapedJob(BaseModel):
@@ -14,39 +14,9 @@ class ScrapedJob(BaseModel):
     salary_range: str | None = None
     job_type: str | None = None
     db_id: int | None = None
+    is_remote: bool = False
 
 
 class ScoredJob(ScrapedJob):
     fit_score: int = 0
     fit_reason: str = ""
-
-
-class TailoredExperience(BaseModel):
-    company: str
-    role: str
-    dates: str
-    location: str = ""
-    selected_bullets: list[str] = Field(default_factory=list)
-
-
-class TailoredProject(BaseModel):
-    name: str
-    url: str = ""
-    selected_bullets: list[str] = Field(default_factory=list)
-
-
-class TailoredCV(BaseModel):
-    job_url: str = ""
-    headline: str
-    selected_summary: str
-    experience: list[TailoredExperience] = Field(default_factory=list)
-    projects: list[TailoredProject] = Field(default_factory=list)
-    selected_skills: dict[str, list[str]] = Field(default_factory=dict)
-    education: list[dict] = Field(default_factory=list)
-    certifications: list[dict] = Field(default_factory=list)
-
-
-class TailoredCoverLetter(BaseModel):
-    greeting: str = "Dear Hiring Manager,"
-    body: str
-    closing: str = "Best regards,"
