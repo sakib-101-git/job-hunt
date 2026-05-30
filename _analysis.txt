@@ -1,0 +1,91 @@
+TOTAL_JOBS=239
+
+### LANGUAGES
+  JavaScript           97  40.6%
+  Python               90  37.7%
+  TypeScript           59  24.7%
+  Go                   54  22.6%
+  SQL                  54  22.6%
+  Java                 38  15.9%
+  C#                   20   8.4%
+  PHP                  14   5.9%
+  Ruby                 13   5.4%
+  Rust                  8   3.3%
+  Kotlin                8   3.3%
+  Scala                 7   2.9%
+  Swift                 3   1.3%
+  Bash/Shell            2   0.8%
+
+### FRONTEND
+  React                82  34.3%
+  HTML/CSS             40  16.7%
+  Vue                  24  10.0%
+  Angular              15   6.3%
+  Tailwind             15   6.3%
+  Next.js              14   5.9%
+  Svelte                6   2.5%
+
+### BACKEND
+  REST API             40  16.7%
+  Node.js              38  15.9%
+  GraphQL              18   7.5%
+  Laravel              12   5.0%
+  Spring                9   3.8%
+  Rails                 7   2.9%
+  Django                5   2.1%
+  Flask                 5   2.1%
+  Express               2   0.8%
+  FastAPI               2   0.8%
+
+### DATABASES
+  PostgreSQL           33  13.8%
+  Redis                12   5.0%
+  MongoDB              11   4.6%
+  Elasticsearch         9   3.8%
+  MySQL                 6   2.5%
+  SQLite                1   0.4%
+
+### CLOUD_DEVOPS
+  Git                  59  24.7%
+  AWS                  58  24.3%
+  CI/CD                40  16.7%
+  Kubernetes           36  15.1%
+  Docker               31  13.0%
+  Azure                30  12.6%
+  GCP                  25  10.5%
+  Terraform            14   5.9%
+  Linux                 8   3.3%
+
+### DATA_ML_AI
+  Machine Learning     38  15.9%
+  LLM/GenAI            24  10.0%
+  Data Analysis        19   7.9%
+  NLP                   6   2.5%
+  PyTorch               5   2.1%
+  Pandas                5   2.1%
+  NumPy                 4   1.7%
+  Deep Learning         2   0.8%
+  scikit-learn          2   0.8%
+  Computer Vision       2   0.8%
+  TensorFlow            1   0.4%
+
+### PRACTICES
+  Agile/Scrum          28  11.7%
+  Testing/QA           21   8.8%
+  Microservices        18   7.5%
+  API Integration       8   3.3%
+
+### POSITIONS (title keywords)
+  Software Engineer/Developer      94  39.3%
+  Full Stack                       31  13.0%
+  Frontend                         18   7.5%
+  Data (Analyst/Eng/Sci)           17   7.1%
+  ML/AI Engineer                    8   3.3%
+  Backend                           5   2.1%
+  Web Developer                     4   1.7%
+  DevOps/SRE                        3   1.3%
+  QA/Test                           3   1.3%
+  Research                          3   1.3%
+  Mobile (iOS/Android)              2   0.8%
+
+ANALYSIS_COMPLETE
