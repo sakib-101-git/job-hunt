@@ -14,12 +14,12 @@
 - If the API endpoint/params change again, re-inspect the Angular bundle: pull
   `https://bdjobs.com/h/main-*.js`, find the env chunk's `searchEndpoint`.
 
-### Skill.jobs
-- Nuxt app with a JSON API. List: `GET https://studio.skill.jobs/api/job_search/?search=<kw>&limit=&offset=`
-  → `{count, next, results[]}`. Detail: `GET https://studio.skill.jobs/api/job_search/<slug>/`
-  → `position_summary`/`job_responsibility`/`qualification`/`skills_list`. Job page: `https://skill.jobs/jobs/<slug>`.
-- Listing leaves jd_text empty; detail is fetched only for jobs passing hard_filter.
-- `workplace` = "Work From Office" / "Work From Home" (Home ⇒ remote).
+### Skill.jobs (removed)
+- Had a clean JSON API (`studio.skill.jobs/api/job_search/`), but it's behind
+  Cloudflare which 403-blocks datacenter IPs (GitHub Actions runners) while
+  serving residential/BD IPs fine. Header tweaks don't bypass Cloudflare IP/TLS
+  filtering. Removed from the project since BDJobs covers the same BD employers
+  on the cloud. Would need a residential proxy to run skill.jobs from CI.
 
 ### Shomvob (currently disabled)
 - Removed from ALL_SCRAPERS. Old `shomvob.com/jobs` 404s; the site is a Next.js app

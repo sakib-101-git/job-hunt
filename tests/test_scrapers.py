@@ -94,36 +94,4 @@ def test_shomvob_parse_listing():
 # ────────────────────────────────────────────────────────────────────
 # Skill.jobs
 
-# Skill.jobs now uses the studio.skill.jobs JSON API; test field extraction offline.
-_SKILLJOBS_API_ITEM = {
-    "id": 8890,
-    "slug": "full-stack-developer-team-leader-3PCY8lCq",
-    "title": "Full Stack Developer (Team Leader)",
-    "type": "Full Time",
-    "company_info": {"name": "Nexogs Systems Ltd.", "slug": "nexogs-01P8awaX"},
-    "location": "Dhaka, Bangladesh",
-    "division": "Dhaka",
-    "min_salary": 0.0,
-    "max_salary": 0.0,
-    "isNegotiable": True,
-    "workplace": "Work From Office",
-    "created_at": "May 19, 2026",
-}
-
-
-def test_skilljobs_parse_job():
-    from src.scrapers.skilljobs import SkillJobsScraper
-    scraper = SkillJobsScraper(_make_config())
-    job = scraper._parse_job(_SKILLJOBS_API_ITEM)
-    assert job is not None
-    assert job.source == "skilljobs"
-    assert job.source_job_id == "8890"
-    assert job.company == "Nexogs Systems Ltd."
-    assert job.url == "https://skill.jobs/jobs/full-stack-developer-team-leader-3PCY8lCq"
-    assert job.salary_range == "Negotiable"
-    assert job.is_remote is False
-    # Missing id/slug/title -> dropped
-    assert scraper._parse_job({"id": "", "slug": "", "title": ""}) is None
-    # Home workplace -> remote
-    remote = scraper._parse_job({"id": "2", "slug": "x", "title": "Dev", "workplace": "Work From Home"})
-    assert remote.is_remote is True
+# skill.jobs was removed (Cloudflare blocks datacenter IPs); no scraper to test.
