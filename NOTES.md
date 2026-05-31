@@ -14,12 +14,20 @@
 - If the API endpoint/params change again, re-inspect the Angular bundle: pull
   `https://bdjobs.com/h/main-*.js`, find the env chunk's `searchEndpoint`.
 
-### Shomvob
-- Site may be JS-rendered. If requests+BS4 returns empty cards, switch to playwright
-- Check `scraping.use_playwright: true` in config.yaml if needed
-
 ### Skill.jobs
-- Similar JS rendering concern as Shomvob
+- Nuxt app with a JSON API. List: `GET https://studio.skill.jobs/api/job_search/?search=<kw>&limit=&offset=`
+  → `{count, next, results[]}`. Detail: `GET https://studio.skill.jobs/api/job_search/<slug>/`
+  → `position_summary`/`job_responsibility`/`qualification`/`skills_list`. Job page: `https://skill.jobs/jobs/<slug>`.
+- Listing leaves jd_text empty; detail is fetched only for jobs passing hard_filter.
+- `workplace` = "Work From Office" / "Work From Home" (Home ⇒ remote).
+
+### Shomvob (currently disabled)
+- Removed from ALL_SCRAPERS. Old `shomvob.com/jobs` 404s; the site is a Next.js app
+  whose job list comes from an obfuscated Supabase RPC (table/RPC name not recoverable
+  from the bundle; `backend-api.shomvob.co` only exposes `get-top-companies`).
+- Also a blue-collar-focused platform, so it yields ~0 of the software roles we target.
+  `src/scrapers/shomvob.py` is kept (old HTML-scraper code) but unused. Revisit only if
+  shomvob exposes a usable jobs endpoint.
 
 ### LinkedIn Email
 - Requires Gmail App Password (not your actual password)
