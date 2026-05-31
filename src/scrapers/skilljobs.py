@@ -16,6 +16,7 @@ JD is left empty at listing time so main.py only fetches detail for jobs that
 survive hard_filter (efficient).
 """
 import logging
+import requests
 from src.models import ScrapedJob
 from src.scrapers.base import BaseScraper
 from src.utils import parse_relative_date, clean_html
@@ -48,6 +49,16 @@ class SkillJobsScraper(BaseScraper):
                     "search": keyword, "limit": RESULTS_PER_PAGE, "offset": 0,
                 })
                 results = resp.json().get("results") or []
+            except requests.HTTPError as exc:
+                status = getattr(exc.response, "status_code", None)
+                if status == 403:
+                    # studio.skill.jobs is behind Cloudflare, which blocks datacenter
+                    # IPs (e.g. GitHub Actions runners). Bail quietly — every keyword
+                    # would fail the same way. Works from a residential/BD IP.
+                    log.info("skilljobs: blocked by Cloudflare (403) from this IP — skipping source")
+                    break
+                log.warning(f"skilljobs search for '{keyword}' failed: {exc}")
+                continue
             except Exception as exc:
                 log.warning(f"skilljobs search for '{keyword}' failed: {exc}")
                 continue
