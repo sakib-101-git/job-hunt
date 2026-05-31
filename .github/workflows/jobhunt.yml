@@ -66,3 +66,29 @@ jobs:
         with:
           path: data
           key: jobhunt-db-${{ github.run_id }}
+
+  # GitHub auto-disables scheduled workflows after 60 days with no repo
+  # activity. This job makes one tiny commit per month (on the 1st, morning
+  # run only) to keep the schedule alive without cluttering history.
+  keepalive:
+    needs: run
+    if: github.event_name == 'schedule' && github.event.schedule == '0 3 * * *'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Monthly keep-alive commit
+        run: |
+          if [ "$(date -u +%d)" != "01" ]; then
+            echo "Not the 1st of the month — skipping keep-alive commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          echo "Last keep-alive: $(date -u)" > .github/keepalive.txt
+          git add .github/keepalive.txt
+          git commit -m "chore: keep scheduled workflow alive [skip ci]" || exit 0
+          git push
