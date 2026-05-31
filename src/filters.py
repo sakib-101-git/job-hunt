@@ -86,12 +86,15 @@ def hard_filter(job: ScrapedJob, config) -> bool:
     if not any(kw.lower() in title_lower for kw in config.search_keywords):
         return False
 
-    if config.remote_only:
+    # remote_only is a guard for global boards (a BD-based candidate must be able
+    # to work the role). BD-local sources are inherently workable from Bangladesh,
+    # so they bypass the remote gate — local office jobs are wanted.
+    if config.remote_only and job.source not in BD_SOURCES:
         if not _is_remote_job(job):
             return False
         if not _location_workable_from_bd(job.location):
             return False
-    else:
+    elif not config.remote_only:
         location_lower = job.location.lower()
         if job.location and not any(loc.lower() in location_lower for loc in config.search_locations):
             return False
@@ -102,7 +105,11 @@ def hard_filter(job: ScrapedJob, config) -> bool:
     if any(ex.lower() in company_lower for ex in config.exclude_companies):
         return False
 
-    if job.posted_date:
+    # BD job boards list a post until its application deadline (often weeks after
+    # the publish date), so age-since-publish would wrongly drop still-open roles.
+    # The API only returns open jobs and dedup guarantees one alert each, so skip
+    # the age gate for BD sources.
+    if job.posted_date and job.source not in BD_SOURCES:
         age_hours = (datetime.now(timezone.utc) - job.posted_date).total_seconds() / 3600
         if age_hours > config.max_age_hours:
             return False

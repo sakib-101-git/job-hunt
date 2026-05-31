@@ -27,33 +27,51 @@ def _make_config():
 # ────────────────────────────────────────────────────────────────────
 # BDJobs
 
-@pytest.mark.skipif(
-    not (FIXTURES / "bdjobs_search_sample.html").exists(),
-    reason="No BDJobs fixture — run a live scrape first",
-)
-def test_bdjobs_parse_listing():
+# BDJobs now uses the JSON search API (api.bdjobs.com/Jobs/api/JobSearch),
+# so we test field extraction from a representative API item offline.
+_BDJOBS_API_ITEM = {
+    "Jobid": "1483986",
+    "jobTitle": "Trainee Software Engineer",
+    "companyName": "Data Edge Limited",
+    "location": "Baridhara J Block",
+    "publishDate": "2026-05-03T03:51:00Z",
+    "jobContext": "<p>Recent graduate with B.Sc. in CSE.</p>",
+    "jobDescription": "Bachelor of Science (BSc) in Computer Science",
+    "eduRec": "Bachelor of Science (BSc) in Computer Science",
+    "experience": "0 to 1 years",
+    "JobType": "FullTime",
+    "WorkPlace": "Office",
+    "Salary": {"SalaryRange": None, "MinSalary": 20000, "MaxSalary": 25000,
+               "IsNegotiable": False, "HideSalary": False},
+}
+
+
+def test_bdjobs_parse_job():
     from src.scrapers.bdjobs import BDJobsScraper
     scraper = BDJobsScraper(_make_config())
-    html = (FIXTURES / "bdjobs_search_sample.html").read_text(encoding="utf-8")
-    jobs = scraper._parse_listing(html)
-    assert len(jobs) > 0, "Expected at least one job from fixture"
-    job = jobs[0]
+    job = scraper._parse_job(_BDJOBS_API_ITEM)
+    assert job is not None
     assert job.source == "bdjobs"
-    assert job.title, "title should not be empty"
-    assert job.url.startswith("http"), "url should be absolute"
-    assert job.source_job_id, "source_job_id should not be empty"
+    assert job.source_job_id == "1483986"
+    assert job.title == "Trainee Software Engineer"
+    assert job.company == "Data Edge Limited"
+    assert job.url == "https://bdjobs.com/h/details/1483986"
+    assert job.posted_date is not None and job.posted_date.year == 2026
+    assert job.salary_range == "20000-25000"
+    assert job.job_type == "FullTime"
+    assert job.is_remote is False
+    assert len(job.jd_text) > 50, "JD text should have meaningful content"
 
 
-@pytest.mark.skipif(
-    not (FIXTURES / "bdjobs_detail_sample.html").exists(),
-    reason="No BDJobs detail fixture",
-)
-def test_bdjobs_parse_detail():
+def test_bdjobs_parse_job_remote_and_missing_fields():
     from src.scrapers.bdjobs import BDJobsScraper
     scraper = BDJobsScraper(_make_config())
-    html = (FIXTURES / "bdjobs_detail_sample.html").read_text(encoding="utf-8")
-    text = scraper._parse_detail(html)
-    assert len(text) > 50, "JD text should have meaningful content"
+    # Missing Jobid/title -> dropped
+    assert scraper._parse_job({"jobTitle": "", "Jobid": ""}) is None
+    # WorkPlace "Home" -> remote; missing company -> Confidential
+    job = scraper._parse_job({"Jobid": "1", "jobTitle": "Dev", "WorkPlace": "Home"})
+    assert job.is_remote is True
+    assert job.company == "Confidential"
 
 
 # ────────────────────────────────────────────────────────────────────

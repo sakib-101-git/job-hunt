@@ -3,10 +3,16 @@
 ## Scraper Quirks
 
 ### BDJobs
-- Search URL params need inspection on each run — site occasionally changes param names
-- "Confidential" is a valid company name, keep as-is
-- Premium listings have slightly different card HTML
-- Pagination: first 2–3 pages only to avoid rate limits
+- Site migrated off `jobs.bdjobs.com/jobsearch.asp` (now a dead 302 → empty Angular
+  shell). Now uses the JSON API: `GET https://api.bdjobs.com/Jobs/api/JobSearch/GetJobSearch`
+  with params `keyword`, `pg`, `rpp`, `isPro=0`. Response: `data[]` + `premiumData[]` + `common`.
+- JD comes straight from the listing item (`jobContext`/`eduRec`/`experience`) — no detail fetch needed.
+- "Confidential" is a valid company name, keep as-is (used as the fallback when companyName is empty).
+- `WorkPlace` is "Office" / "Home" / "" — "Home" means remote.
+- BD sources bypass the remote-only and age gates in `hard_filter` (local jobs are top
+  priority, and BDJobs lists posts until their deadline, not just for 72h).
+- If the API endpoint/params change again, re-inspect the Angular bundle: pull
+  `https://bdjobs.com/h/main-*.js`, find the env chunk's `searchEndpoint`.
 
 ### Shomvob
 - Site may be JS-rendered. If requests+BS4 returns empty cards, switch to playwright

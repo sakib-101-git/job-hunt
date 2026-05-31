@@ -1,134 +1,147 @@
 """
 BDJobs scraper.
 
-Search URL: https://jobs.bdjobs.com/jobsearch.asp
-Params observed from manual search:
-  Ession  = URL-encoded keyword (e.g. "python+developer")
-  Lcn     = location code (1=Dhaka, 3=Chittagong, 0=All)
-  typepost = 0 for all job types
-  iPage   = page number (1-based)
+BDJobs migrated from the old `jobs.bdjobs.com/jobsearch.asp` page (now dead —
+it 302-redirects to an empty Angular shell) to a JSON search API:
 
-If selectors break, save a fresh page to tests/fixtures/bdjobs_search_sample.html
-and inspect the structure.
+  GET https://api.bdjobs.com/Jobs/api/JobSearch/GetJobSearch
+  params: keyword, pg (1-based page), rpp (results per page), isPro=0
+  response: { data: [...], premiumData: [...], common: { totalpages, ... } }
+
+Each job item already carries the JD (jobContext / eduRec / experience), so we
+build jd_text from the listing and skip a separate detail fetch. Job detail
+pages for the Telegram link live at https://bdjobs.com/h/details/<Jobid>.
 """
 import logging
-import re
-from pathlib import Path
-from bs4 import BeautifulSoup
+from datetime import datetime
 from src.models import ScrapedJob
 from src.scrapers.base import BaseScraper
-from src.utils import parse_relative_date, clean_html
+from src.utils import clean_html
 
 log = logging.getLogger("jobhunt.scrapers.bdjobs")
 
-SEARCH_URL = "https://jobs.bdjobs.com/jobsearch.asp"
-DETAIL_BASE = "https://jobs.bdjobs.com/"
-MAX_PAGES = 3
-FIXTURE_DIR = Path(__file__).parent.parent.parent / "tests" / "fixtures"
+SEARCH_API = "https://api.bdjobs.com/Jobs/api/JobSearch/GetJobSearch"
+DETAIL_BASE = "https://bdjobs.com/h/details/"
+RESULTS_PER_PAGE = 40
+MAX_PAGES = 2          # first 2 pages per keyword to avoid hammering the API
+MAX_KEYWORDS = 5       # limit keywords per cycle
 
 
 class BDJobsScraper(BaseScraper):
     name = "bdjobs"
 
+    def __init__(self, config):
+        super().__init__(config)
+        # Mimic the real web client so the API returns JSON and we look less
+        # like a bare bot (helps when running from datacenter IPs).
+        self._session.headers.update({
+            "Accept": "application/json, text/plain, */*",
+            "Origin": "https://bdjobs.com",
+            "Referer": "https://bdjobs.com/",
+        })
+
     def fetch_listings(self) -> list[ScrapedJob]:
-        jobs = []
+        jobs: list[ScrapedJob] = []
         seen_ids: set[str] = set()
-        for keyword in self.config.search_keywords[:5]:  # limit API calls
+        for keyword in self.config.search_keywords[:MAX_KEYWORDS]:
             for page in range(1, MAX_PAGES + 1):
                 try:
-                    new = self._search_page(keyword, page)
-                    if not new:
-                        break
-                    for j in new:
-                        if j.source_job_id not in seen_ids:
-                            seen_ids.add(j.source_job_id)
-                            jobs.append(j)
+                    items, total_pages = self._search_page(keyword, page)
                 except Exception as exc:
-                    log.warning(f"bdjobs page {page} for '{keyword}' failed: {exc}")
+                    log.warning(f"bdjobs '{keyword}' page {page} failed: {exc}")
+                    break
+                if not items:
+                    break
+                for item in items:
+                    job = self._parse_job(item)
+                    if job and job.source_job_id not in seen_ids:
+                        seen_ids.add(job.source_job_id)
+                        jobs.append(job)
+                if page >= total_pages:
                     break
         log.info(f"bdjobs: found {len(jobs)} listings")
         return jobs
 
     def fetch_job_detail(self, url: str) -> str:
-        try:
-            resp = self._get(url)
-            self._save_fixture("bdjobs_detail_sample.html", resp.text)
-            return self._parse_detail(resp.text)
-        except Exception as exc:
-            log.warning(f"bdjobs detail fetch failed for {url}: {exc}")
-            return ""
+        # JD is already captured from the search API; nothing more to fetch.
+        return ""
 
     # ------------------------------------------------------------------ #
 
-    def _search_page(self, keyword: str, page: int) -> list[ScrapedJob]:
-        resp = self._get(SEARCH_URL, params={
-            "Ession": keyword,
-            "typepost": "0",
-            "Lcn": "1",
-            "iPage": str(page),
+    def _search_page(self, keyword: str, page: int) -> tuple[list[dict], int]:
+        resp = self._get(SEARCH_API, params={
+            "keyword": keyword,
+            "pg": str(page),
+            "rpp": str(RESULTS_PER_PAGE),
+            "isPro": "0",
         })
-        if page == 1:
-            self._save_fixture("bdjobs_search_sample.html", resp.text)
-        return self._parse_listing(resp.text)
-
-    def _parse_listing(self, html: str) -> list[ScrapedJob]:
-        soup = BeautifulSoup(html, "lxml")
-        jobs = []
-
-        # BDJobs job cards — adjust selectors if site HTML changes
-        for card in soup.select("div.job-tittle, div.single-job-items, div[class*='job-item']"):
-            try:
-                title_el = card.select_one("a.job-title-link, h2 a, .job-tittle a")
-                if not title_el:
-                    continue
-
-                href = title_el.get("href", "")
-                if not href.startswith("http"):
-                    href = DETAIL_BASE + href.lstrip("/")
-
-                job_id = self._extract_id(href)
-                if not job_id:
-                    continue
-
-                company_el = card.select_one(".company-name, .comp-name, [class*='company']")
-                location_el = card.select_one(".location, [class*='location']")
-                date_el = card.select_one(".date, .post-date, [class*='date']")
-
-                jobs.append(ScrapedJob(
-                    source=self.name,
-                    source_job_id=job_id,
-                    title=title_el.get_text(strip=True),
-                    company=company_el.get_text(strip=True) if company_el else "Confidential",
-                    location=location_el.get_text(strip=True) if location_el else "",
-                    url=href,
-                    posted_date=parse_relative_date(date_el.get_text(strip=True) if date_el else ""),
-                ))
-            except Exception as exc:
-                log.debug(f"bdjobs card parse error: {exc}")
-
-        return jobs
-
-    def _parse_detail(self, html: str) -> str:
-        soup = BeautifulSoup(html, "lxml")
-        desc_el = soup.select_one(
-            "#JobDescriptionBox, .job-desc, .job-description, [class*='job-detail'], article"
-        )
-        if desc_el:
-            return clean_html(str(desc_el))
-        return clean_html(soup.get_text())
-
-    def _extract_id(self, url: str) -> str:
-        m = re.search(r"[?&]id=(\d+)", url, re.IGNORECASE)
-        return m.group(1) if m else ""
-
-    def _save_fixture(self, filename: str, content: str):
+        payload = resp.json()
+        items = (payload.get("data") or []) + (payload.get("premiumData") or [])
+        common = payload.get("common") or {}
         try:
-            FIXTURE_DIR.mkdir(parents=True, exist_ok=True)
-            path = FIXTURE_DIR / filename
-            if not path.exists():
-                path.write_text(content, encoding="utf-8")
-        except Exception:
-            pass
+            total_pages = int(common.get("totalpages", 1))
+        except (TypeError, ValueError):
+            total_pages = 1
+        return items, total_pages
+
+    def _parse_job(self, item: dict) -> ScrapedJob | None:
+        try:
+            job_id = str(item.get("Jobid") or "").strip()
+            title = (item.get("jobTitle") or "").strip()
+            if not job_id or not title:
+                return None
+            workplace = (item.get("WorkPlace") or "").strip()
+            return ScrapedJob(
+                source=self.name,
+                source_job_id=job_id,
+                title=title,
+                company=(item.get("companyName") or "").strip() or "Confidential",
+                location=(item.get("location") or "").strip(),
+                url=DETAIL_BASE + job_id,
+                posted_date=self._parse_date(item.get("publishDate")),
+                jd_text=self._build_jd(item),
+                salary_range=self._parse_salary(item.get("Salary")),
+                job_type=(item.get("JobType") or "").strip() or None,
+                is_remote=workplace.lower() in {"home", "remote", "work from home"},
+            )
+        except Exception as exc:
+            log.debug(f"bdjobs card parse error: {exc}")
+            return None
+
+    @staticmethod
+    def _parse_date(value) -> datetime | None:
+        if not value:
+            return None
+        try:
+            return datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        except ValueError:
+            return None
+
+    @staticmethod
+    def _build_jd(item: dict) -> str:
+        parts = []
+        for key in ("jobContext", "jobDescription", "eduRec", "experience"):
+            val = item.get(key)
+            if val:
+                val = str(val)
+                parts.append(clean_html(val) if "<" in val else val.strip())
+        workplace = (item.get("WorkPlace") or "").strip()
+        if workplace:
+            parts.append(f"Workplace: {workplace}")
+        return "\n".join(p for p in parts if p).strip()
+
+    @staticmethod
+    def _parse_salary(salary) -> str | None:
+        if not isinstance(salary, dict) or salary.get("HideSalary"):
+            return None
+        if salary.get("SalaryRange"):
+            return str(salary["SalaryRange"])
+        lo, hi = salary.get("MinSalary") or 0, salary.get("MaxSalary") or 0
+        if lo or hi:
+            return f"{lo}-{hi}"
+        if salary.get("IsNegotiable"):
+            return "Negotiable"
+        return None
 
 
 if __name__ == "__main__":

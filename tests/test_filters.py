@@ -59,7 +59,8 @@ def test_fails_excluded_company():
 
 
 def test_fails_wrong_location():
-    job = _make_job(location="New York, USA")
+    # Global-remote source with a restricted location is filtered out.
+    job = _make_job(source="remotive", location="New York, USA")
     assert hard_filter(job, _make_config()) is False
 
 
@@ -70,12 +71,27 @@ def test_passes_empty_location():
 
 
 def test_fails_too_old():
-    job = _make_job(posted_date=datetime.now(timezone.utc) - timedelta(hours=100))
+    # Age gate applies to non-BD sources (BD posts stay open until deadline).
+    job = _make_job(source="remotive",
+                    posted_date=datetime.now(timezone.utc) - timedelta(hours=100))
     assert hard_filter(job, _make_config()) is False
 
 
 def test_passes_no_posted_date():
     job = _make_job(posted_date=None)
+    assert hard_filter(job, _make_config()) is True
+
+
+def test_bd_source_bypasses_remote_and_age():
+    # BD-local jobs are top priority: an office job in Dhaka, even an old post,
+    # must pass (remote-only and age gates are skipped for BD sources).
+    job = _make_job(
+        source="bdjobs",
+        title="Software Engineer",
+        location="Dhaka",
+        is_remote=False,
+        posted_date=datetime.now(timezone.utc) - timedelta(hours=500),
+    )
     assert hard_filter(job, _make_config()) is True
 
 
