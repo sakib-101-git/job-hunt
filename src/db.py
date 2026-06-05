@@ -27,6 +27,12 @@ CREATE TABLE IF NOT EXISTS jobs (
     UNIQUE(source, source_job_id)
 );
 
+CREATE TABLE IF NOT EXISTS subscribers (
+    chat_id     TEXT PRIMARY KEY,
+    username    TEXT,
+    joined_at   TEXT NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_jobs_status ON jobs(status);
 CREATE INDEX IF NOT EXISTS idx_jobs_source ON jobs(source);
 """
@@ -115,6 +121,30 @@ def get_new_jobs(db_path: str) -> list[dict]:
     rows = conn.execute("SELECT * FROM jobs WHERE status='new'").fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+
+def add_subscriber(db_path: str, chat_id: str, username: str | None = None) -> None:
+    conn = _connect(db_path)
+    conn.execute(
+        "INSERT OR REPLACE INTO subscribers (chat_id, username, joined_at) VALUES (?,?,?)",
+        (chat_id, username, datetime.now(timezone.utc).isoformat()),
+    )
+    conn.commit()
+    conn.close()
+
+
+def remove_subscriber(db_path: str, chat_id: str) -> None:
+    conn = _connect(db_path)
+    conn.execute("DELETE FROM subscribers WHERE chat_id=?", (chat_id,))
+    conn.commit()
+    conn.close()
+
+
+def get_subscribers(db_path: str) -> list[str]:
+    conn = _connect(db_path)
+    rows = conn.execute("SELECT chat_id FROM subscribers").fetchall()
+    conn.close()
+    return [row["chat_id"] for row in rows]
 
 
 def get_stats(db_path: str) -> dict:

@@ -14,28 +14,49 @@ search:
     - software development
     - web developer
     - web development
+    - web engineer
     - frontend developer
     - front end developer
     - front-end developer
+    - frontend engineer
+    - front end engineer
+    - front-end engineer
     - backend developer
     - back end developer
     - back-end developer
+    - backend engineer
+    - back end engineer
+    - back-end engineer
     - full stack developer
     - full-stack developer
+    - full stack engineer
+    - full-stack engineer
+    - fullstack developer
+    - fullstack engineer
     - application developer
+    - application engineer
     - api developer
+    - api engineer
     # Stack-specific
     - python developer
     - python engineer
     - javascript developer
+    - javascript engineer
     - typescript developer
+    - typescript engineer
     - react developer
     - react engineer
+    - react native developer
+    - react native engineer
     - next.js developer
     - node developer
     - node.js developer
+    - node engineer
+    - node.js engineer
     - django developer
+    - django engineer
     - fastapi developer
+    - fastapi engineer
     # QA / automation
     - qa engineer
     - test engineer

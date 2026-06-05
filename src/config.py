@@ -12,7 +12,7 @@ load_dotenv(ROOT / ".env")
 class AppConfig(BaseModel):
     groq_api_key: str
     telegram_bot_token: str
-    telegram_chat_id: str
+    telegram_chat_id: str = ""  # owner fallback if no subscribers in DB yet
     imap_host: str | None = None
     imap_email: str | None = None
     imap_app_password: str | None = None

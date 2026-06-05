@@ -1,19 +1,17 @@
 """
 Telegram notifications.
 
-send_job_alert() — called by main.py, sends alert + PDFs synchronously.
+send_job_alert() — called by main.py, sends alert to all subscribers.
 Running `python -m src.notify` starts the polling bot for button callbacks.
 
 Bot setup:
 1. Create bot via @BotFather, get TOKEN
-2. Start a chat with the bot, then visit:
-   https://api.telegram.org/bot<TOKEN>/getUpdates
-3. Put TOKEN + chat_id in .env
+2. Share the bot link with friends — they send /start to subscribe
+3. Put TOKEN in .env; TELEGRAM_CHAT_ID is optional (owner default subscriber)
 """
 import asyncio
 import logging
 from datetime import datetime, timezone
-from pathlib import Path
 
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler
@@ -34,6 +32,17 @@ def send_job_alert(job, config) -> bool:
 
 
 async def _send_alert_async(job, config):
+    from src.db import get_subscribers
+    subscribers = get_subscribers(config.db_path)
+
+    # Fall back to the owner chat_id if nobody has /start-ed yet
+    if not subscribers and config.telegram_chat_id:
+        subscribers = [config.telegram_chat_id]
+
+    if not subscribers:
+        log.warning("No Telegram subscribers — nobody will receive this alert.")
+        return
+
     bot = Bot(token=config.telegram_bot_token)
 
     posted = ""
@@ -47,9 +56,9 @@ async def _send_alert_async(job, config):
         f"🎯 *{_md(job.title)}* at *{_md(job.company)}*\n"
         f"📍 {_md(job.location or 'Location not specified')}\n"
         f"⭐ Fit Score: {job.fit_score}/10\n"
-        f"💬 \"{_md(job.fit_reason)}\""
+        f"💬 \"{_md(job.fit_reason or '')}\""
         f"{salary}\n"
-        f"🔗 [View Job]({job.url})"
+        f"🔗 [View Job]({_escape_url(job.url)})"
         f"{posted}"
     )
 
@@ -61,13 +70,17 @@ async def _send_alert_async(job, config):
         ]
     ])
 
-    await bot.send_message(
-        chat_id=config.telegram_chat_id,
-        text=text,
-        parse_mode="Markdown",
-        reply_markup=keyboard,
-        disable_web_page_preview=True,
-    )
+    for chat_id in subscribers:
+        try:
+            await bot.send_message(
+                chat_id=chat_id,
+                text=text,
+                parse_mode="MarkdownV2",
+                reply_markup=keyboard,
+                disable_web_page_preview=True,
+            )
+        except Exception as exc:
+            log.warning(f"Failed to send to chat_id {chat_id}: {exc}")
 
 
 def send_daily_summary(config):
@@ -78,7 +91,7 @@ def send_daily_summary(config):
 
 
 async def _send_summary_async(config):
-    from src.db import get_stats
+    from src.db import get_stats, get_subscribers
     stats = get_stats(config.db_path)
     by_status = stats.get("by_status", {})
     total = sum(by_status.values())
@@ -88,12 +101,18 @@ async def _send_summary_async(config):
     ]
     for status, cnt in sorted(by_status.items()):
         lines.append(f"  • {status}: {cnt}")
+    text = "\n".join(lines)
+
+    subscribers = get_subscribers(config.db_path)
+    if not subscribers and config.telegram_chat_id:
+        subscribers = [config.telegram_chat_id]
+
     bot = Bot(token=config.telegram_bot_token)
-    await bot.send_message(
-        chat_id=config.telegram_chat_id,
-        text="\n".join(lines),
-        parse_mode="Markdown",
-    )
+    for chat_id in subscribers:
+        try:
+            await bot.send_message(chat_id=chat_id, text=text, parse_mode="Markdown")
+        except Exception as exc:
+            log.warning(f"Summary failed for chat_id {chat_id}: {exc}")
 
 
 # ------------------------------------------------------------------ #
@@ -104,6 +123,7 @@ def run_bot(config):
     app.bot_data["config"] = config
 
     app.add_handler(CommandHandler("start", _cmd_start))
+    app.add_handler(CommandHandler("stop", _cmd_stop))
     app.add_handler(CommandHandler("stats", _cmd_stats))
     app.add_handler(CommandHandler("pause", _cmd_pause))
     app.add_handler(CommandHandler("resume", _cmd_resume))
@@ -114,11 +134,26 @@ def run_bot(config):
 
 
 async def _cmd_start(update, context):
+    from src.db import add_subscriber
+    config = context.bot_data["config"]
+    chat_id = str(update.effective_chat.id)
+    username = update.effective_user.username if update.effective_user else None
+    add_subscriber(config.db_path, chat_id, username)
     await update.message.reply_text(
-        "👋 JobHunt Bot active.\n"
+        "👋 Subscribed! You'll now receive job alerts.\n"
         "Commands: /stats — application summary\n"
-        "/pause — stop notifications\n/resume — resume notifications"
+        "/stop — unsubscribe from alerts\n"
+        "/pause — pause notifications\n/resume — resume notifications\n\n"
+        f"Your chat ID: `{chat_id}`"
     )
+
+
+async def _cmd_stop(update, context):
+    from src.db import remove_subscriber
+    config = context.bot_data["config"]
+    chat_id = str(update.effective_chat.id)
+    remove_subscriber(config.db_path, chat_id)
+    await update.message.reply_text("🔕 Unsubscribed. Send /start to re-subscribe.")
 
 
 async def _cmd_stats(update, context):
@@ -159,10 +194,15 @@ async def _callback_handler(update, context):
 
 
 def _md(text: str) -> str:
-    """Escape Telegram Markdown special chars."""
-    for ch in ["_", "*", "[", "]", "(", ")", "~", "`", ">", "#", "+", "-", "=", "|", ".", "!"]:
+    """Escape Telegram MarkdownV2 special chars."""
+    for ch in ["\\", "_", "*", "[", "]", "(", ")", "~", "`", ">", "#", "+", "-", "=", "|", "{", "}", ".", "!"]:
         text = text.replace(ch, f"\\{ch}")
     return text
+
+
+def _escape_url(url: str) -> str:
+    """Escape only ) and \ inside a MarkdownV2 link URL."""
+    return url.replace("\\", "\\\\").replace(")", "\\)")
 
 
 if __name__ == "__main__":
