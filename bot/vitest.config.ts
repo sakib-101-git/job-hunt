@@ -6,6 +6,8 @@ import { defineConfig } from "vitest/config";
 // Wrangler reads `secrets.required` values from the environment. Tests get a
 // fixed fake value so they never depend on a local .dev.vars file.
 process.env.TELEGRAM_WEBHOOK_SECRET = "test-webhook-secret-0123456789";
+process.env.TELEGRAM_BOT_TOKEN = "123456:test-bot-token";
+process.env.GITHUB_DISPATCH_TOKEN = "test-dispatch-token";
 
 // The same migrations production uses, applied to the local test D1 by
 // test/apply-migrations.ts.

@@ -5,7 +5,7 @@ compatibility_date = "2026-10-12"
 
 # Secret values are set with `wrangler secret put <NAME>`; only names live here.
 [secrets]
-required = ["TELEGRAM_WEBHOOK_SECRET"]
+required = ["TELEGRAM_BOT_TOKEN", "TELEGRAM_WEBHOOK_SECRET", "GITHUB_DISPATCH_TOKEN"]
 
 # The database id is not committed; deploy supplies it (docs/DECISIONS.md).
 # Local dev and tests run against a local D1 with the same migrations.
