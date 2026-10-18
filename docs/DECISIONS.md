@@ -232,3 +232,26 @@ replaced with `[email]` and `[phone]`.
   variables are set (`required_env`: such a source is "not configured", never
   "failed"). The parser was written against a synthetic email until a real,
   redacted one is available.
+
+## Normalization and storage
+
+### 2026-10-18: Listings to jobs
+
+- Descriptions become plain text (`html_to_text`): block tags become line breaks,
+  list items keep a "• " bullet, entities and double-escaped HTML are decoded,
+  NFKC, spaces collapsed. Stored text is capped at `jd_max_chars_stored` at a word
+  boundary; `jd_max_chars_llm` is the extraction phase's cap.
+- Canonical URLs drop tracking parameters (`normalization.tracking_params`),
+  lower-case scheme and host, drop the fragment and sort the remaining query.
+- Fingerprint = sha1(company | title key | seniority | city). Company names drop
+  configured suffixes ("Ltd", "Limited", ...); the title key comes from the same
+  normalizer the taxonomy uses, so "Sr. Software Engineer" and "Senior Software
+  Developer" agree, while seniority keeps a senior and a junior opening apart;
+  the city is the Bangladesh district a location names ("Gulshan" and "Dhaka" are
+  both `dhaka`), else the first part of the location, else "remote".
+- Fields with no column (work mode, employment type, salary, restrictions, tags,
+  source extras) go to `jobs.listing_json` (migration 0003), so later stages can
+  re-process a job without fetching it again.
+- Upserts keep `first_seen_at`, refresh `last_seen_at`, keep the earliest known
+  posting date, and replace the description only with a longer one: a job seen
+  again without its details request never loses its full text.

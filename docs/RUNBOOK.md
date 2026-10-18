@@ -17,6 +17,17 @@ uv run jobhunt fetch bdjobs jobicy --show 10    # live fetch, nothing stored
 uv run jobhunt fetch jobicy --record /tmp/rec   # also save every response
 ```
 
+To run the due sources and store their jobs in a local SQLite database (created
+and migrated on first use):
+
+```bash
+JOBHUNT_SQLITE_PATH=/tmp/jobhunt.db uv run jobhunt collect            # due sources
+JOBHUNT_SQLITE_PATH=/tmp/jobhunt.db uv run jobhunt collect --source bdjobs --force
+```
+
+It prints, per source, its status, how many listings it returned and how many were
+new, plus any warnings and health alerts.
+
 Tests never touch the network: they replay `pipeline/tests/fixtures/sources/<name>/`.
 To refresh a fixture, record it as above, keep a handful of items, scrub emails and
 phone numbers from job text, and copy the directory over.

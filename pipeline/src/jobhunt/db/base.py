@@ -6,10 +6,16 @@ layer never knows which one it has.
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Protocol
 
 Param = str | int | float | bytes | None
 Row = Mapping[str, Param]
+
+
+def timestamp(value: datetime | None) -> str | None:
+    """The schema's timestamp format: ISO 8601 UTC to the second ("...T09:30:00Z")."""
+    return value.strftime("%Y-%m-%dT%H:%M:%SZ") if value else None
 
 
 class DatabaseError(Exception):

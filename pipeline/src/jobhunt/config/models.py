@@ -268,10 +268,25 @@ class DatabaseSettings(Strict):
     max_statement_bytes: int = Field(ge=1)
 
 
+class NormalizationSettings(Strict):
+    jd_max_chars_stored: int = Field(ge=100)
+    jd_max_chars_llm: int = Field(ge=100)
+    tracking_params: list[NonEmpty] = []
+    company_suffixes: list[NonEmpty] = []
+    store_batch_size: int = Field(ge=1)
+
+    @model_validator(mode="after")
+    def _check(self) -> Self:
+        if self.jd_max_chars_llm > self.jd_max_chars_stored:
+            raise ValueError("jd_max_chars_llm cannot exceed jd_max_chars_stored")
+        return self
+
+
 class App(Strict):
     version: Literal[1]
     title_matching: TitleMatching
     database: DatabaseSettings
+    normalization: NormalizationSettings
 
 
 # --- sources.yaml -------------------------------------------------------------

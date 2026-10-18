@@ -7,12 +7,14 @@ Commands are added as each pipeline stage lands:
 - `build-shared` writes the Worker's generated config (`--check` only compares).
 - `sources` lists the configured sources; `fetch` runs some live, without a
   database, and can record their responses as test fixtures.
+- `collect` runs the due sources and stores what they return in the database.
 """
 
 import argparse
 import asyncio
 import os
 import sys
+from collections import Counter
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -22,9 +24,13 @@ import httpx
 
 from jobhunt import __version__, shared
 from jobhunt.config import ConfigError, find_repo_root, load_config
+from jobhunt.db import DatabaseError, SqliteBackend, apply_migrations, open_database
+from jobhunt.jobs.store import store_jobs
+from jobhunt.normalize.jobs import JobNormalizer
 from jobhunt.sources import FetchContext, build_source
 from jobhunt.sources.http import Fetcher, FetchError
 from jobhunt.sources.recording import RecordingTransport
+from jobhunt.sources.runner import run_sources
 
 REQUIRED_PYTHON = (3, 12)
 
@@ -162,6 +168,39 @@ async def _fetch(names: Sequence[str], bootstrap: bool, record: Path | None, sho
     return 1 if failed else 0
 
 
+async def _collect(only: Sequence[str] | None, force: bool) -> int:
+    try:
+        config = load_config()
+        db = open_database(config.app.database, os.environ)
+    except (ConfigError, DatabaseError) as exc:
+        return _fail(str(exc))
+    fetcher = Fetcher(config.sources.http)
+    now = datetime.now(UTC)
+    try:
+        root = find_repo_root(Path.cwd())
+        if isinstance(db, SqliteBackend) and root is not None:
+            await apply_migrations(db, root / "migrations")  # local databases only
+        report = await run_sources(config.sources, db, fetcher, now, os.environ, only, force)
+        normalizer = JobNormalizer(config)
+        records = [normalizer.record(listing) for listing in report.listings]
+        stored = await store_jobs(db, records, now, config.app.normalization.store_batch_size)
+    finally:
+        await fetcher.aclose()
+        await db.aclose()
+    new = Counter(job.record.source for job in stored if job.is_new)
+    for run in sorted(report.runs, key=lambda r: r.source):
+        detail = f"{len(run.listings):4} listings {new[run.source]:4} new"
+        if run.error:
+            detail = run.error
+        _write(f"{run.source:16} {run.status:15} {detail}")
+        for warning in run.warnings:
+            _write(f"{'':16} warning: {warning}")
+    for alert in report.alerts:
+        _write(f"ALERT [{alert.kind}] {alert.message}")
+    failed = [run for run in report.runs if run.status == "failed"]
+    return 1 if report.runs and len(failed) == len(report.runs) else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="jobhunt")
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -176,6 +215,9 @@ def build_parser() -> argparse.ArgumentParser:
     fetch.add_argument("--bootstrap", action="store_true", help="fetch as on a first run")
     fetch.add_argument("--record", type=Path, metavar="DIR", help="save responses as fixtures")
     fetch.add_argument("--show", type=int, default=5, metavar="N", help="listings to print")
+    collect = commands.add_parser("collect", help="run the due sources and store their jobs")
+    collect.add_argument("--source", action="append", dest="only", metavar="SOURCE")
+    collect.add_argument("--force", action="store_true", help="run sources that are not due")
     return parser
 
 
@@ -191,6 +233,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _sources()
     if args.command == "fetch":
         return asyncio.run(_fetch(args.names, args.bootstrap, args.record, args.show))
+    if args.command == "collect":
+        return asyncio.run(_collect(args.only, args.force))
     raise AssertionError(f"unhandled command {args.command!r}")  # argparse rejects unknown ones
 
 

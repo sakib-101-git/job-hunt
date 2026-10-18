@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from typing import Any, Literal
 
 from jobhunt.config.models import HealthSettings
-from jobhunt.db import Database
+from jobhunt.db import Database, timestamp
 from jobhunt.sources.models import SourceResult
 
 AlertKind = Literal["failing", "silent", "recovered"]
@@ -39,10 +39,6 @@ class SourceState:
 
     def due(self, now: datetime) -> bool:
         return self.next_run_at is None or self.next_run_at <= now
-
-
-def iso(value: datetime | None) -> str | None:
-    return value.strftime("%Y-%m-%dT%H:%M:%SZ") if value else None
 
 
 def _parse(value: Any) -> datetime | None:
@@ -86,14 +82,14 @@ async def save_state(db: Database, st: SourceState, now: datetime) -> None:
         (
             st.source,
             json.dumps(st.state, sort_keys=True),
-            iso(st.next_run_at),
-            iso(st.last_success_at),
-            iso(st.last_nonempty_at),
+            timestamp(st.next_run_at),
+            timestamp(st.last_success_at),
+            timestamp(st.last_nonempty_at),
             st.consecutive_failures,
             st.consecutive_empty,
             st.last_count,
             int(st.bootstrapped),
-            iso(now),
+            timestamp(now),
         ),
     )
 
@@ -129,7 +125,7 @@ def record_success(
                 st.source,
                 "silent",
                 f"{st.source} returned no jobs {st.consecutive_empty} runs in a row; "
-                f"last jobs at {iso(st.last_nonempty_at)}",
+                f"last jobs at {timestamp(st.last_nonempty_at)}",
             )
         )
     return alerts
