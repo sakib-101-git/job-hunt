@@ -325,6 +325,34 @@ class CseGateSettings(Strict):
     tech_signals: list[NonEmpty] = Field(min_length=1)
 
 
+class NotificationSettings(Strict):
+    telegram_api_base_url: Annotated[str, StringConstraints(pattern=r"^https://")]
+    request_timeout_seconds: float = Field(gt=0)
+    messages_per_second: float = Field(gt=0, le=30)
+    per_chat_interval_seconds: float = Field(ge=1)
+    max_attempts: int = Field(ge=1)
+    retries_per_send: int = Field(ge=0)
+    retry_backoff_seconds: float = Field(ge=0)
+    max_listed_extras: int = Field(ge=0)
+
+
+CallbackCode = Annotated[str, StringConstraints(pattern=r"^[a-z]{1,4}$")]
+
+
+class Callbacks(Strict):
+    why: CallbackCode
+    applied: CallbackCode
+    save: CallbackCode
+    hide: CallbackCode
+    thumbs_up: CallbackCode
+    thumbs_down: CallbackCode
+
+    @model_validator(mode="after")
+    def _distinct(self) -> Self:
+        _require_unique("callback codes", self.model_dump().values())
+        return self
+
+
 class App(Strict):
     version: Literal[1]
     title_matching: TitleMatching
@@ -336,6 +364,8 @@ class App(Strict):
     seniority_gate: SeniorityGate
     cse_gate: CseGateSettings
     red_flags: list[NonEmpty] = []
+    notifications: NotificationSettings
+    callbacks: Callbacks
 
     @model_validator(mode="after")
     def _known_timezone(self) -> Self:

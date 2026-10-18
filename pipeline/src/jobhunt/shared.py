@@ -41,6 +41,7 @@ def shared_data(config: Config) -> dict[str, Any]:
             {"id": city, "name": districts[city].name}
             for city in config.locations.preferred_city_options
         ],
+        "callbacks": config.app.callbacks.model_dump(),
     }
 
 

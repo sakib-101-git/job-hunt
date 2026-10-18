@@ -10,6 +10,8 @@ Commands are added as each pipeline stage lands:
 - `collect` runs the due sources, stores what they return and gates new jobs.
 - `enrich` classifies unknown titles, extracts facts from open jobs and gates
   them again.
+- `match` scores eligible jobs for users and queues notifications; `notify`
+  sends what is queued (needs TELEGRAM_BOT_TOKEN).
 """
 
 import argparse
@@ -32,6 +34,10 @@ from jobhunt.jobs.enrich import enrich
 from jobhunt.jobs.gating import GateItem, JobGates, apply_gates
 from jobhunt.jobs.store import store_jobs
 from jobhunt.normalize.jobs import JobNormalizer
+from jobhunt.notify.outbox import enqueue
+from jobhunt.notify.sender import SendPlan, send_pending
+from jobhunt.notify.telegram import TelegramClient
+from jobhunt.score.matching import match
 from jobhunt.sources import FetchContext, build_source
 from jobhunt.sources.http import Fetcher, FetchError
 from jobhunt.sources.recording import RecordingTransport
@@ -237,6 +243,46 @@ async def _enrich(limit: int | None) -> int:
     return 0
 
 
+async def _match() -> int:
+    try:
+        config = load_config()
+        db = open_database(config.app.database, os.environ)
+    except (ConfigError, DatabaseError) as exc:
+        return _fail(str(exc))
+    now = datetime.now(UTC)
+    try:
+        if isinstance(db, SqliteBackend):
+            await apply_migrations(db, config.root / "migrations")
+        new, counts = await match(db, config, now)
+        counts.update(await enqueue(db, new, now))
+    finally:
+        await db.aclose()
+    for outcome, count in sorted(counts.items()):
+        _write(f"{count:5} {outcome}")
+    return 0
+
+
+async def _notify(digest: bool, users: Sequence[int] | None) -> int:
+    token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    if not token:
+        return _fail("TELEGRAM_BOT_TOKEN is not set")
+    try:
+        config = load_config()
+        db = open_database(config.app.database, os.environ)
+    except (ConfigError, DatabaseError) as exc:
+        return _fail(str(exc))
+    telegram = TelegramClient(config.app.notifications, token)
+    plan = SendPlan(digest_run=digest, only_users=frozenset(users) if users else None)
+    try:
+        counts = await send_pending(db, config, telegram, datetime.now(UTC), plan)
+    finally:
+        await telegram.aclose()
+        await db.aclose()
+    for outcome, count in sorted(counts.items()):
+        _write(f"{count:5} {outcome}")
+    return 1 if counts.get("failed") and not counts.get("sent") else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="jobhunt")
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -256,6 +302,10 @@ def build_parser() -> argparse.ArgumentParser:
     collect.add_argument("--force", action="store_true", help="run sources that are not due")
     enrich_cmd = commands.add_parser("enrich", help="extract facts from open jobs")
     enrich_cmd.add_argument("--limit", type=int, metavar="N", help="jobs to extract at most")
+    commands.add_parser("match", help="score jobs for users and queue notifications")
+    notify = commands.add_parser("notify", help="send queued notifications")
+    notify.add_argument("--digest", action="store_true", help="the daily digest run")
+    notify.add_argument("--user", type=int, action="append", metavar="ID", help="only this user")
     return parser
 
 
@@ -275,6 +325,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         return asyncio.run(_collect(args.only, args.force))
     if args.command == "enrich":
         return asyncio.run(_enrich(args.limit))
+    if args.command == "match":
+        return asyncio.run(_match())
+    if args.command == "notify":
+        return asyncio.run(_notify(args.digest, args.user))
     raise AssertionError(f"unhandled command {args.command!r}")  # argparse rejects unknown ones
 
 
