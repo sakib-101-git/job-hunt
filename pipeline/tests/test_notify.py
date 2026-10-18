@@ -311,17 +311,96 @@ async def test_stale_jobs_are_skipped_at_send_time(db: SqliteBackend, config: Co
 async def test_digest_quiet_hours_and_on_demand(db: SqliteBackend, config: Config) -> None:
     await add_job(db, 1)
     await add_user(db, 1, mode="digest")
-    await add_user(db, 2, quiet={"start": "11:00", "end": "13:00"})  # it is 12:00 in Dhaka
+    await add_user(db, 2, quiet={"start": "07:00", "end": "13:00"})  # it is 12:00 in Dhaka
     await _queue(db, config)
     fake = FakeTelegram()
-    assert await send_pending(db, config, _telegram(config, fake), NOW) == {}
+    early = NOW.replace(hour=2)  # 08:00 in Dhaka, before digest_time
+    assert await send_pending(db, config, _telegram(config, fake), early) == {}
+    # A forced digest run serves digest users at any time.
     assert await send_pending(
-        db, config, _telegram(config, fake), NOW, SendPlan(digest_run=True)
+        db, config, _telegram(config, fake), early, SendPlan(digest_run=True)
     ) == {"sent": 1}
     assert [b["chat_id"] for b in fake.sent] == [10]
     # /digest: the user asked, so quiet hours don't apply.
     on_demand = SendPlan(only_users=frozenset({2}))
     assert await send_pending(db, config, _telegram(config, fake), NOW, on_demand) == {"sent": 1}
+
+
+async def test_digest_goes_out_once_a_day(db: SqliteBackend, config: Config) -> None:
+    await add_job(db, 1)
+    await add_job(db, 2, fingerprint="fp-2")
+    await add_user(db, 1, mode="digest")
+    await _queue(db, config)
+    fake = FakeTelegram()
+    # 12:00 in Dhaka: past 09:00 and nothing sent today, so the digest is due.
+    assert await send_pending(db, config, _telegram(config, fake), NOW) == {"sent": 2}
+    await add_job(db, 3, fingerprint="fp-3")
+    await _queue(db, config)
+    # Later the same day: already served.
+    later = NOW + timedelta(hours=3)
+    assert await send_pending(db, config, _telegram(config, fake), later) == {}
+    # The next morning after 09:00 it is due again.
+    tomorrow = NOW + timedelta(days=1)
+    assert await send_pending(db, config, _telegram(config, fake), tomorrow) == {"sent": 1}
+
+
+def test_digest_due() -> None:
+    from zoneinfo import ZoneInfo
+
+    from jobhunt.notify.sender import digest_due
+
+    dhaka = ZoneInfo("Asia/Dhaka")
+    nine = "09:00"
+    assert not digest_due(None, NOW.replace(hour=2), dhaka, nine)  # 08:00 local
+    assert digest_due(None, NOW.replace(hour=3), dhaka, nine)  # 09:00 local
+    assert digest_due("2026-10-18T02:59:59Z", NOW, dhaka, nine)  # sent before 09:00
+    assert not digest_due("2026-10-18T03:00:00Z", NOW, dhaka, nine)  # sent at 09:00
+
+
+async def test_overlapping_senders_send_each_row_once(db: SqliteBackend, config: Config) -> None:
+    await add_job(db, 1)
+    await add_user(db, 1)
+    await _queue(db, config)
+    # Another run claimed the row a minute ago and is still sending it.
+    lease_until = (NOW + timedelta(minutes=14)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    await db.execute("UPDATE notifications SET lease_id = 'other', lease_until = ?", (lease_until,))
+    fake = FakeTelegram()
+    assert await send_pending(db, config, _telegram(config, fake), NOW) == {}
+    assert fake.sent == []
+    # That run died: once its lease runs out the row is sent, and the lease cleared.
+    later = NOW + timedelta(minutes=15)
+    assert await send_pending(db, config, _telegram(config, fake), later) == {"sent": 1}
+    row = (await db.query("SELECT status, lease_id, lease_until FROM notifications"))[0]
+    assert (row["status"], row["lease_id"], row["lease_until"]) == ("sent", None, None)
+
+
+async def test_a_row_is_claimed_by_one_run_only(db: SqliteBackend, config: Config) -> None:
+    from jobhunt.notify.sender import _claim
+
+    await add_job(db, 1)
+    await add_user(db, 1)
+    await _queue(db, config)
+    # Both runs read the pending row before either claims it.
+    rows = await db.query("SELECT id AS notification_id FROM notifications")
+    first = await _claim(db, {1: rows}, NOW, 15)
+    second = await _claim(db, {1: rows}, NOW, 15)
+    assert len(first[1]) == 1
+    assert second == {}
+
+
+async def test_two_concurrent_runs_one_send(db: SqliteBackend, config: Config) -> None:
+    import asyncio
+
+    await add_job(db, 1)
+    await add_user(db, 1)
+    await _queue(db, config)
+    fake = FakeTelegram()
+    results = await asyncio.gather(
+        send_pending(db, config, _telegram(config, fake), NOW),
+        send_pending(db, config, _telegram(config, fake), NOW),
+    )
+    assert sorted(sum(c.values()) for c in results) == [0, 1]
+    assert len(fake.sent) == 1
 
 
 async def test_failures_are_reported_and_retried(db: SqliteBackend, config: Config) -> None:

@@ -1,0 +1,80 @@
+name: Deploy
+
+# Deploys the Worker when anything it is built from changes on main (brief
+# §10.5): D1 migrations first (a failed migration stops the deploy), then the
+# Worker with its secrets, then the Telegram webhook and command menu.
+# Migrations must stay backward compatible with the running pipeline.
+on:
+  push:
+    branches: [main]
+    paths:
+      - bot/**
+      - migrations/**
+      - config/**
+      - locales/**
+      - .github/workflows/deploy.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy the Worker
+    # Set the repository variable DEPLOY_ENABLED to "true" once the secrets
+    # below exist (docs/SETUP.md).
+    if: vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: bot
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
+      - run: npm ci
+      - name: Point wrangler at the database
+        env:
+          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
+        # The id stays out of the repository (docs/DECISIONS.md).
+        run: |
+          [[ "$D1_DATABASE_ID" =~ ^[0-9a-f-]{36}$ ]] || { echo "D1_DATABASE_ID is not a database id"; exit 1; }
+          sed -i "s/^database_name = \"jobhunt\"$/&\ndatabase_id = \"$D1_DATABASE_ID\"/" wrangler.toml
+          grep -q "^database_id = " wrangler.toml
+      - name: Apply D1 migrations
+        run: npx wrangler d1 migrations apply jobhunt --remote
+      - name: Deploy the Worker with its secrets
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_WEBHOOK_SECRET: ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}
+          GITHUB_DISPATCH_TOKEN: ${{ secrets.GH_DISPATCH_TOKEN }}
+          ADMIN_TELEGRAM_IDS: ${{ secrets.ADMIN_TELEGRAM_IDS }}
+        run: |
+          secrets="$RUNNER_TEMP/worker-secrets.json"
+          trap 'rm -f "$secrets"' EXIT
+          node -e '
+            const names = ["TELEGRAM_BOT_TOKEN", "TELEGRAM_WEBHOOK_SECRET", "GITHUB_DISPATCH_TOKEN", "ADMIN_TELEGRAM_IDS"];
+            const missing = names.filter((n) => !process.env[n]);
+            if (missing.length) { console.error("missing secrets: " + missing.join(", ")); process.exit(1); }
+            process.stdout.write(JSON.stringify(Object.fromEntries(names.map((n) => [n, process.env[n]]))));
+          ' > "$secrets"
+          npx wrangler deploy --secrets-file "$secrets"
+      - name: Register the Telegram webhook and commands
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_WEBHOOK_SECRET: ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}
+          WORKER_URL: ${{ vars.WORKER_URL }}
+        run: node scripts/set_webhook.ts

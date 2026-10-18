@@ -46,7 +46,11 @@ def shared_data(config: Config) -> dict[str, Any]:
         "github": config.app.github.model_dump(),
         "timezone": config.app.timezone,
         "max_age_days": config.app.freshness.max_age_days,
-        "notifications": {"max_attempts": config.app.notifications.max_attempts},
+        "notifications": {
+            "max_attempts": config.app.notifications.max_attempts,
+            "telegram_api_base_url": config.app.notifications.telegram_api_base_url,
+        },
+        "heartbeat": config.app.heartbeat.model_dump(),
     }
 
 

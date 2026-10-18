@@ -2044,9 +2044,12 @@
     "hide": "hd",
     "thumbs_up": "up",
     "thumbs_down": "dn",
-    "reason": "rs"
+    "reason": "rs",
+    "cv_ok": "ck",
+    "cv_edit": "ce"
   },
   "bot": {
+    "webhook_path": "/telegram",
     "updates_per_minute": 30,
     "max_pause_days": 90,
     "cv_max_bytes": 5000000,
@@ -2112,6 +2115,12 @@
   "timezone": "Asia/Dhaka",
   "max_age_days": 10,
   "notifications": {
-    "max_attempts": 5
+    "max_attempts": 5,
+    "telegram_api_base_url": "https://api.telegram.org"
+  },
+  "heartbeat": {
+    "kv_key": "last_successful_run",
+    "max_age_minutes": 60,
+    "alert_kv_key": "heartbeat_alert"
   }
 }

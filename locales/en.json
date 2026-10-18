@@ -259,7 +259,8 @@
       "too_big": "That file is too big. The limit is {mb} MB.",
       "consent": "<b>Before I read your CV</b>\nIts text is sent to Groq, an AI service that doesn't keep or train on it, to pull out your skills, years of experience and education. I keep only that summary and delete the text right after. OK?",
       "queued": "📄 Reading your CV. I'll message you what I found in a few minutes.",
-      "cancelled": "OK, your CV wasn't read."
+      "cancelled": "OK, your CV wasn't read.",
+      "confirmed": "👍 Thanks! Your profile is saved."
     },
     "admin": {
       "title": "<b>Admin</b> · {time}",
@@ -280,6 +281,58 @@
       "ok_mark": "✅",
       "bad_mark": "⚠️",
       "count": "{name} {count}"
+    },
+    "heartbeat": {
+      "stale": "🚨 <b>The pipeline has stalled</b>: no successful run since {at}.",
+      "never": "🚨 <b>The pipeline has not completed a run yet.</b>",
+      "recovered": "✅ The pipeline is running again (last success {at})."
+    },
+    "commands": {
+      "start": "Set up or restart",
+      "settings": "Change your preferences",
+      "tracks": "Change your career tracks",
+      "skills": "Change your skills",
+      "cv": "Read your skills from your CV",
+      "saved": "Jobs you saved",
+      "applied": "Jobs you applied to",
+      "why": "Why a job got its score",
+      "digest": "Send waiting matches now",
+      "pause": "Pause alerts",
+      "resume": "Resume alerts",
+      "privacy": "What I store and why",
+      "export": "Download your data",
+      "delete": "Delete your data",
+      "help": "What I can do"
     }
+  },
+  "cv": {
+    "parsed": "📄 <b>Here's what I read from your CV</b>",
+    "skills": "🛠 Skills: {skills}",
+    "experience": "💼 Experience: {years}",
+    "years": "{years} years",
+    "degree": "🎓 Education: {education}",
+    "education": "{level} in {field}",
+    "levels": {
+      "secondary": "Secondary school",
+      "diploma": "Diploma",
+      "bachelor": "Bachelor's degree",
+      "master": "Master's degree",
+      "phd": "PhD"
+    },
+    "summary": "📝 {summary}",
+    "none": "not found",
+    "check": "\nDoes this look right? I've deleted your CV's text and kept only this summary.",
+    "buttons": {
+      "ok": "✅ Looks right",
+      "edit": "✏️ Edit skills"
+    },
+    "no_model": "Sorry, I can't read CVs right now. You can type your skills with /skills instead.",
+    "download_failed": "Sorry, I couldn't download your CV. Please send it again with /cv.",
+    "no_text": "I couldn't find any text in that PDF; it may be a scanned image. Please send a PDF with selectable text, or type your skills with /skills.",
+    "model_failed": "Sorry, I couldn't read your CV just now. Please send it again later, or type your skills with /skills."
+  },
+  "admin": {
+    "source_alert": "⚠️ <b>Source alert</b>: {message}",
+    "broadcast_done": "📣 Broadcast sent to {sent} users; {failed} failed."
   }
 }

@@ -8,9 +8,11 @@ What the JobHunt bot stores, why, and who else sees it.
   messages and greet you.
 - **Settings:** tracks, experience level, where you can work, preferred cities,
   job types, minimum score, delivery mode and quiet hours, to choose your jobs.
-- **Skills and education:** typed in the bot or read from a CV you chose to
-  send. Only the structured result is kept; the CV text is deleted after
-  parsing. Telegram's file id for the CV is kept so it can be parsed again.
+- **Skills, years of experience and education:** typed in the bot or read from
+  a CV you chose to send, plus a one-line summary with no contact details. Only
+  this structured result is kept. The CV's text exists only in memory while it
+  is read and is never stored or logged; Telegram's file id for the CV is
+  deleted once it has been read (or couldn't be).
 - **Matches and feedback:** the jobs matched for you, their scores and
   explanations, and what you marked applied, saved, hidden, 👍 or 👎.
 
@@ -26,7 +28,9 @@ Nothing else: no phone numbers, no message history.
   sent to Gemini's free tier, whose inputs may be used to improve Google's
   products ([Gemini API terms](https://ai.google.dev/terms)).
 - **Infrastructure:** Telegram delivers messages, Cloudflare hosts the bot and
-  the database, and GitHub Actions runs the pipeline.
+  the database, and GitHub Actions runs the pipeline. The pipeline's logs are
+  public (the repository is), so they hold counts only: no user ids, names or
+  message text.
 
 Data is never sold or shared for any other purpose.
 

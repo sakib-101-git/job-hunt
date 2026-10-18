@@ -90,6 +90,14 @@ notifications:
   retry_backoff_seconds: 2.0
   # Extra matches beyond the user's per-cycle cap are listed in one message, up to this many.
   max_listed_extras: 10
+  # Digest users get their waiting matches once a day, at the first run after
+  # this local time.
+  digest_time: "09:00"
+  # After setup, a new user gets at most this many of the best current matches.
+  backfill_top_n: 10
+  # A run claims the rows it sends for this long, so overlapping runs never send
+  # a row twice; longer than one send stage can take.
+  lease_minutes: 15
 
 # Inline-button callback codes, shared with the bot (build-shared): each button
 # sends "<code>:<match id>", at most 64 bytes.
@@ -101,10 +109,14 @@ callbacks:
   thumbs_up: up
   thumbs_down: dn
   reason: rs
+  cv_ok: ck
+  cv_edit: ce
 
 # The Telegram bot (Worker). Every option list is shown in this order; labels
 # are in locales/en.json.
 bot:
+  # The Worker path Telegram posts updates to (setWebhook in deploy.yml).
+  webhook_path: /telegram
   # Updates (commands and button taps) a user may send per minute.
   updates_per_minute: 30
   max_pause_days: 90
@@ -135,3 +147,21 @@ bot:
 github:
   api_base_url: https://api.github.com
   repository: sakib-101-git/job-hunt
+
+retention:
+  # Job descriptions are cleared this long after a job was last seen; its
+  # extracted facts are kept.
+  jd_text_days: 60
+
+# Every successful pipeline run writes its time to this kv key; the Worker's
+# hourly check alerts admins when it is older than max_age_minutes.
+heartbeat:
+  kv_key: last_successful_run
+  max_age_minutes: 60
+  # Set while an alert about a stalled pipeline is open, so admins hear once.
+  alert_kv_key: heartbeat_alert
+
+# Once-a-day housekeeping (expiring jobs, retention) runs at the first pipeline
+# run of each local day; this kv key holds the day it last ran.
+maintenance:
+  kv_key: last_maintenance_day

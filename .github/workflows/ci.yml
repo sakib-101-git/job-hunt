@@ -54,6 +54,8 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      - name: Bundle the Worker as deploy would
+        run: npx wrangler deploy --dry-run --outdir "$RUNNER_TEMP/worker"
 
   shared:
     name: Repo rules and secrets

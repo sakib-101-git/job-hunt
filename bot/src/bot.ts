@@ -42,7 +42,8 @@ const DAY_MS = 86_400_000;
 
 export function createBot(token: string, deps: BotDeps, botInfo?: UserFromGetMe): Bot<BotContext> {
   const { db, config, locale: t } = deps;
-  const bot = new Bot<BotContext>(token, botInfo ? { botInfo } : {});
+  const client = { apiRoot: config.notifications.telegram_api_base_url };
+  const bot = new Bot<BotContext>(token, botInfo ? { botInfo, client } : { client });
   const skills = skillIndex(config.skills);
 
   // Private chats only; load the user and apply the per-user update limit.
@@ -194,6 +195,16 @@ export function createBot(token: string, deps: BotDeps, botInfo?: UserFromGetMe)
   registerAdmin(bot, deps);
   registerAlerts(bot, deps);
   registerCv(bot, deps);
+
+  // The buttons under the CV summary the pipeline sends after reading a CV.
+  bot.callbackQuery([config.callbacks.cv_ok, config.callbacks.cv_edit], async (ctx) => {
+    const confirmed = ctx.callbackQuery.data === config.callbacks.cv_ok;
+    await ctx.answerCallbackQuery(confirmed ? t.plain("bot.cv.confirmed") : undefined);
+    await ctx.editMessageReplyMarkup({ reply_markup: { inline_keyboard: [] } });
+    if (!confirmed) {
+      await openSettings(ctx, "skills");
+    }
+  });
 
   bot.callbackQuery(/^o:/, async (ctx) => {
     const user = ctx.user;

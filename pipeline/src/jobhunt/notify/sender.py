@@ -1,7 +1,9 @@
 """Send pending notifications (brief §6.9).
 
-Per user, oldest first: instant users are served by every run, digest users by
-the digest run (or on demand); nothing goes out during a user's quiet hours.
+Per user, oldest first: instant users are served by every run, digest users once
+a day, by the first run after `digest_time` (or on demand); nothing goes out
+during a user's quiet hours. A run first claims the rows it will send with a
+lease, so two overlapping runs never send the same row.
 Freshness and the deadline are checked again at send time. The first
 `max_per_cycle` matches go out as full alerts; the rest are listed in one
 message. Every row ends as sent (with Telegram's message id), failed (with the
@@ -11,10 +13,11 @@ as they happened: a failed send is never reported as success (defect D3).
 """
 
 import json
+import uuid
 from collections import Counter, defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
 from jobhunt.config import Config
@@ -30,20 +33,29 @@ _PENDING = """
 SELECT n.id AS notification_id, n.attempts, n.match_id, n.job_id, n.created_at,
        u.id AS user_id, u.chat_id, p.delivery_mode, p.quiet_hours_json, p.max_per_cycle,
        m.breakdown_json, m.explanation_json, m.gate_results_json, m.scorer_version,
-       j.first_seen_at
+       j.first_seen_at,
+       (SELECT MAX(s.sent_at) FROM notifications s
+        WHERE s.user_id = n.user_id AND s.status = 'sent') AS last_sent_at
 FROM notifications n
 JOIN users u ON u.id = n.user_id
 JOIN user_prefs p ON p.user_id = n.user_id
 JOIN matches m ON m.id = n.match_id
 JOIN jobs j ON j.id = n.job_id
-WHERE n.status IN ('pending', 'failed') AND n.attempts < ? AND u.status = 'active'
+WHERE n.status IN ('pending', 'failed') AND n.attempts < ?1 AND u.status = 'active'
+  AND (n.lease_until IS NULL OR n.lease_until <= ?2)
 ORDER BY n.created_at, n.id
+"""
+
+# One statement per row: it succeeds for exactly one of two racing runs.
+_CLAIM = """
+UPDATE notifications SET lease_id = ?1, lease_until = ?2
+WHERE id = ?3 AND status IN ('pending', 'failed') AND (lease_until IS NULL OR lease_until <= ?4)
 """
 
 
 @dataclass(frozen=True)
 class SendPlan:
-    digest_run: bool = False
+    digest_run: bool = False  # serve every digest user now, due or not
     only_users: frozenset[int] | None = None  # /digest: these users, whatever their mode
 
 
@@ -57,6 +69,20 @@ def keyboard(job: JobView, match_id: int, locale: Locale, codes: Callbacks) -> K
         [button("applied", codes.applied), button("save", codes.save), button("hide", codes.hide)],
         [button("thumbs_up", codes.thumbs_up), button("thumbs_down", codes.thumbs_down)],
     ]
+
+
+def digest_due(last_sent_at: object, now: datetime, zone: ZoneInfo, digest_time: str) -> bool:
+    """A digest user's daily digest is due once local time passes `digest_time`,
+    until something has been sent to them after that moment."""
+    local = now.astimezone(zone)
+    due_at = datetime.combine(local.date(), time.fromisoformat(digest_time), zone)
+    if local < due_at:
+        return False
+    return not last_sent_at or _parse(str(last_sent_at)) < due_at
+
+
+def _parse(value: str) -> datetime:
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
 def in_quiet_hours(raw: object, now: datetime, default_zone: ZoneInfo) -> bool:
@@ -81,7 +107,7 @@ async def send_pending(
     zone = ZoneInfo(config.app.timezone)
     renderer = Renderer.from_config(config)
     freshness = FreshnessGate(config)
-    rows = await db.query(_PENDING, (settings.max_attempts,))
+    rows = await db.query(_PENDING, (settings.max_attempts, timestamp(now)))
     by_user: dict[int, list[Row]] = defaultdict(list)
     for row in rows:
         user_id = int(str(row["user_id"]))
@@ -89,13 +115,17 @@ async def send_pending(
             if user_id in plan.only_users:
                 by_user[user_id].append(row)
             continue
-        wants_digest = row["delivery_mode"] == "digest"
-        if wants_digest == plan.digest_run and not in_quiet_hours(
-            row["quiet_hours_json"], now, zone
-        ):
+        if row["delivery_mode"] == "digest":
+            wanted = plan.digest_run or digest_due(
+                row["last_sent_at"], now, zone, settings.digest_time
+            )
+        else:
+            wanted = not plan.digest_run
+        if wanted and not in_quiet_hours(row["quiet_hours_json"], now, zone):
             by_user[user_id].append(row)
 
     counts: Counter[str] = Counter()
+    by_user = await _claim(db, by_user, now, settings.lease_minutes)
     if not by_user:
         return counts
     jobs = {j.job_id: j for j in await load_jobs(db, config, _job_ids(by_user))}
@@ -111,7 +141,7 @@ async def send_pending(
                 await _finish(db, row, "skipped", now, error="job no longer open")
                 counts["skipped: job no longer open"] += 1
                 continue
-            first_seen = datetime.fromisoformat(str(row["first_seen_at"]).replace("Z", "+00:00"))
+            first_seen = _parse(str(row["first_seen_at"]))
             fresh = freshness(
                 now=now,
                 posted_at=job.posted_at,
@@ -164,6 +194,32 @@ async def send_pending(
     return counts
 
 
+async def _claim(
+    db: Database, by_user: dict[int, list[Row]], now: datetime, minutes: int
+) -> dict[int, list[Row]]:
+    """The rows this run won the lease for; another run is sending the rest."""
+    rows = [row for user_rows in by_user.values() for row in user_rows]
+    if not rows:
+        return {}
+    lease, until = uuid.uuid4().hex, timestamp(now + timedelta(minutes=minutes))
+    results = await db.batch(
+        [
+            Statement(_CLAIM, (lease, until, int(str(row["notification_id"])), timestamp(now)))
+            for row in rows
+        ]
+    )
+    won = {
+        int(str(row["notification_id"]))
+        for row, result in zip(rows, results, strict=True)
+        if result.changes
+    }
+    claimed = {
+        user_id: [row for row in user_rows if int(str(row["notification_id"])) in won]
+        for user_id, user_rows in by_user.items()
+    }
+    return {user_id: user_rows for user_id, user_rows in claimed.items() if user_rows}
+
+
 async def _send_extras(
     db: Database,
     telegram: TelegramClient,
@@ -208,7 +264,7 @@ async def _finish(
         [
             Statement(
                 "UPDATE notifications SET status = ?, telegram_message_id = ?, attempts = ?,"
-                " last_error = ?, sent_at = ? WHERE id = ?",
+                " last_error = ?, sent_at = ?, lease_id = NULL, lease_until = NULL WHERE id = ?",
                 (
                     status,
                     message_id,

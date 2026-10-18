@@ -37,7 +37,9 @@ class TelegramClient:
         sleep: Sleep = asyncio.sleep,
     ) -> None:
         self._s = settings
-        self._url = f"{settings.telegram_api_base_url.rstrip('/')}/bot{token}"
+        base = settings.telegram_api_base_url.rstrip("/")
+        self._url = f"{base}/bot{token}"
+        self._file_url = f"{base}/file/bot{token}"
         self._owns_client = client is None
         self._client = client or httpx.AsyncClient(timeout=settings.request_timeout_seconds)
         self._clock = clock
@@ -63,7 +65,21 @@ class TelegramClient:
         result = await self._call("sendMessage", body, chat_id)
         return int(result["message_id"])
 
-    async def _call(self, method: str, body: dict[str, Any], chat_id: int) -> dict[str, Any]:
+    async def download_file(self, file_id: str, max_bytes: int) -> bytes:
+        """A file a user sent (getFile, then the download URL), at most `max_bytes`."""
+        result = await self._call("getFile", {"file_id": file_id}, None)
+        size = int(result.get("file_size") or 0)
+        if size > max_bytes:
+            raise TelegramError(f"file is {size} bytes; the limit is {max_bytes}")
+        try:
+            response = await self._client.get(f"{self._file_url}/{result['file_path']}")
+        except httpx.HTTPError as exc:
+            raise TelegramError(f"download failed: {type(exc).__name__}") from exc
+        if not response.is_success or len(response.content) > max_bytes:
+            raise TelegramError(f"download failed: HTTP {response.status_code}")
+        return response.content
+
+    async def _call(self, method: str, body: dict[str, Any], chat_id: int | None) -> dict[str, Any]:
         attempt = 0
         while True:
             await self._wait_turn(chat_id)
@@ -93,11 +109,14 @@ class TelegramClient:
             await self._sleep(delay)
             attempt += 1
 
-    async def _wait_turn(self, chat_id: int) -> None:
+    async def _wait_turn(self, chat_id: int | None) -> None:
+        """Wait for the global gap and, for a message to a chat, that chat's gap."""
         async with self._lock:
             now = self._clock()
-            start = max(now, self._next_global, self._next_chat.get(chat_id, 0.0))
+            chat_next = self._next_chat.get(chat_id, 0.0) if chat_id is not None else 0.0
+            start = max(now, self._next_global, chat_next)
             if start > now:
                 await self._sleep(start - now)
             self._next_global = start + 1 / self._s.messages_per_second
-            self._next_chat[chat_id] = start + self._s.per_chat_interval_seconds
+            if chat_id is not None:
+                self._next_chat[chat_id] = start + self._s.per_chat_interval_seconds

@@ -13,6 +13,16 @@ required = [
   "ADMIN_TELEGRAM_IDS",
 ]
 
+# Cron Triggers (free plan: 5 per account; this uses 2). Every 10 minutes the
+# Worker asks GitHub Actions for a pipeline run (repository_dispatch); hourly it
+# checks the pipeline's heartbeat. [vars] tells the code which cron is which.
+[triggers]
+crons = ["*/10 * * * *", "5 * * * *"]
+
+[vars]
+CRON_PIPELINE = "*/10 * * * *"
+CRON_HEARTBEAT = "5 * * * *"
+
 # The database id is not committed; deploy supplies it (docs/DECISIONS.md).
 # Local dev and tests run against a local D1 with the same migrations.
 [[d1_databases]]

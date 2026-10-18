@@ -176,21 +176,21 @@ def _replaying_fetcher(names: list[str]) -> object:
 def test_collect_stores_jobs(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
 ) -> None:
-    from jobhunt import cli
+    from jobhunt.automation import pipeline
 
-    monkeypatch.setattr(cli, "Fetcher", _replaying_fetcher(["jobicy", "workingnomads"]))
+    monkeypatch.setattr(pipeline, "Fetcher", _replaying_fetcher(["jobicy", "workingnomads"]))
     monkeypatch.setenv("JOBHUNT_SQLITE_PATH", str(tmp_path / "jobs.db"))
     for name in ("CLOUDFLARE_ACCOUNT_ID", "D1_DATABASE_ID", "CLOUDFLARE_API_TOKEN"):
         monkeypatch.delenv(name, raising=False)
     args = ["collect", "--source", "jobicy", "--source", "workingnomads", "--source", "remoteok"]
     assert main(args) == 0
     out = capsys.readouterr().out
-    assert "jobicy           ok                 5 listings    5 new" in out
-    assert "remoteok         failed" in out
+    assert "jobicy: ok, 5 listings, 5 new" in out
+    assert "remoteok: failed" in out
     assert "gates:" in out
 
     assert main([*args, "--force"]) == 0
-    assert "5 listings    0 new" in capsys.readouterr().out
+    assert "jobicy: ok, 5 listings, 0 new" in capsys.readouterr().out
 
 
 def test_collect_without_database(
@@ -210,11 +210,12 @@ def test_collect_without_database(
 def test_collect_fails_when_every_source_fails(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
 ) -> None:
-    from jobhunt import cli
+    from jobhunt.automation import pipeline
 
-    monkeypatch.setattr(cli, "Fetcher", _replaying_fetcher([]))
+    monkeypatch.setattr(pipeline, "Fetcher", _replaying_fetcher([]))
     monkeypatch.setenv("JOBHUNT_SQLITE_PATH", str(tmp_path / "jobs.db"))
     assert main(["collect", "--source", "jobicy"]) == 1
+    assert "FAILED: every source that ran failed" in capsys.readouterr().out
 
 
 def test_enrich_without_keys_uses_rules(
@@ -239,3 +240,30 @@ def test_enrich_without_database(
         monkeypatch.delenv(name, raising=False)
     assert main(["enrich"]) == 1
     assert "no database configured" in capsys.readouterr().err
+
+
+def test_run_and_event_write_the_step_summary(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    from jobhunt.automation import pipeline
+
+    monkeypatch.setattr(pipeline, "Fetcher", _replaying_fetcher([]))
+    monkeypatch.setenv("JOBHUNT_SQLITE_PATH", str(tmp_path / "jobs.db"))
+    summary = tmp_path / "summary.md"
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary))
+    for name in ("CLOUDFLARE_ACCOUNT_ID", "TELEGRAM_BOT_TOKEN", "GEMINI_API_KEY", "GROQ_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
+    # Offline and without a bot token: the run is recorded as failed.
+    assert main(["run", "--trigger", "schedule"]) == 1
+    out = capsys.readouterr().out
+    assert "== collect" in out
+    assert "FAILED: TELEGRAM_BOT_TOKEN is not set" in out
+    assert "## Pipeline run: schedule, failed" in summary.read_text(encoding="utf-8")
+
+    event = tmp_path / "event.json"
+    event.write_text('{"action": "parse-cv", "client_payload": {"user_id": 1}}', encoding="utf-8")
+    assert main(["event", str(event)]) == 1  # no bot token
+    event.write_text('{"action": "nope", "client_payload": {}}', encoding="utf-8")
+    assert main(["event", str(event)]) == 1
+    assert "unknown event type 'nope'" in capsys.readouterr().err
+    assert main(["event", str(tmp_path / "missing.json")]) == 1

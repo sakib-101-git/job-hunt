@@ -1,17 +1,19 @@
 import type { Update } from "grammy/types";
 import { z } from "zod";
 
+import { Api, type Bot } from "grammy";
+
 import { type BotContext, createBot } from "./bot";
 import { CONFIG } from "./config";
 import { parseAdminIds } from "./context";
+import { runCron } from "./cron";
 import { githubDispatcher } from "./dispatch";
 import { EN } from "./locale";
 import { isValidWebhookSecret, SECRET_HEADER } from "./webhook";
-import type { Bot } from "grammy";
 
 export const ROUTES = {
   health: "/health",
-  telegram: "/telegram",
+  telegram: CONFIG.bot.webhook_path,
 } as const;
 
 // Only the updates the bot asks for in setWebhook's allowed_updates.
@@ -68,5 +70,26 @@ export default {
       return handleTelegram(request, env);
     }
     return new Response("not found", { status: 404 });
+  },
+
+  async scheduled(controller, env): Promise<void> {
+    const api = new Api(env.TELEGRAM_BOT_TOKEN, {
+      apiRoot: CONFIG.notifications.telegram_api_base_url,
+    });
+    await runCron(
+      controller.cron,
+      { pipeline: env.CRON_PIPELINE, heartbeat: env.CRON_HEARTBEAT },
+      {
+        db: env.DB,
+        config: CONFIG,
+        locale: EN,
+        dispatch: githubDispatcher(CONFIG.github, env.GITHUB_DISPATCH_TOKEN),
+        send: async (chatId, html) => {
+          await api.sendMessage(chatId, html, { parse_mode: "HTML" });
+        },
+        adminIds: parseAdminIds(env.ADMIN_TELEGRAM_IDS),
+        now: new Date(controller.scheduledTime),
+      },
+    );
   },
 } satisfies ExportedHandler<Env>;
