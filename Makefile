@@ -1,6 +1,6 @@
 # Developer entry points. `make check` runs everything CI runs, except gitleaks.
 .DEFAULT_GOAL := help
-.PHONY: help setup hooks lint format typecheck test guard bot-dev check
+.PHONY: help setup hooks lint format typecheck test config build-shared guard bot-dev check
 
 UV := uv --directory pipeline
 NPM := npm --prefix bot
@@ -32,6 +32,13 @@ test: ## pytest with coverage and vitest
 	$(UV) run pytest --cov
 	$(NPM) test
 
+config: ## Validate config/ and check the Worker's generated copy is current
+	$(UV) run jobhunt validate-config
+	$(UV) run jobhunt build-shared --check
+
+build-shared: ## Regenerate bot/src/generated/ from config/
+	$(UV) run jobhunt build-shared
+
 guard: ## Repository rules: tracked files and the last commit message
 	python3 scripts/repo_guard.py tracked-files
 	git log -1 --format=%B | python3 scripts/repo_guard.py attribution
@@ -39,4 +46,4 @@ guard: ## Repository rules: tracked files and the last commit message
 bot-dev: ## Run the Worker locally with wrangler dev
 	$(NPM) run dev
 
-check: lint typecheck test guard ## Everything CI checks
+check: lint typecheck test config guard ## Everything CI checks
