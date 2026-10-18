@@ -18,3 +18,7 @@ export async function setKv(db: D1Database, key: string, value: string, now: Dat
     .bind(key, value, isoSeconds(now))
     .run();
 }
+
+export async function deleteKv(db: D1Database, key: string): Promise<void> {
+  await db.prepare("DELETE FROM kv WHERE key = ?").bind(key).run();
+}

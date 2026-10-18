@@ -1,7 +1,7 @@
-import { Bot, type Context, GrammyError, InputFile } from "grammy";
+import { Bot, InputFile } from "grammy";
 import type { UserFromGetMe } from "grammy/types";
 
-import type { SharedConfig } from "./config";
+import { type BotContext, type BotDeps, formatDate, show } from "./context";
 import { exportUserData } from "./db/export";
 import {
   draftFromPreferences,
@@ -19,8 +19,9 @@ import {
   upsertTelegramUser,
   type User,
 } from "./db/users";
-import type { Dispatcher } from "./dispatch";
-import type { Locale } from "./locale";
+import { registerAdmin } from "./handlers/admin";
+import { registerAlerts } from "./handlers/alerts";
+import { registerCv } from "./handlers/cv";
 import {
   acceptsSkillText,
   apply,
@@ -30,22 +31,9 @@ import {
   withSkills,
 } from "./onboarding/draft";
 import { parseSkills, skillIndex } from "./onboarding/skills";
-import { render, type View } from "./onboarding/view";
+import { render } from "./onboarding/view";
 
-export interface BotDeps {
-  db: D1Database;
-  config: SharedConfig;
-  locale: Locale;
-  dispatch: Dispatcher;
-  now: () => Date;
-}
-
-interface Flavor {
-  user: User | null;
-  now: Date;
-}
-
-export type BotContext = Context & Flavor;
+export type { BotContext, BotDeps } from "./context";
 
 // Callback data for /delete's confirmation; alert buttons use the shared codes.
 const DELETE_YES = "x:y";
@@ -79,21 +67,6 @@ export function createBot(token: string, deps: BotDeps, botInfo?: UserFromGetMe)
     await next();
   });
 
-  async function show(ctx: BotContext, view: View, edit: boolean): Promise<void> {
-    const options = { parse_mode: "HTML" as const, reply_markup: { inline_keyboard: view.keyboard } };
-    if (edit && ctx.callbackQuery?.message) {
-      try {
-        await ctx.editMessageText(view.text, options);
-      } catch (error) {
-        if (!(error instanceof GrammyError && error.description.includes("message is not modified"))) {
-          throw error;
-        }
-      }
-      return;
-    }
-    await ctx.reply(view.text, options);
-  }
-
   async function startDraft(ctx: BotContext, user: User, draft: Draft): Promise<void> {
     await setOnboardingState(db, user.id, draft, ctx.now);
     await show(ctx, render(draft, config, t), false);
@@ -118,16 +91,6 @@ export function createBot(token: string, deps: BotDeps, botInfo?: UserFromGetMe)
       return;
     }
     await startDraft(ctx, user, draft);
-  }
-
-  function formatDate(date: Date): string {
-    const parts = new Intl.DateTimeFormat("en-GB", {
-      timeZone: config.timezone,
-      day: "numeric",
-      month: "numeric",
-    }).formatToParts(date);
-    const part = (type: string): number => Number(parts.find((p) => p.type === type)?.value);
-    return t.plain("bot.date", { day: part("day"), month: t.list("months")[part("month") - 1] ?? "" });
   }
 
   bot.command("start", async (ctx) => {
@@ -173,7 +136,7 @@ export function createBot(token: string, deps: BotDeps, botInfo?: UserFromGetMe)
     const until = days === null ? null : new Date(ctx.now.getTime() + days * DAY_MS);
     await pauseUser(db, ctx.user.id, until, ctx.now);
     await ctx.reply(
-      until ? t.plain("bot.paused_until", { date: formatDate(until) }) : t.plain("bot.paused"),
+      until ? t.plain("bot.paused_until", { date: formatDate(until, config, t) }) : t.plain("bot.paused"),
     );
   });
 
@@ -227,6 +190,10 @@ export function createBot(token: string, deps: BotDeps, botInfo?: UserFromGetMe)
     }
     await ctx.editMessageText(t.plain("bot.deleted"));
   });
+
+  registerAdmin(bot, deps);
+  registerAlerts(bot, deps);
+  registerCv(bot, deps);
 
   bot.callbackQuery(/^o:/, async (ctx) => {
     const user = ctx.user;

@@ -99,6 +99,10 @@ export async function savePreferences(
 ): Promise<void> {
   const at = isoSeconds(now);
   const defaults = config.bot.defaults;
+  const typed = [...draft.skills, ...draft.unknownSkills];
+  // Skills parsed from a CV (possibly already saved by the pipeline) win over
+  // an empty typed list.
+  const keepParsed = draft.cvPending && typed.length === 0;
   await db.batch([
     db
       .prepare(
@@ -137,11 +141,11 @@ export async function savePreferences(
       .prepare(
         `INSERT INTO user_profiles (user_id, skills_json, updated_at) VALUES (?1, ?2, ?3)
          ON CONFLICT (user_id) DO UPDATE SET
-           skills_json = excluded.skills_json,
-           profile_version = profile_version + (skills_json != excluded.skills_json),
+           skills_json = CASE WHEN ?4 THEN skills_json ELSE excluded.skills_json END,
+           profile_version = profile_version + (NOT ?4 AND skills_json != excluded.skills_json),
            updated_at = excluded.updated_at`,
       )
-      .bind(userId, JSON.stringify([...draft.skills, ...draft.unknownSkills]), at),
+      .bind(userId, JSON.stringify(typed), at, keepParsed ? 1 : 0),
     db
       .prepare("UPDATE users SET onboarding_state = NULL, updated_at = ?2 WHERE id = ?1")
       .bind(userId, at),

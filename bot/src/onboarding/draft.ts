@@ -41,6 +41,9 @@ export const Draft = z.strictObject({
   minScore: z.number(),
   delivery: Delivery,
   quiet: QuietHours.nullable(),
+  // A CV was sent for parsing: saving keeps the skills it finds unless the user
+  // typed some.
+  cvPending: z.boolean().default(false),
 });
 export type Draft = z.infer<typeof Draft>;
 
@@ -111,6 +114,7 @@ export function newDraft(config: SharedConfig): Draft {
     minScore: defaults.min_score,
     delivery: defaults.delivery_mode,
     quiet: null,
+    cvPending: false,
   };
 }
 
@@ -247,6 +251,11 @@ function next(draft: Draft): Outcome {
 /** Text typed during the skills step. */
 export function withSkills(draft: Draft, ids: string[], unknown: string[]): Draft {
   return { ...draft, skills: ids, unknownSkills: unknown, step: "skills_confirm" };
+}
+
+/** A CV was sent during the skills step: move on while it is parsed. */
+export function withCv(draft: Draft): Draft {
+  return draft.step === "skills" ? { ...draft, cvPending: true, step: after(draft, "skills") } : draft;
 }
 
 export function acceptsSkillText(draft: Draft): boolean {

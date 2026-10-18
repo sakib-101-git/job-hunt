@@ -132,7 +132,7 @@
       "where": "<b>3/7 · Where</b>\nWhere can you work? Pick one or both.",
       "cities": "<b>Preferred cities</b> (optional)\nJobs in these cities score a little higher; jobs elsewhere in Bangladesh still reach you.",
       "job_types": "<b>4/7 · Job types</b>\nWhich kinds of jobs do you want?",
-      "skills": "<b>5/7 · Skills</b>\nType your skills separated by commas (for example: Python, SQL, React), or skip for now.",
+      "skills": "<b>5/7 · Skills</b>\nType your skills separated by commas (for example: Python, SQL, React), send your CV as a PDF, or skip for now.",
       "skills_confirm": "<b>Your skills</b>\n{skills}",
       "score": "<b>6/7 · Match strictness</b>\nOnly send jobs that score at least…",
       "delivery": "<b>7/7 · Delivery</b>\nEach match as soon as it's found, or once a day?",
@@ -187,7 +187,9 @@
       "start": "🚀 Start matching",
       "save": "💾 Save",
       "delete_yes": "🗑 Delete everything",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "parse_cv": "✅ Read my CV",
+      "send": "📣 Send"
     },
     "sections": {
       "tracks": "Tracks",
@@ -211,12 +213,73 @@
     "resumed": "▶️ Resumed. New matches will reach you again.",
     "not_paused": "You're not paused.",
     "slow_down": "Too many requests. Please wait a minute.",
-    "help": "<b>What I can do</b>\n/settings change your preferences\n/tracks change your career tracks\n/skills change your skills\n/pause [days] pause alerts\n/resume resume alerts\n/privacy what I store and why\n/export download your data\n/delete delete your data\n/help this list",
-    "privacy": "<b>Privacy</b>\nI store your Telegram id, name and username, your settings and skills, and the jobs I matched for you with their scores, only to send you matching jobs.\n\nJob postings are read by AI services (Google Gemini, Groq) to extract their facts; your own data is never sent to them unless you send a CV, which is asked about first.\n\nYour data is never sold or shared. /delete removes all of it.",
+    "help": "<b>What I can do</b>\n/settings change your preferences\n/tracks change your career tracks\n/skills change your skills\n/cv read your skills from your CV\n/saved jobs you saved\n/applied jobs you applied to\n/why N why a job got its score\n/digest send waiting matches now\n/pause [days] pause alerts\n/resume resume alerts\n/privacy what I store and why\n/export download your data\n/delete delete your data\n/help this list",
+    "privacy": "<b>Privacy</b>\nI store your Telegram id, name and username, your settings and skills, and the jobs I matched for you with their scores, only to send you matching jobs.\n\nJob postings are read by AI services (Google Gemini, Groq) to extract their facts. Your own data is never sent to them, except a CV you choose to send: its text goes only to Groq, which doesn't keep or train on it, and is deleted once read.\n\nYour data is never sold or shared. /export downloads it and /delete removes all of it.",
     "date": "{day} {month}",
     "export_caption": "Everything I store about you.",
     "delete_confirm": "<b>Delete all your data?</b>\nYour settings, skills, matches and feedback are removed for good. You can start again any time with /start.",
     "deleted": "🗑 Done. Everything I stored about you is deleted.",
-    "delete_cancelled": "Nothing was deleted."
+    "delete_cancelled": "Nothing was deleted.",
+    "match_gone": "That job is no longer available.",
+    "why_missing": "The explanation for this match isn't available any more.",
+    "why_usage": "Use /why N with the match number from a list.",
+    "feedback": {
+      "applied_on": "✅ Marked as applied. /applied lists them.",
+      "applied_off": "Removed from applied.",
+      "saved_on": "💾 Saved. /saved lists them.",
+      "saved_off": "Removed from saved.",
+      "hidden": "🙈 Hidden.",
+      "thanks": "👍 Thanks, noted.",
+      "reason_question": "👎 What was wrong with “{title}”?",
+      "reason_thanks": "Thanks, noted: {reason}."
+    },
+    "reasons": {
+      "too_senior": "Too senior",
+      "wrong_location": "Wrong location",
+      "not_my_field": "Not my field",
+      "skills_dont_fit": "Skills don't fit",
+      "scam": "Scam or low quality",
+      "other": "Other"
+    },
+    "lists": {
+      "saved": "<b>💾 Saved jobs</b>",
+      "applied": "<b>✅ Jobs you applied to</b>",
+      "item": "{id}. <a href=\"{url}\">{title}</a>{company} · {score}/10",
+      "company": " · {company}",
+      "footer": "/why N explains a score.",
+      "saved_empty": "Nothing saved yet. Tap 💾 Save on an alert.",
+      "applied_empty": "Nothing marked as applied yet. Tap ✅ Applied on an alert."
+    },
+    "digest_requested": "📬 Sending your waiting matches now.",
+    "digest_empty": "No matches are waiting. New ones reach you as they're found.",
+    "dispatch_failed": "I couldn't start that right now. Please try again later.",
+    "cv": {
+      "hint": "Send your CV as a PDF (up to {mb} MB) and I'll read your skills, experience and education from it.",
+      "not_pdf": "Please send your CV as a PDF file.",
+      "too_big": "That file is too big. The limit is {mb} MB.",
+      "consent": "<b>Before I read your CV</b>\nIts text is sent to Groq, an AI service that doesn't keep or train on it, to pull out your skills, years of experience and education. I keep only that summary and delete the text right after. OK?",
+      "queued": "📄 Reading your CV. I'll message you what I found in a few minutes.",
+      "cancelled": "OK, your CV wasn't read."
+    },
+    "admin": {
+      "title": "<b>Admin</b> · {time}",
+      "users": "👥 Users: {counts}",
+      "queue": "📬 Queue: {pending} pending, {failed} failed",
+      "llm": "🧠 LLM today: {usage}",
+      "run": "🏃 Last run: {trigger} {status} at {at}",
+      "no_run": "🏃 No runs yet.",
+      "sources": "<b>Sources</b>",
+      "source": "{mark} {name}: {count} jobs, last ok {at}{failures}",
+      "failures": ", {count} failures in a row",
+      "never": "never",
+      "none": "none",
+      "broadcast_usage": "Use /broadcast followed by the message.",
+      "broadcast_preview": "<b>Send this to every active user?</b>\n\n{text}",
+      "broadcast_queued": "📣 Broadcast queued.",
+      "broadcast_cancelled": "Broadcast cancelled.",
+      "ok_mark": "✅",
+      "bad_mark": "⚠️",
+      "count": "{name} {count}"
+    }
   }
 }

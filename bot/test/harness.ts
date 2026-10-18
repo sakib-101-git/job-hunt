@@ -8,6 +8,7 @@ import { EN } from "../src/locale";
 
 export const ALICE: User = { id: 1001, is_bot: false, first_name: "Alice", username: "alice" };
 export const BOB: User = { id: 1002, is_bot: false, first_name: "Bob" };
+export const ADMIN: User = { id: 9001, is_bot: false, first_name: "Owner" };
 export const T0 = new Date("2026-10-18T06:00:00Z");
 
 const BOT_INFO = {
@@ -46,6 +47,7 @@ export function harness(options: { dispatchOk?: boolean } = {}) {
         return Promise.resolve(options.dispatchOk ?? true);
       },
       now: () => clock.now,
+      adminIds: new Set([ADMIN.id]),
     },
     BOT_INFO,
   );

@@ -495,3 +495,30 @@ pipeline. The Worker sends a `repository_dispatch` event with a fine-grained
 PAT limited to this repository; GitHub requires Contents read and write for
 that endpoint. Without the token the bot still works and says the first
 matches come with the next scheduled run.
+
+### 2026-10-18: Alert buttons check ownership
+
+Every alert button carries `<code>:<match id>` (codes shared with the
+pipeline). The Worker answers only when the match belongs to the user pressing
+it; anything else gets "no longer available", whether the match is someone
+else's or gone. Applied and Save toggle; Hide records the feedback and deletes
+the alert (Telegram allows that for 48 hours); 👍 and 👎 replace each other, and
+👎 asks for one of `bot.feedback_reasons`.
+
+### 2026-10-18: CVs go to Groq only, after consent
+
+Gemini's unpaid tier may use prompts to improve Google's products, and human
+reviewers may read them; its terms say not to send personal information
+(ai.google.dev/terms). Groq does not keep inference inputs by default or train
+on them (console.groq.com/docs/your-data). So CV text is sent only to Groq, the
+bot asks before doing it, and the pipeline deletes the text once parsed. The
+Worker never handles the PDF: it keeps Telegram's file id and dispatches
+`parse-cv`. A CV sent during setup completes the skills step; skills it yields
+are kept when setup ends with none typed.
+
+### 2026-10-18: /broadcast and /digest run in the pipeline
+
+A Worker on the free plan may make 50 subrequests per request, too few to
+message every user, and alerts are rendered in Python. So `/broadcast` (after a
+preview, admins only) and `/digest` dispatch events and the pipeline sends,
+within Telegram's limits. `/digest` checks first that something is waiting.

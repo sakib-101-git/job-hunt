@@ -3,7 +3,7 @@ import type { SharedConfig } from "./config";
 // The pipeline does the heavy work (scoring, CV parsing, sending alerts); the
 // bot asks for it with a GitHub repository_dispatch event.
 
-export type DispatchEvent = "backfill-user" | "parse-cv" | "send-digest";
+export type DispatchEvent = "backfill-user" | "parse-cv" | "send-digest" | "broadcast";
 
 export type Dispatcher = (event: DispatchEvent, payload: Record<string, unknown>) => Promise<boolean>;
 

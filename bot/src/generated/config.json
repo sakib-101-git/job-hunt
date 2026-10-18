@@ -2110,5 +2110,8 @@
     "repository": "sakib-101-git/job-hunt"
   },
   "timezone": "Asia/Dhaka",
-  "max_age_days": 10
+  "max_age_days": 10,
+  "notifications": {
+    "max_attempts": 5
+  }
 }
