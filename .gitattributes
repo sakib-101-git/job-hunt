@@ -1,0 +1,20 @@
+# Normalize every text file to LF in the repository and working tree.
+* text=auto eol=lf
+
+# Binary files: never touch line endings, never diff as text.
+*.pdf    binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.webp   binary
+*.ico    binary
+*.woff   binary
+*.woff2  binary
+*.db     binary
+*.sqlite binary
+
+# Generated files: collapse in GitHub diffs.
+pipeline/uv.lock          linguist-generated=true
+bot/package-lock.json     linguist-generated=true
+bot/src/generated/**      linguist-generated=true
