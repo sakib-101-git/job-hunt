@@ -12,7 +12,8 @@ in none, so it scores low instead of matching "Software Engineer". Listing words
 that the candidate lacks but that appear in the candidate's domains ("Laravel" in
 "PHP Laravel Developer") cost only part of their weight. A fuzzy candidate must also share the
 listing's role noun, its last word, so "Graphic Designer" never matches
-"Graphics Programmer".
+"Graphics Programmer". A one-word title ("Analyst", "Head of Growth" once
+seniority is stripped) is too little to go on and is matched exactly or not at all.
 
 Titles left unmatched go to the LLM classifier in a later stage.
 """
@@ -164,6 +165,8 @@ class TitleMatcher:
     def _fuzzy(self, variants: Iterable[NormalizedTitle]) -> list[_Scored]:
         scored: list[_Scored] = []
         for variant in variants:
+            if len(variant.tokens) < 2:
+                continue
             repaired = self._repair(variant.tokens)
             query, role = Counter(repaired), repaired[-1]
             for entry in self._candidates(query):
