@@ -195,6 +195,25 @@ Tuning is data, not code:
 - Policies: `location_policy` in `config/app.yaml` (accept unspecified remote jobs,
   accept "APAC"-style regions); `freshness.max_age_days`; `seniority_gate`.
 
+## LLM extraction
+
+`jobhunt enrich` classifies unknown titles, extracts facts from open jobs and
+runs the gates again. It prints which models have a key, and how many jobs went
+to each model or to the rules-only fallback.
+
+- **Keys:** `GEMINI_API_KEY` (aistudio.google.com) and `GROQ_API_KEY`
+  (console.groq.com). Without either, every job gets rules-only facts and stays
+  undecided until a model is available.
+- **Limits:** after creating the Gemini key, open the AI Studio rate-limit page
+  and copy the free-tier numbers into `config/llm.yaml` (`chain`). Usage so far
+  today: `SELECT * FROM llm_usage WHERE day = date('now')`.
+- **Changing the prompt:** copy it to a new version (`extraction.v2.md`), point
+  `config/llm.yaml` at it and bump `prompt_version`; every job is then extracted
+  again as runs come by. Never edit a prompt version that has been used.
+- **A wrong fact:** look at `job_facts.grounding_failures_json` and
+  `jobs.gates_json -> audit_flags` for the job, then fix the prompt (new version),
+  not the code.
+
 ## Database migrations
 
 Migrations live in `migrations/` and are shared: wrangler applies them to D1 and

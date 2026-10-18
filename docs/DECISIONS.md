@@ -316,3 +316,68 @@ title match in `job_domains`, and the location quote in
   extraction, the rest were filtered (320 no tech signal, 193 too old, 183
   region-restricted, 24 not in Bangladesh, 17 regions without Bangladesh, 4 non-CSE
   titles).
+
+## Extraction
+
+### 2026-10-18: Providers and models
+
+Both providers serve OpenAI-compatible chat completions with strict JSON-schema
+output (`response_format: json_schema, strict: true`):
+
+- Gemini: `https://generativelanguage.googleapis.com/v1beta/openai`. Current
+  models `gemini-3.8-flash` and `gemini-3.5-flash-lite`; reasoning can't be turned
+  off on Gemini 3, so `reasoning_effort: low`. Free-tier limits are shown only in
+  AI Studio for a key's project, so `config/llm.yaml` holds conservative
+  placeholders to replace once a key exists. Free-tier inputs may be used to
+  improve Google's products: job text only, never CVs.
+- Groq: `https://api.groq.com/openai/v1`. `openai/gpt-oss-120b`,
+  `qwen/qwen3.8-27b`, `openai/gpt-oss-20b`: 30 requests/min, 8K tokens/min,
+  1,000 requests and 200K tokens a day each. Strict mode needs every property
+  required (optional ones nullable) and `additionalProperties: false`;
+  `strict_schema` produces exactly that from the pydantic model.
+
+Not yet verified live: no keys were available. Owner action: add
+`GEMINI_API_KEY` and `GROQ_API_KEY`, then run `jobhunt enrich --limit 5` and
+check the answers.
+
+### 2026-10-18: Budget
+
+`llm_usage` keeps daily requests and tokens per model across runs; per-minute
+requests and tokens are tracked in memory for the run. A model is skipped
+before a request would pass 95 % of a daily limit (`daily_safety_margin`), the
+budget waits up to `max_wait_seconds` for per-minute room before moving on, and a
+429 skips that model for the rest of the run. Groq's 8K tokens/minute allows
+only two or three extractions a minute per model, which the budget spreads over
+the chain.
+
+### 2026-10-18: Facts are grounded
+
+- `prompts/extraction.v1.md`: facts only, a verbatim quote next to every fact,
+  temperature 0, the schema pinned to the taxonomy's domain slugs. A schema miss
+  gets one retry with the validation error.
+- The grounding validator resets any fact whose quote isn't in the posting
+  (fuzzy match at least 90 after normalization), and also requires every number
+  in a quote to be in the posting and `min_years` to be in its quote: a test
+  showed fuzzy matching alone accepting "5 years" for "1 year". Skills must
+  appear in the posting; known ones become skills.yaml ids.
+- Years and deadline are cross-checked against a regex and the listing;
+  disagreements go to `gates_json.audit_flags` for the auditor.
+- Facts are cached in `job_facts` by an input hash (prompt version, title,
+  company, location, description); a job is re-extracted only when that changes.
+
+### 2026-10-18: Rules-only facts never decide a gate
+
+When no model has room, `extract/rules.py` produces facts from regex and the
+vocabulary (years only next to "experience", degrees, non-ambiguous skills,
+structured fields). They are stored for scoring, but gates keep their listing
+verdict and the job is extracted again by an LLM on a later run. Skills that are
+ordinary words ("R", "Unity", "Excel") are marked `ambiguous` in skills.yaml and
+skipped by the rules.
+
+### 2026-10-18: Title classification
+
+Tech titles the taxonomy doesn't know are classified in batches of 25 into a
+domain slug or "none" (`prompts/title_classification.v1.md`), cached per
+normalized title in `title_classes` (migration 0005). "none" filters the job
+without spending an extraction call; a slug becomes a `job_domains` row with
+method `llm`.
