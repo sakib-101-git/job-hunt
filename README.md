@@ -1,28 +1,15 @@
-# Job Hunt Automation
+# JobHunt
 
-Automated job scraping, scoring, CV tailoring, and notification pipeline.
+Finds, scores and sends CSE job openings over Telegram. v2 is being rebuilt as a
+Python pipeline on GitHub Actions plus a Cloudflare Worker bot backed by D1.
 
-## Setup
+This README gets a full rewrite when v2 is complete. Until then:
 
-```bash
-pip install -r requirements.txt
-cp .env.example .env
-# Fill in your credentials in .env
-```
-
-## Configuration
-
-- `config.yaml` — search keywords, locations, job sources
-- `profile.yaml` — your master CV / profile data
-
-## Usage
+- [docs/SETUP.md](docs/SETUP.md): set up a development machine
+- [docs/RUNBOOK.md](docs/RUNBOOK.md): operational notes and job-source quirks
+- [docs/DECISIONS.md](docs/DECISIONS.md): dated technical decisions
 
 ```bash
-python src/main.py            # run full pipeline
-python src/main.py --scrape   # scrape only
-python src/main.py --tailor <job_id>  # tailor CV for a specific job
+make setup
+make check
 ```
-
-## Output
-
-Generated PDFs land in `output/`. The SQLite database is at `data/jobs.db`.
