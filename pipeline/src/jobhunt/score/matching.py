@@ -12,15 +12,17 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
+from typing import Any
 
 from jobhunt.config import Config
 from jobhunt.db import Database, Row, timestamp
 from jobhunt.extract.rules import PROVIDER as RULES
 from jobhunt.extract.schema import JobFacts
+from jobhunt.gates.base import GateResult
 from jobhunt.jobs.rows import listing_from_row
 from jobhunt.normalize.jobs import JobNormalizer
 from jobhunt.score.model import JobView, UserProfile
-from jobhunt.score.scorer import Scorer
+from jobhunt.score.scorer import Component, Scorer, ScoreResult
 
 _ELIGIBLE_JOBS = """
 SELECT j.*, f.facts_json, f.provider AS facts_provider
@@ -158,3 +160,33 @@ async def match(
             new.append(NewMatch(int(str(rows[0]["id"])), user.user_id, job.job_id, result.score))
             counts[f"matched ({result.label})"] += 1
     return new, counts
+
+
+def stored_result(row: Row, config: Config) -> ScoreResult:
+    """The score as stored on a match: messages show these numbers, never a rerun."""
+    breakdown = json.loads(str(row["breakdown_json"]))
+    explanation: dict[str, dict[str, Any]] = json.loads(str(row["explanation_json"]))
+    gates = json.loads(str(row["gate_results_json"]))
+    components = tuple(
+        Component(
+            name,
+            Decimal(data["points"]),
+            Decimal(data["max"]),
+            data["rule"],
+            {k: v for k, v in data.items() if k not in {"points", "max", "rule"}},
+        )
+        for name, data in explanation.items()
+    )
+    score = Decimal(breakdown["score"])
+    label = next(lbl.key for lbl in config.scoring.labels if score >= Decimal(str(lbl.min)))
+    return ScoreResult(
+        passed=True,
+        gates=tuple(
+            GateResult(name, g["status"], g["reason"], g.get("evidence"))
+            for name, g in gates.items()
+        ),
+        components=components,
+        score=score,
+        label=label,
+        scorer_version=str(row["scorer_version"]),
+    )
