@@ -324,6 +324,82 @@ deploy.yml`: it uploads the Worker's secrets again and re-registers the webhook
 its secrets at every run. For a new bot token, also revoke the old one in
 @BotFather (`/revoke`).
 
+## Evaluation
+
+The golden set in `eval/golden/` measures the whole system against
+hand-checked labels (brief §8.3):
+
+- `jobs.jsonl`: 170 real postings collected on 2026-10-18 from every enabled
+  source, spread over sources and gate outcomes (60% passed the job gates,
+  Bangladesh boards weighted double), with e-mail addresses and phone numbers
+  redacted. Labels: `is_cse_role`, `primary_domain` (+ `secondary_domains`),
+  `min_years`, `remote_eligibility`, `country`, `deadline`, `skills` and
+  `eligible` (should reach anyone at all).
+- `profiles.jsonl`: 10 synthetic users across the tracks. Never real users.
+- `pairs.jsonl`: 320 (profile, job) pairs labelled 0 not relevant, 1 maybe,
+  2 apply.
+- `llm_answers.jsonl`: recorded model answers, so CI replays the evaluation
+  without keys. A changed prompt or posting misses its recording and falls back
+  to rules-only facts, which shows in the metrics.
+
+Commands (from `pipeline/`):
+
+- `uv run jobhunt eval` prints the report; `--check` fails below the thresholds
+  in `config/scoring.yaml` (`eval`), as CI does; `make eval` runs that.
+- `uv run jobhunt eval --live --record` calls the models and rewrites the
+  recordings (needs `GEMINI_API_KEY` and/or `GROQ_API_KEY`).
+- `uv run jobhunt eval label` walks the silver job labels: Enter accepts,
+  `field=value` corrects (for example `min_years=2`, `skills=python, django`),
+  `s` skips, `q` quits; each answer is saved at once and makes the label gold.
+  `--pairs` does the same for pairs (Enter, `0`, `1` or `2`).
+- `uv run jobhunt eval draft --db FILE --count N` drafts a new jobs file from a
+  database the pipeline collected into (move the old one away first). Every
+  drafted label then needs checking by hand.
+
+### Refreshing the recordings
+
+The weekly Audit workflow (or `gh workflow run audit.yml -f audit=false`) runs
+the live evaluation and uploads `golden-set-live` (the answers and the report).
+Download it with `gh run download <run id> -n golden-set-live`, copy
+`llm_answers.jsonl` into `eval/golden/`, run `make eval`, and open a PR. Raise a
+threshold in `scoring.yaml` when a metric has clearly improved; never lower one
+to let a change pass.
+
+### Labelling conventions
+
+- `is_cse_role` follows the owner's taxonomy: engineering, data, IT support and
+  administration, security, QA, technical support and UI/UX roles are CSE;
+  product managers, sales, marketing, recruiters, translators and designers of
+  graphics are not.
+- `primary_domain` is a taxonomy slug; when a title appears in the Bangladesh
+  additions of `job_titles.yaml`, its domain there wins. Other true domains go
+  in `secondary_domains`; any of them counts as correct.
+- `min_years` is the lowest number of years asked for ("3 to 5 years" is 3,
+  "freshers may apply" is 0); ages and company histories never count.
+- `remote_eligibility` uses the extraction prompt's definitions. A board's
+  "Anywhere" tag counts as worldwide unless the posting itself limits who may
+  apply (work authorization, a country list without Bangladesh, a time-zone
+  band that is an explicit condition).
+- `country` is where the job is based, null for fully remote jobs.
+- `eligible`: CSE, and either in Bangladesh or remote for anyone (or naming
+  Bangladesh).
+- Pair labels were drafted by a written rule over the job labels (in-track,
+  location, seniority, skills) and checked by hand; the owner's
+  `jobhunt eval label --pairs` makes them gold.
+
+### The weekly audit
+
+`jobhunt audit` (Audit workflow, Sundays 03:13 UTC) samples every match scoring
+8 or more from the last 7 days plus 10% of the rest (at most 40), and has the
+auditor model (default `groq/openai/gpt-oss-120b`; `AUDITOR_PROVIDER`,
+`AUDITOR_MODEL`, `AUDITOR_API_KEY` override it) score each one from the
+posting and the user's settings alone, without seeing the system's score.
+Within `audit.agree_within` points is "justified"; otherwise "overrated" or
+"underrated". Results go to `audits`, the run summary and a short admin
+message: agreement, mean difference, the worst disagreements, the score
+histogram with inflation/narrow-band warnings, and 👍/👎 by track. Feedback
+never changes weights by itself.
+
 ## Database migrations
 
 Migrations live in `migrations/` and are shared: wrangler applies them to D1 and

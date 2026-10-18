@@ -32,17 +32,20 @@ class GateResult:
 class PhraseFinder:
     """Finds any of a set of phrases as whole words, longest first.
 
-    Phrases of up to three capital letters ("US", "EU") match only in capitals;
-    everything else ignores case.
+    Phrases of up to three capital letters ("US", "EU"), and those listed in
+    `exact`, match only as written; everything else ignores case.
     """
 
-    def __init__(self, phrases: Iterable[str]) -> None:
-        exact: list[str] = []
+    def __init__(self, phrases: Iterable[str], exact: Iterable[str] = ()) -> None:
+        as_written = {p.strip() for p in exact}
+        exact_list: list[str] = []
         folded: list[str] = []
         for phrase in sorted({p.strip() for p in phrases if p.strip()}, key=len, reverse=True):
             bare = phrase.replace(".", "")
-            (exact if bare.isupper() and len(bare) <= 3 else folded).append(re.escape(phrase))
-        self._exact = _compile(exact, 0)
+            short_caps = bare.isupper() and len(bare) <= 3
+            target = exact_list if short_caps or phrase in as_written else folded
+            target.append(re.escape(phrase))
+        self._exact = _compile(exact_list, 0)
         self._folded = _compile(folded, re.IGNORECASE)
 
     def find(self, text: str) -> str | None:
@@ -64,4 +67,6 @@ class PhraseFinder:
 def _compile(alternatives: list[str], flags: int) -> re.Pattern[str] | None:
     if not alternatives:
         return None
-    return re.compile(rf"(?<![\w]){'|'.join(alternatives)}(?![\w])", flags)
+    # The group matters: without it the lookarounds bind to the first and last
+    # alternatives only, and every other phrase matches inside words.
+    return re.compile(rf"(?<![\w])(?:{'|'.join(alternatives)})(?![\w])", flags)

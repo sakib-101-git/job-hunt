@@ -1,6 +1,6 @@
 # Developer entry points. `make check` runs everything CI runs, except gitleaks.
 .DEFAULT_GOAL := help
-.PHONY: help setup hooks lint format typecheck test config build-shared migrate-local run-local guard bot-dev check
+.PHONY: help setup hooks lint format typecheck test config eval build-shared migrate-local run-local guard bot-dev check
 
 UV := uv --directory pipeline
 NPM := npm --prefix bot
@@ -36,6 +36,9 @@ config: ## Validate config/ and check the Worker's generated copy is current
 	$(UV) run jobhunt validate-config
 	$(UV) run jobhunt build-shared --check
 
+eval: ## Golden-set evaluation on recorded LLM answers (as CI runs it)
+	$(UV) run jobhunt eval --check
+
 build-shared: ## Regenerate bot/src/generated/ from config/
 	$(UV) run jobhunt build-shared
 
@@ -55,4 +58,4 @@ guard: ## Repository rules: tracked files and the last commit message
 bot-dev: ## Run the Worker locally with wrangler dev
 	$(NPM) run dev
 
-check: lint typecheck test config guard ## Everything CI checks
+check: lint typecheck test config eval guard ## Everything CI checks

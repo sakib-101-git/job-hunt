@@ -354,6 +354,9 @@ def test_short_quotes_never_ground(config: Config) -> None:
         ("Experience: 3-5 years", (3, 5)),
         ("Founded 20 years ago; 3 years experience needed", (3, None)),
         ("Freshers welcome", None),
+        # BDJobs puts the requirement a few lines below the heading.
+        ("Experience\n\n• At least 4 years\n• The applicants should", (4, None)),
+        ("Experience\n• Age 25 to 30 years", None),
     ],
 )
 def test_experience_years(text: str, years: tuple[int, int | None] | None) -> None:

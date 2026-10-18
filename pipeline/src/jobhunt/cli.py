@@ -16,6 +16,10 @@ Commands are added as each pipeline stage lands:
   handles a repository_dispatch event file (run-pipeline, backfill-user,
   parse-cv, send-digest, broadcast); `backfill` and `parse-cv` run those jobs
   for one user by hand.
+- `eval` measures the system on the golden set in eval/golden/ (recorded LLM
+  answers by default; `--live` calls the models); `eval label` turns silver
+  labels gold; `eval draft` drafts golden jobs from a collected database.
+- `audit` has the auditor model re-score a sample of last week's matches.
 """
 
 import argparse
@@ -37,6 +41,8 @@ from jobhunt.automation.pipeline import Pipeline, RunSummary, StageReport
 from jobhunt.automation.summary import markdown
 from jobhunt.config import ConfigError, find_repo_root, load_config
 from jobhunt.db import DatabaseError, open_database
+from jobhunt.eval import commands as evaluation
+from jobhunt.eval.dataset import DatasetError
 from jobhunt.logs import configure_logging
 from jobhunt.notify.sender import SendPlan
 from jobhunt.sources import FetchContext, build_source
@@ -249,6 +255,42 @@ def _event_file(path: Path) -> int:
     return asyncio.run(_event(action, payload))
 
 
+def _eval(args: argparse.Namespace) -> int:
+    try:
+        config = load_config()
+    except ConfigError as exc:
+        return _fail(str(exc))
+    directory = args.dir or config.root / evaluation.GOLDEN_DIR
+    try:
+        if args.eval_command == "label":
+            return evaluation.label(directory, args.pairs, input, _write)
+        if args.eval_command == "draft":
+            return asyncio.run(evaluation.draft(config, directory, args.db, args.count, _write))
+        if args.record and not args.live:
+            return _fail("--record needs --live")
+        return asyncio.run(
+            evaluation.evaluate(
+                config,
+                directory,
+                live=args.live,
+                record=args.record,
+                check=args.check,
+                report_path=args.report,
+                write=_write,
+            )
+        )
+    except (DatasetError, ValueError, DatabaseError) as exc:
+        return _fail(str(exc))
+
+
+def _audit() -> int:
+    try:
+        config = load_config()
+        return asyncio.run(evaluation.audit(config, os.environ, _write))
+    except (ConfigError, DatabaseError, ValueError) as exc:
+        return _fail(str(exc))
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="jobhunt")
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -280,6 +322,19 @@ def build_parser() -> argparse.ArgumentParser:
     backfill.add_argument("--user", type=int, required=True, metavar="ID")
     parse_cv = commands.add_parser("parse-cv", help="read the CV a user sent the bot")
     parse_cv.add_argument("--user", type=int, required=True, metavar="ID")
+    ev = commands.add_parser("eval", help="measure the system on the golden set")
+    ev.add_argument("--dir", type=Path, default=None, help="golden set (eval/golden)")
+    ev.add_argument("--live", action="store_true", help="call the LLMs instead of recordings")
+    ev.add_argument("--record", action="store_true", help="with --live: save the answers")
+    ev.add_argument("--check", action="store_true", help="fail when a threshold is not met")
+    ev.add_argument("--report", type=Path, metavar="FILE", help="also write the report here")
+    ev_commands = ev.add_subparsers(dest="eval_command")
+    lab = ev_commands.add_parser("label", help="confirm or fix silver labels (makes them gold)")
+    lab.add_argument("--pairs", action="store_true", help="label pairs instead of jobs")
+    dr = ev_commands.add_parser("draft", help="draft golden jobs from a collected database")
+    dr.add_argument("--db", type=Path, required=True, metavar="SQLITE")
+    dr.add_argument("--count", type=int, default=160)
+    commands.add_parser("audit", help="re-score recent matches with the auditor model")
     return parser
 
 
@@ -314,6 +369,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         return asyncio.run(_event("backfill-user", {"user_id": args.user}))
     if args.command == "parse-cv":
         return asyncio.run(_event("parse-cv", {"user_id": args.user}))
+    if args.command == "eval":
+        return _eval(args)
+    if args.command == "audit":
+        return _audit()
     raise AssertionError(f"unhandled command {args.command!r}")  # argparse rejects unknown ones
 
 

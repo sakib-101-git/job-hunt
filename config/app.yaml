@@ -53,6 +53,10 @@ location_policy:
   accept_unspecified_remote: false
   # Accept regions that contain Bangladesh but do not name it ("APAC", "Asia").
   accept_region_lists_containing_bd: false
+  # Sources whose "Anywhere" tag is unreliable when the listing also names
+  # countries or regions (the named places are the real limit): such jobs wait
+  # for the description. Elsewhere each entry is an alternative office option.
+  mixed_tags_need_facts: [weworkremotely]
 
 seniority_gate:
   # A job asking for this many more years than the user has is never sent.

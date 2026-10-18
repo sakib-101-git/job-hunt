@@ -86,6 +86,20 @@ def test_phrase_finder_case_rules() -> None:
     assert PhraseFinder([]).find("x") is None
 
 
+def test_phrase_finder_whole_words_for_every_phrase() -> None:
+    # With three or more phrases per case class, every one of them, not only the
+    # first and last, must match whole words only (found by the golden set:
+    # "ITSM" read as "TS", "restore" as "rest").
+    finder = PhraseFinder(["TypeScript", "REST API", "REST", "RESTful", "TS", "EU", "US"])
+    assert finder.find_all("an ITSM tool; backup and restore; FOCUS on EUR") == []
+    assert finder.find_all("REST and TS, EU or US") == ["REST", "TS", "EU", "US"]
+
+
+def test_phrase_finder_exact_phrases() -> None:
+    finder = PhraseFinder(["REST", "Python"], exact=["REST"])
+    assert finder.find_all("the rest of the team uses python and REST") == ["python", "REST"]
+
+
 # --- CSE -----------------------------------------------------------------------
 
 

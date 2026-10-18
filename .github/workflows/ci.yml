@@ -35,6 +35,8 @@ jobs:
       - run: uv run pytest --cov
       - run: uv run jobhunt validate-config
       - run: uv run jobhunt build-shared --check
+      - name: Golden-set evaluation (recorded LLM answers)
+        run: uv run jobhunt eval --check
 
   bot:
     name: Bot (Worker)

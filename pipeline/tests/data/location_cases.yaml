@@ -317,3 +317,30 @@
     location_restrictions:
     - Remote - join us
   expect: fail not_bangladesh
+# Found by the golden set: We Work Remotely tags some region-locked jobs
+# "Anywhere in the World" next to the real countries.
+- case: WWR anywhere next to a country
+  listing:
+    source: weworkremotely
+    location_restrictions:
+    - Anywhere in the World
+    - United Kingdom
+  expect: needs_facts worldwide_in_doubt
+- case: WWR anywhere alone
+  listing:
+    source: weworkremotely
+    location_restrictions:
+    - Anywhere in the World
+  expect: pass worldwide
+- case: worldwide tag but the text limits who may apply
+  listing:
+    location_restrictions:
+    - Anywhere
+    description: We're only hiring those authorized to work in the United States.
+  expect: needs_facts worldwide_in_doubt
+- case: EUR in a salary is not the EU
+  listing:
+    location_restrictions:
+    - Remote, Global
+    salary: EUR 60k
+  expect: pass worldwide
