@@ -31,3 +31,8 @@ def checkout(tmp_path: Path, repo_root: Path) -> Path:
     (tmp_path / "pipeline" / "pyproject.toml").write_text("", encoding="utf-8")
     shutil.copytree(repo_root / "config", tmp_path / "config")
     return tmp_path
+
+
+@pytest.fixture
+def anyio_backend() -> str:
+    return "asyncio"

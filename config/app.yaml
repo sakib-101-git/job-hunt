@@ -15,3 +15,14 @@ title_matching:
   # replaced by that word. Shorter tokens are never repaired.
   spelling_min_ratio: 85
   spelling_min_length: 5
+
+database:
+  # Cloudflare D1 over its REST API (used by the pipeline on GitHub Actions).
+  d1_api_base_url: https://api.cloudflare.com/client/v4
+  request_timeout_seconds: 30
+  # Retries for 429 and 5xx responses and network errors; Retry-After is honoured.
+  max_retries: 4
+  retry_base_delay_seconds: 1.0
+  # D1 limits (docs/DECISIONS.md), checked before a request is sent.
+  max_params_per_statement: 100
+  max_statement_bytes: 100000
