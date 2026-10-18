@@ -1,0 +1,137 @@
+# Job sources. Every endpoint was checked live on 2026-10-18, together with the
+# site's terms and robots.txt; findings are in docs/RUNBOOK.md ("Sources").
+# A disabled source keeps its settings and says why it is off.
+version: 1
+
+http:
+  user_agent: "JobHuntBot/2.0 (+https://github.com/sakib-101-git/job-hunt)"
+  timeout_seconds: 20
+  # Retries on 429, 5xx and network errors: exponential backoff with jitter,
+  # Retry-After honoured (capped at backoff_max_seconds).
+  max_retries: 3
+  backoff_base_seconds: 1.0
+  backoff_max_seconds: 60
+  # Politeness per host, unless the host is listed under host_overrides.
+  per_host_concurrency: 2
+  per_host_min_delay_seconds: 1.0
+  host_overrides:
+    remoteok.com: {min_delay_seconds: 1.0, concurrency: 1}  # robots.txt Crawl-delay: 1
+    api.bdjobs.com: {min_delay_seconds: 1.5, concurrency: 1}
+    gateway.bdjobs.com: {min_delay_seconds: 1.5, concurrency: 1}
+
+health:
+  # Alert the admin when a source fails this many runs in a row...
+  failures_before_alert: 3
+  # ...or returns nothing this many runs in a row after it used to return jobs.
+  empty_runs_before_alert: 6
+
+sources:
+  bdjobs:
+    kind: bdjobs
+    enabled: true
+    min_interval_minutes: 10
+    attribution: BDJobs
+    search_url: https://api.bdjobs.com/Jobs/api/JobSearch/GetJobSearch
+    details_url: https://gateway.bdjobs.com/ActtivejobsTest/api/JobSubsystem/jobDetails
+    job_url: "https://bdjobs.com/h/details/{id}"
+    # The web client sends these; the API answers JSON to them.
+    headers:
+      Accept: "application/json, text/plain, */*"
+      Origin: https://bdjobs.com
+      Referer: https://bdjobs.com/
+    # Functional category 8 is "IT/Telecommunication" (about 300 open jobs).
+    category: "8"
+    results_per_page: 100
+    max_pages: 10
+    # Incremental runs ask for jobs posted in the last N days; the first run of a
+    # source (bootstrap) pages through the whole category.
+    posted_within_days: 2
+
+  remoteok:
+    kind: remoteok
+    enabled: true
+    min_interval_minutes: 60
+    # Terms: link back to the Remote OK job URL and name Remote OK as the source.
+    attribution: Remote OK
+    url: https://remoteok.com/api
+
+  weworkremotely:
+    kind: rss
+    enabled: true
+    min_interval_minutes: 30
+    attribution: We Work Remotely
+    feeds:
+      - https://weworkremotely.com/categories/remote-programming-jobs.rss
+      - https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss
+      - https://weworkremotely.com/categories/remote-front-end-programming-jobs.rss
+      - https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss
+      - https://weworkremotely.com/categories/remote-devops-sysadmin-jobs.rss
+      - https://weworkremotely.com/categories/remote-design-jobs.rss
+      - https://weworkremotely.com/categories/remote-product-jobs.rss
+
+  jobicy:
+    kind: jobicy
+    enabled: true
+    min_interval_minutes: 60
+    # Terms: credit Jobicy with a direct link; Apply must open the job's own URL.
+    attribution: Jobicy
+    url: https://jobicy.com/api/v2/remote-jobs
+    params: {count: "100", geo: anywhere}
+
+  workingnomads:
+    kind: workingnomads
+    enabled: true
+    min_interval_minutes: 60
+    attribution: Working Nomads
+    url: https://www.workingnomads.com/api/exposed_jobs/
+
+  himalayas:
+    kind: himalayas
+    enabled: true
+    min_interval_minutes: 60
+    # Terms (clause 113): Apply must use applicationLink; name Himalayas with a
+    # visible link; never pass the jobs on to other job boards or aggregators.
+    attribution: Himalayas
+    url: https://himalayas.app/jobs/api/search
+    # country=BD returns worldwide jobs plus jobs that list Bangladesh. Pages hold
+    # 20 jobs; "recent" order is not strictly by date, so every run reads max_pages.
+    params: {country: BD, sort: recent}
+    max_pages: 10
+    # Optional free key: its own 60 requests/minute instead of the shared pool.
+    api_key_env: HIMALAYAS_API_KEY
+
+  remotive:
+    kind: remotive
+    enabled: false
+    disabled_reason: >-
+      Terms forbid "displaying our jobs in order to collect signups", which a bot
+      with onboarding does, and robots.txt disallows /api/*. Owner's call.
+    min_interval_minutes: 360
+    attribution: Remotive
+    url: https://remotive.com/api/remote-jobs
+    params: {category: software-dev}
+
+  themuse:
+    kind: disabled
+    enabled: false
+    disabled_reason: US-centric; worldwide-remote roles are rare. Brief §6.1.
+    min_interval_minutes: 360
+    attribution: The Muse
+
+  skilljobs:
+    kind: disabled
+    enabled: false
+    disabled_reason: >-
+      Cloudflare answers 403 to datacenter IPs such as GitHub Actions runners;
+      bypassing it is out of scope. BDJobs covers the same employers.
+    min_interval_minutes: 360
+    attribution: skill.jobs
+
+  shomvob:
+    kind: disabled
+    enabled: false
+    disabled_reason: >-
+      No usable endpoint (the site's job list comes from an obfuscated RPC) and
+      it lists almost no software roles.
+    min_interval_minutes: 360
+    attribution: Shomvob
