@@ -251,6 +251,16 @@ class TitleMatching(Strict):
     spelling_min_length: int = Field(ge=1)
 
 
+class DatabaseSettings(Strict):
+    d1_api_base_url: Annotated[str, StringConstraints(pattern=r"^https://")]
+    request_timeout_seconds: float = Field(gt=0)
+    max_retries: int = Field(ge=0)
+    retry_base_delay_seconds: float = Field(ge=0)
+    max_params_per_statement: int = Field(ge=1)
+    max_statement_bytes: int = Field(ge=1)
+
+
 class App(Strict):
     version: Literal[1]
     title_matching: TitleMatching
+    database: DatabaseSettings
