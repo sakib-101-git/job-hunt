@@ -375,7 +375,8 @@ async def test_match_stores_the_why_text(db: SqliteBackend, config: Config) -> N
     await add_user(db, 1)
     await _queue(db, config)
     row = (await db.query("SELECT score, why_html FROM matches"))[0]
-    assert str(row["why_html"]).startswith(f"<b>Why {row['score']}/10 for “Junior Machine Learning")
+    title = f"<b>Why {row['score']!s}/10 for “Junior Machine Learning Engineer”</b>"
+    assert str(row["why_html"]).startswith(title)
 
 
 async def test_expired_pauses_end_at_the_next_run(db: SqliteBackend, config: Config) -> None:
