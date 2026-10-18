@@ -114,5 +114,11 @@
     "hide": "🙈 Hide",
     "thumbs_up": "👍",
     "thumbs_down": "👎"
+  },
+  "digest": {
+    "more": "➕ <b>{count} more matches</b> for you:",
+    "item": "• <a href=\"{url}\">{title}</a>{company} · {score}/10",
+    "company": " · {company}",
+    "and_more": "…and {count} more."
   }
 }

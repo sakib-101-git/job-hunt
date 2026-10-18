@@ -75,3 +75,28 @@ cse_gate:
 # Scam and exploitation markers (brief §12). The rules-only extractor looks for
 # them; scoring treats any of them as a hard gate.
 red_flags: [training fee, registration fee, processing fee, pay to apply, application fee, security deposit, refundable deposit, unpaid, without salary, no salary, commission only, commission-based only, bond, service bond]
+
+notifications:
+  telegram_api_base_url: https://api.telegram.org
+  request_timeout_seconds: 20
+  # Telegram: about 30 messages a second overall and 1 a second per chat (Bot FAQ).
+  # Stay a little under both.
+  messages_per_second: 25
+  per_chat_interval_seconds: 1.1
+  # A failed send is retried on later runs up to this many attempts in total.
+  max_attempts: 5
+  # Retries within one send: 429 waits Retry-After, 5xx and network errors back off.
+  retries_per_send: 3
+  retry_backoff_seconds: 2.0
+  # Extra matches beyond the user's per-cycle cap are listed in one message, up to this many.
+  max_listed_extras: 10
+
+# Inline-button callback codes, shared with the bot (build-shared): each button
+# sends "<code>:<match id>", at most 64 bytes.
+callbacks:
+  why: wy
+  applied: ap
+  save: sv
+  hide: hd
+  thumbs_up: up
+  thumbs_down: dn

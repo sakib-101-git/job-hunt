@@ -2036,5 +2036,13 @@
       "id": "mymensingh",
       "name": "Mymensingh"
     }
-  ]
+  ],
+  "callbacks": {
+    "why": "wy",
+    "applied": "ap",
+    "save": "sv",
+    "hide": "hd",
+    "thumbs_up": "up",
+    "thumbs_down": "dn"
+  }
 }
