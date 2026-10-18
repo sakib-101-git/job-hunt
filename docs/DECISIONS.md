@@ -102,11 +102,12 @@ written before tuning) and `non_cse_titles.txt` (64 non-CSE titles):
 | min_similarity | correct | wrong domain | unmatched | non-CSE matched |
 | --- | --- | --- | --- | --- |
 | 0.65 | 96.4 % | 5 | 9 | 3 |
-| **0.70** | **95.9 %** | **4** | **12** | **2** |
+| **0.70** | **95.6 %** | **4** | **13** | **2** |
 | 0.75 | 94.4 % | 3 | 19 | 2 |
 | 0.80 | 93.8 % | 3 | 21 | 0 |
 
-0.70 is used. The 4 wrong-domain cases land in an adjacent domain (for example
+0.70 is used (re-measured after one-word titles stopped matching fuzzily; see
+the gates section). The 4 wrong-domain cases land in an adjacent domain (for example
 "Applied Scientist" in data science). The 2 non-CSE matches ("Industrial
 Engineer", "IT Sales Executive") are on `non_cse_exclusions`, which the CSE gate
 applies. Unmatched titles use words the taxonomy lacks ("CodeIgniter", "Cloud
@@ -255,3 +256,63 @@ replaced with `[email]` and `[phone]`.
 - Upserts keep `first_seen_at`, refresh `last_seen_at`, keep the earliest known
   posting date, and replace the description only with a longer one: a job seen
   again without its details request never loses its full text.
+
+## Gates
+
+### 2026-10-18: Three answers, not two
+
+Each gate returns pass, fail or `needs_facts`. `needs_facts` means the listing
+alone can't decide (a remote job with no stated eligibility, a tech title the
+taxonomy doesn't know, no posting date); such a job stays open, goes to LLM
+extraction, and the gate runs again on the extracted facts. Gates are pure
+functions; `jobs/gating.py` stores every result with its reason and quote in
+`jobs.gates_json` (migration 0004), the first failure as `filter_reason`, the
+title match in `job_domains`, and the location quote in
+`remote_eligibility_evidence`.
+
+### 2026-10-18: CSE gate
+
+- The owner's `non_cse_exclusions` match whole words on normalized titles.
+  An entry with "(Non-X)" ("Sales Engineer (Non-Software)") is a "depends": a title
+  without X goes to extraction instead of failing. Found on real data: "Ubuntu
+  Sales Engineer" at Canonical is software sales.
+- Unknown titles go to the LLM only with a tech word in the title
+  (`cse_gate.tech_signals`). On 938 live jobs this cut LLM-bound titles from 509 to
+  about 127 ("Video Creator", "Client Advisor" fail as `no_tech_signal`). Listing
+  tags were dropped as a signal: Remote OK tags nearly everything "technical".
+- One-word titles ("Analyst", "Head of Growth" once seniority is stripped) are
+  matched exactly or not at all; fuzzy matching on one word gave wrong domains.
+
+### 2026-10-18: Location gate
+
+- Strict by default, each eligibility entry judged on its own: any entry that names
+  a Bangladeshi place, or says worldwide/anywhere without naming another country or
+  region, passes the job. "Home based - EMEA; Home based - Worldwide" passes;
+  "REMOTE (Worldwide: US / Canada / Europe)" does not.
+- Places come from data: Bangladesh from `locations.yaml`, everything else from
+  `geography.yaml` (84 countries with spellings and cities, regions, worldwide
+  phrases, remote words, time-zone markers, filler words). Aliases of up to three
+  capitals ("US", "EU") match only in capitals, so "join us" is not the US.
+- An unknown place on a non-Bangladesh source fails (`not_bangladesh`): it is
+  neither Bangladesh nor worldwide. On BDJobs an unknown place passes unless a
+  foreign place or overseas note shows up (defect D5).
+- Time-zone requirements never reject; they are returned as warnings for the
+  message.
+
+### 2026-10-18: Freshness and seniority
+
+- Freshness is judged in Asia/Dhaka: posted at most `max_age_days` (10) ago,
+  exactly 10 days included; deadline not passed. With no posting date: only a
+  future deadline, first seen within 10 days, outside a bootstrap run. LinkedIn
+  alerts have no posting date; the alert's send time stands in for it.
+- The seniority gate is per user and lives in config (`seniority_gate`): blocked
+  title seniority per level, a maximum years gap, and default years per level.
+- Jobs from a source's first run are stored with `seeded: true` and never notified.
+
+### 2026-10-18: Measured
+
+- BDJobs bootstrap (303 IT jobs with details): 459 s, within the 10-minute target.
+- On 938 live jobs from the other sources: 70 passed every gate, 127 need
+  extraction, the rest were filtered (320 no tech signal, 193 too old, 183
+  region-restricted, 24 not in Bangladesh, 17 regions without Bangladesh, 4 non-CSE
+  titles).
