@@ -61,3 +61,38 @@ implementation can still be read with `git show 426e331:src/scrapers/<name>.py`.
 | Jobicy | `https://jobicy.com/api/v2/remote-jobs?count=50&tag=<tag>` | |
 | Working Nomads | `https://www.workingnomads.com/api/exposed_jobs/` | |
 | The Muse | public API | US-centric; disabled by default in v2 |
+
+## Config: adding titles, tracks, skills and places
+
+All of these are YAML edits; no code changes. After any edit run `make config`
+(validates everything) and `make build-shared` if the bot's view changed, then
+`make test`.
+
+- **A job title:** add it to `additions` in `config/taxonomy/job_titles.yaml` under
+  its domain. Keep directory titles as they are.
+- **A track, or a domain in a track:** edit `config/taxonomy/tracks.yaml`. Domains
+  must exist and must not be the seniority ladder; `include_titles` entries must be
+  copied from `job_titles.yaml` exactly.
+- **An abbreviation, spelling or seniority word:** `config/taxonomy/title_rules.yaml`.
+  Quote words that YAML reads as booleans (`on`, `no`, `yes`).
+- **A skill or alias:** `config/skills.yaml`. Names and aliases must be unique
+  across all skills (case-insensitive). Never change an existing id.
+- **A place spelling or neighbourhood:** `aliases` or `areas` in
+  `config/locations.yaml`.
+
+### When a title is matched wrongly
+
+1. Reproduce it:
+
+   ```bash
+   cd pipeline
+   uv run python -c "from jobhunt.config import load_config
+   from jobhunt.taxonomy.matcher import TitleMatcher
+   print(TitleMatcher(load_config()).match('Jr. SQA Engr.'))"
+   ```
+
+2. Add the title with its correct domains to `pipeline/tests/data/title_cases.txt`
+   (or to `non_cse_titles.txt`).
+3. Prefer a data fix (a title addition or a rule in `title_rules.yaml`) over changing
+   `title_matching` in `config/app.yaml`. If you change thresholds, redo the
+   calibration table in `docs/DECISIONS.md`.
