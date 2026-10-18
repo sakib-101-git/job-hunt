@@ -51,3 +51,16 @@ title_classification:
   prompt: prompts/title_classification.v1.md
   prompt_version: titles.v1
   batch_size: 25
+
+# CV parsing (brief §6.10). CV text goes only to providers with
+# trains_on_inputs: false, after the user agrees in the bot.
+cv:
+  prompt: prompts/cv.v1.md
+  prompt_version: cv.v1
+  # PDFs longer than this are read up to here; text is cut at max_chars (kept
+  # under one request on the smallest per-minute token limit in the chain).
+  max_pages: 8
+  max_chars: 15000
+  # Less text than this means a scanned (image-only) PDF: nothing to read.
+  min_chars: 200
+  max_summary_chars: 300

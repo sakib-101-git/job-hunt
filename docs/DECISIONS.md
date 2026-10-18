@@ -522,3 +522,79 @@ A Worker on the free plan may make 50 subrequests per request, too few to
 message every user, and alerts are rendered in Python. So `/broadcast` (after a
 preview, admins only) and `/digest` dispatch events and the pipeline sends,
 within Telegram's limits. `/digest` checks first that something is waiting.
+
+## Automation
+
+### 2026-10-18: Two Worker crons, the rest in the pipeline
+
+The free plan allows five Cron Triggers per account; the Worker uses two: every
+10 minutes it sends `repository_dispatch run-pipeline`, and hourly (at :05) it
+checks the heartbeat. The daily digest needs no cron of its own: each digest
+user is served by the first run after `notifications.digest_time`, which needs
+no extra state (the last `sent_at` says whether today's digest went out).
+Daily housekeeping likewise runs in the first run of each local day. Which cron
+does what is set in `wrangler.toml`'s `[vars]` next to the expressions, so no
+cron string lives in code. `pipeline.yml` keeps a `7,37 * * * *` schedule as a
+fallback.
+
+### 2026-10-18: Overlapping runs can't double-send
+
+Full runs share one concurrency group; a user's job (backfill, CV, digest,
+broadcast) gets its own, so it starts at once instead of replacing a pending
+run (GitHub keeps one pending run per group and cancels the older one). They
+can overlap with a full run, which is safe: `matches` inserts skip a pair
+another run stored first, `notifications` is unique per (user, fingerprint),
+and the sender claims each row with a lease (`lease_id`, `lease_until`;
+migration 0007) in one `UPDATE ... WHERE lease is free` statement per row, so
+exactly one run wins a row. A lease that runs out (the run died) frees the row.
+
+### 2026-10-18: A user's first matches are a backfill
+
+Whichever run scores a new user first (the backfill job or a scheduled run),
+only their best `backfill_top_n` matches are queued, seeded jobs included; the
+rest are stored and never queued. Without this, a scheduled run that beat the
+backfill job would queue every current match.
+
+### 2026-10-18: Payloads never reach the public logs
+
+The repository is public, so its Actions logs are too. `pipeline.yml` passes
+`$GITHUB_EVENT_PATH` to `jobhunt event`, which reads and validates the payload
+(pydantic, strict) itself, so user ids never appear on a command line or in an
+`env:` block. The step summary has counts and source names only.
+
+### 2026-10-18: Deploy uploads the Worker's secrets
+
+`wrangler deploy --secrets-file` (wrangler 4.151.1) uploads secrets with the
+version, additively, so the Worker's secrets live in GitHub secrets like the
+pipeline's and a rotation is one `gh secret set` and a deploy. The file is
+written to `$RUNNER_TEMP` and removed. GitHub reserves secret names starting
+with `GITHUB_`, so the dispatch token is the GitHub secret `GH_DISPATCH_TOKEN`
+and the Worker secret `GITHUB_DISPATCH_TOKEN`. The D1 id is added to a copy of
+`wrangler.toml` in the runner, never committed.
+
+### 2026-10-18: set_webhook in TypeScript, run by Node directly
+
+`bot/scripts/set_webhook.ts` runs with `node` (Node 24 strips types natively),
+so the deploy job needs nothing beyond npm ci. The request-building part
+(`telegram-setup.ts`) is pure and tested in vitest; the script calls
+`setWebhook` (secret token, `allowed_updates` message and callback_query),
+`setMyCommands` (from `bot.commands` in the locale) and checks
+`getWebhookInfo`. The webhook path is `bot.webhook_path` in `config/app.yaml`,
+shared with the Worker's router.
+
+### 2026-10-18: CV reading
+
+`jobhunt.cv.parse`: pypdf 6.19.0 reads at most `cv.max_pages` pages; under
+`cv.min_chars` characters means an image-only scan, and the user is told so.
+Only providers with `trains_on_inputs: false` may see the text (Groq today).
+The answer is grounded like job facts: each skill must appear in the CV, and the
+years and education quotes must match it; a summary with contact details is
+dropped. Skills are merged with any the user typed. Years go to
+`user_profiles.years_experience` (migration 0007), which the pipeline owns, so a
+CV read before setup ends isn't overwritten; a years value in `user_prefs` wins.
+The Telegram file id is cleared whatever the outcome.
+
+### 2026-10-18: Logs
+
+The CLI logs one JSON object per line with the Actions run id. httpx's request
+log is turned down to WARNING, because Telegram API URLs contain the bot token.

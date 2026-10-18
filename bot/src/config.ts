@@ -50,8 +50,11 @@ const SharedConfig = z.strictObject({
     thumbs_up: CallbackCode,
     thumbs_down: CallbackCode,
     reason: CallbackCode,
+    cv_ok: CallbackCode,
+    cv_edit: CallbackCode,
   }),
   bot: z.strictObject({
+    webhook_path: z.string().regex(/^\/[a-z0-9_-]+$/),
     updates_per_minute: z.number().int().positive(),
     max_pause_days: z.number().int().positive(),
     cv_max_bytes: z.number().int().positive(),
@@ -77,7 +80,15 @@ const SharedConfig = z.strictObject({
   }),
   timezone: z.string(),
   max_age_days: z.number().int().positive(),
-  notifications: z.strictObject({ max_attempts: z.number().int().positive() }),
+  notifications: z.strictObject({
+    max_attempts: z.number().int().positive(),
+    telegram_api_base_url: z.url({ protocol: /^https$/ }),
+  }),
+  heartbeat: z.strictObject({
+    kv_key: z.string(),
+    max_age_minutes: z.number().int().positive(),
+    alert_kv_key: z.string(),
+  }),
 });
 
 export type SharedConfig = z.infer<typeof SharedConfig>;

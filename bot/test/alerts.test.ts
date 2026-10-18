@@ -211,6 +211,32 @@ describe("CV intake", () => {
   });
 });
 
+describe("CV summary buttons", () => {
+  async function setUp(h: ReturnType<typeof harness>): Promise<void> {
+    await h.send("/start");
+    for (const data of ["o:t:0", "o:n", "o:l:1", "o:w:1", "o:n", "o:j:0", "o:n", "o:s"]) {
+      await h.tap(data);
+    }
+    for (const data of ["o:m:1", "o:v:0", "o:q", "o:f"]) await h.tap(data);
+  }
+
+  it("thanks the user and removes the buttons", async () => {
+    const h = harness();
+    await setUp(h);
+    const calls = await h.tap(C.cv_ok);
+    expect(answers(calls)).toEqual(["👍 Thanks! Your profile is saved."]);
+    expect(calls.map((c) => c.method)).toContain("editMessageReplyMarkup");
+  });
+
+  it("opens the skills editor", async () => {
+    const h = harness();
+    await setUp(h);
+    const calls = await h.tap(C.cv_edit);
+    expect(calls.map((c) => c.method)).toContain("editMessageReplyMarkup");
+    expect(texts(calls).at(-1)).toContain("Skills");
+  });
+});
+
 describe("admin", () => {
   beforeEach(async () => {
     await user(ALICE);

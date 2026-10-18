@@ -1,0 +1,68 @@
+name: Pipeline
+
+# One pipeline run every 10 minutes, asked for by the Worker's cron
+# (repository_dispatch run-pipeline), plus the jobs the bot asks for. The
+# schedule is only a fallback in case the Worker's trigger fails (brief §4.2).
+on:
+  repository_dispatch:
+    types: [run-pipeline, backfill-user, parse-cv, send-digest, broadcast]
+  workflow_dispatch:
+  schedule:
+    - cron: "7,37 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  # Full runs queue behind each other; a user's job (backfill, CV, digest,
+  # broadcast) runs at once. Overlap is safe: matches and notifications are
+  # idempotent in the database and sends are claimed with a lease.
+  group: >-
+    ${{ (github.event_name != 'repository_dispatch' || github.event.action == 'run-pipeline')
+    && 'pipeline' || format('job-{0}', github.run_id) }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    name: ${{ github.event.action || github.event_name }}
+    # Set the repository variable PIPELINE_ENABLED to "true" once the secrets
+    # below exist (docs/SETUP.md).
+    if: vars.PIPELINE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    # A source's first (bootstrap) run fetches every listing's details and can
+    # take several minutes, so a manual run (how the first one is started) gets
+    # longer; dispatched and scheduled runs stop at 10.
+    timeout-minutes: ${{ github.event_name == 'workflow_dispatch' && 30 || 10 }}
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      ADMIN_TELEGRAM_IDS: ${{ secrets.ADMIN_TELEGRAM_IDS }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      HIMALAYAS_API_KEY: ${{ secrets.HIMALAYAS_API_KEY }}
+      IMAP_HOST: ${{ secrets.IMAP_HOST }}
+      IMAP_EMAIL: ${{ secrets.IMAP_EMAIL }}
+      IMAP_APP_PASSWORD: ${{ secrets.IMAP_APP_PASSWORD }}
+      LOG_LEVEL: ${{ vars.LOG_LEVEL || 'INFO' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: pipeline/uv.lock
+      - run: uv sync --locked --no-dev
+      - name: Pipeline run
+        if: github.event_name != 'repository_dispatch'
+        run: uv run --no-sync jobhunt run --trigger "$GITHUB_EVENT_NAME"
+      # The event file is read by the CLI, so payload values (user ids) never
+      # appear in this public log.
+      - name: Dispatched job
+        if: github.event_name == 'repository_dispatch'
+        run: uv run --no-sync jobhunt event "$GITHUB_EVENT_PATH"

@@ -78,6 +78,10 @@ class Grounder:
             s for skill in skills.all_skills if not skill.ambiguous for s in skill.spellings
         )
 
+    def canonical(self, skill: str) -> str | None:
+        """The skills.yaml id for a spelling, or None for an unknown skill."""
+        return self._ids.get(normalize(skill))
+
     def skills_in(self, text: str, *, include_ambiguous: bool = True) -> list[str]:
         """Canonical ids of the known skills the text mentions, in order."""
         finder = self._finder if include_ambiguous else self._clear
@@ -120,7 +124,7 @@ class Grounder:
         for field in ("required_skills", "preferred_skills"):
             kept = []
             for skill in getattr(facts, field):
-                canonical = self._ids.get(normalize(skill))
+                canonical = self.canonical(skill)
                 if canonical and canonical in present:
                     kept.append(canonical)
                 elif re.search(rf"(?<!\w){re.escape(normalize(skill))}(?!\w)", lowered):

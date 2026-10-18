@@ -334,6 +334,9 @@ class NotificationSettings(Strict):
     retries_per_send: int = Field(ge=0)
     retry_backoff_seconds: float = Field(ge=0)
     max_listed_extras: int = Field(ge=0)
+    digest_time: Annotated[str, StringConstraints(pattern=r"^([01]\d|2[0-3]):[0-5]\d$")]
+    backfill_top_n: int = Field(ge=1)
+    lease_minutes: int = Field(ge=1)
 
 
 CallbackCode = Annotated[str, StringConstraints(pattern=r"^[a-z]{1,4}$")]
@@ -347,6 +350,8 @@ class Callbacks(Strict):
     thumbs_up: CallbackCode
     thumbs_down: CallbackCode
     reason: CallbackCode  # a 👎 reason, "<code>:<match id>:<reason index>"
+    cv_ok: CallbackCode  # the CV summary looks right
+    cv_edit: CallbackCode  # edit the skills read from a CV
 
     @model_validator(mode="after")
     def _distinct(self) -> Self:
@@ -376,6 +381,7 @@ class BotDefaults(Strict):
 
 
 class BotSettings(Strict):
+    webhook_path: Annotated[str, StringConstraints(pattern=r"^/[a-z0-9_-]+$")]
     updates_per_minute: int = Field(gt=0)
     max_pause_days: int = Field(gt=0)
     cv_max_bytes: int = Field(gt=0, le=20_000_000)  # getFile downloads at most 20 MB
@@ -406,6 +412,20 @@ class BotSettings(Strict):
         return self
 
 
+class RetentionSettings(Strict):
+    jd_text_days: int = Field(ge=1)
+
+
+class HeartbeatSettings(Strict):
+    kv_key: Ident
+    max_age_minutes: int = Field(ge=1)
+    alert_kv_key: Ident
+
+
+class MaintenanceSettings(Strict):
+    kv_key: Ident
+
+
 class GitHubSettings(Strict):
     api_base_url: Annotated[str, StringConstraints(pattern=r"^https://")]
     repository: Annotated[str, StringConstraints(pattern=r"^[\w.-]+/[\w.-]+$")]
@@ -426,6 +446,9 @@ class App(Strict):
     callbacks: Callbacks
     bot: BotSettings
     github: GitHubSettings
+    retention: RetentionSettings
+    heartbeat: HeartbeatSettings
+    maintenance: MaintenanceSettings
 
     @model_validator(mode="after")
     def _known_timezone(self) -> Self:
@@ -697,6 +720,15 @@ class TitleClassificationSettings(Strict):
     batch_size: int = Field(ge=1)
 
 
+class CvSettings(Strict):
+    prompt: PromptPath
+    prompt_version: NonEmpty
+    max_pages: int = Field(ge=1)
+    max_chars: int = Field(ge=1)
+    min_chars: int = Field(ge=0)
+    max_summary_chars: int = Field(ge=1)
+
+
 class Llm(Strict):
     version: Literal[1]
     providers: dict[Ident, LlmProvider] = Field(min_length=1)
@@ -704,6 +736,7 @@ class Llm(Strict):
     request: LlmRequest
     extraction: ExtractionSettings
     title_classification: TitleClassificationSettings
+    cv: CvSettings
 
     @model_validator(mode="after")
     def _check(self) -> Self:

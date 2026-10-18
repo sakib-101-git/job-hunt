@@ -32,7 +32,7 @@ WHERE j.status = 'open' AND json_extract(j.gates_json, '$.needs_facts') = '[]'
 """
 
 _PROFILES = """
-SELECT u.id, p.*, COALESCE(pr.skills_json, '[]') AS skills_json
+SELECT u.id, p.*, COALESCE(pr.skills_json, '[]') AS skills_json, pr.years_experience AS cv_years
 FROM users u
 JOIN user_prefs p ON p.user_id = u.id
 LEFT JOIN user_profiles pr ON pr.user_id = u.id
@@ -104,7 +104,7 @@ def _profile(row: Row) -> UserProfile:
         user_id=int(str(row["id"])),
         tracks=tuple(json.loads(str(row["tracks_json"]))),
         level=row["experience_level"],  # type: ignore[arg-type]
-        years=float(str(row["years_experience"])) if row["years_experience"] is not None else None,
+        years=_years(row["years_experience"], row["cv_years"]),
         locations=frozenset(json.loads(str(row["locations_json"]))),
         job_types=frozenset(json.loads(str(row["job_types_json"]))),
         min_score=Decimal(str(row["min_score"])),
@@ -113,6 +113,11 @@ def _profile(row: Row) -> UserProfile:
         deselected={track: frozenset(slugs) for track, slugs in overrides.items()},
         preferred_cities=tuple(json.loads(str(row["preferred_cities_json"] or "[]"))),
     )
+
+
+def _years(*values: object) -> float | None:
+    """The first known value: years set in prefs, then years read from a CV."""
+    return next((float(str(v)) for v in values if v is not None), None)
 
 
 async def match(
@@ -154,7 +159,9 @@ async def match(
                 """INSERT INTO matches (user_id, job_id, score, breakdown_json, explanation_json,
                                         gate_results_json, scorer_version, why_html,
                                         created_at)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id""",
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                   ON CONFLICT (user_id, job_id) DO NOTHING
+                   RETURNING id""",
                 (
                     user.user_id,
                     job.job_id,
@@ -167,6 +174,8 @@ async def match(
                     timestamp(now),
                 ),
             )
+            if not rows:  # an overlapping run stored this pair first
+                continue
             new.append(NewMatch(int(str(rows[0]["id"])), user.user_id, job.job_id, result.score))
             counts[f"matched ({result.label})"] += 1
     return new, counts

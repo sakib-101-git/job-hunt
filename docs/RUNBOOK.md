@@ -229,8 +229,15 @@ to each model or to the rules-only fallback.
 ## Notifications
 
 - **Run by hand:** `uv run jobhunt match` scores and queues;
-  `TELEGRAM_BOT_TOKEN=... uv run jobhunt notify` sends instant alerts, `--digest`
-  the daily digest, `--user ID` one user's queue whatever their mode.
+  `TELEGRAM_BOT_TOKEN=... uv run jobhunt notify` sends instant alerts and any
+  digest that is due, `--digest` every digest user's queue now, `--user ID` one
+  user's queue whatever their mode.
+- **Digests** go out once a day per digest user: the first run after
+  `notifications.digest_time` (local time) sends everything waiting, unless the
+  user already got something since that time (for example through `/digest`).
+- **New users** get only their best `notifications.backfill_top_n` current
+  matches (seeded jobs included), whichever run scores them first; their other
+  current matches are stored and never sent.
 - **A user says they got nothing:** check `users.status` (a 403 sets `blocked`),
   `user_prefs.min_score`, `delivery_mode` and `quiet_hours_json`, then their rows
   in `notifications`: `last_error` says why a row failed or was skipped.
@@ -253,9 +260,69 @@ to each model or to the rules-only fallback.
   `/broadcast <text>` (preview, then the pipeline sends it). Others get the
   unknown-command reply.
 - **Pipeline events the bot sends:** `backfill-user`, `parse-cv`, `send-digest`
-  and `broadcast` (`repository_dispatch`, payload `user_id` or `html`).
+  and `broadcast` (`repository_dispatch`, payload `user_id`, or `html` and
+  `admin_id`); its cron sends `run-pipeline`. See [Automation](#automation).
 - **Errors** are logged as JSON lines (`update failed`, with the update id,
   never the message text): `npx wrangler tail` in `bot/`.
+
+## Automation
+
+### What runs when
+
+| Trigger | What happens |
+| --- | --- |
+| Worker cron `*/10 * * * *` | `repository_dispatch run-pipeline` → `pipeline.yml` runs `jobhunt event`: collect, enrich, match, notify, then the daily maintenance |
+| `pipeline.yml` schedule `7,37 * * * *` | the same run, as a fallback if the Worker's trigger fails |
+| Worker cron `5 * * * *` | heartbeat check (below) |
+| A user finishes setup | `backfill-user`: scores open jobs for them (no LLM calls) and sends their best matches now |
+| A user agrees to a CV read | `parse-cv`: downloads the PDF, reads it with Groq only, saves skills, years and education, messages a summary |
+| `/digest` | `send-digest`: the user's waiting matches, now |
+| `/broadcast` (admin) | `broadcast`: one message to every active user, then a count to the admin |
+| Merge to `main` touching `bot/`, `migrations/`, `config/` or `locales/` | `deploy.yml`: D1 migrations, Worker deploy with its secrets, webhook and command menu |
+
+The crons are in `bot/wrangler.toml` (`[triggers]`, and `[vars]` saying which
+is which). Each run is a row in `runs` (trigger, status, per-stage counts and
+seconds in `stats_json`) and a summary on the Actions run page. A stage that
+fails is recorded and the later stages still run; the run is then `failed`.
+
+### Switching things off
+
+- Pause the pipeline: `gh variable set PIPELINE_ENABLED --body false` (runs
+  are then skipped, not failed). The Worker keeps asking; nothing happens.
+- Pause deploys: `gh variable set DEPLOY_ENABLED --body false`.
+- Run once by hand: `gh workflow run pipeline.yml` (30-minute limit instead
+  of 10, enough for a source's first run).
+
+### Admin messages
+
+| Message | Meaning | What to do |
+| --- | --- | --- |
+| ⚠️ Source alert: … is failing | a source failed `failures_before_alert` runs in a row | `uv run jobhunt fetch <source>` locally; see the source's section above |
+| ⚠️ Source alert: … returned nothing | silent breakage: empty for `empty_runs_before_alert` runs after returning jobs | the site may have changed its API or markup |
+| ⚠️ Source alert: … is working again | recovered | nothing |
+| 🚨 The pipeline has stalled | no successful run for `heartbeat.max_age_minutes` | Actions → Pipeline: look at the last runs; check secrets and `PIPELINE_ENABLED`; `gh workflow run pipeline.yml` |
+| 🚨 The pipeline has not completed a run yet | no run has ever succeeded | finish SETUP.md section 12 |
+| ✅ The pipeline is running again | a run succeeded after a stall | nothing |
+| 📣 Broadcast sent to N users | after `/broadcast` | users who blocked the bot are marked blocked |
+
+The stall alert is sent once per stall (`heartbeat.alert_kv_key` in `kv` marks
+it open) and once on recovery.
+
+### Housekeeping
+
+The first run of each local day expires open jobs that are no longer fresh
+(deadline passed, or older than `freshness.max_age_days`) and clears
+descriptions of jobs not seen for `retention.jd_text_days`, keeping their facts.
+`kv.last_maintenance_day` records the day it last ran; delete that row to run
+it again.
+
+### Rotating secrets
+
+Change the GitHub secret (`gh secret set NAME`), then run `gh workflow run
+deploy.yml`: it uploads the Worker's secrets again and re-registers the webhook
+(so a new `TELEGRAM_WEBHOOK_SECRET` takes effect at once). The pipeline reads
+its secrets at every run. For a new bot token, also revoke the old one in
+@BotFather (`/revoke`).
 
 ## Database migrations
 

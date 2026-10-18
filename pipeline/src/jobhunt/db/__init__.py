@@ -14,6 +14,7 @@ from jobhunt.db.base import (
     timestamp,
 )
 from jobhunt.db.d1 import D1HttpBackend
+from jobhunt.db.kv import get_kv, set_kv
 from jobhunt.db.migrations import apply_migrations, read_migrations
 from jobhunt.db.sqlite import SqliteBackend
 
@@ -48,7 +49,9 @@ __all__ = [
     "SqliteBackend",
     "Statement",
     "apply_migrations",
+    "get_kv",
     "open_database",
     "read_migrations",
+    "set_kv",
     "timestamp",
 ]
