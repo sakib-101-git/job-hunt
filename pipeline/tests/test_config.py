@@ -148,6 +148,26 @@ def test_default_config_dir_outside_checkout(
             "url",
         ),
         ("sources.yaml", "    kind: remoteok", "    kind: monster", "kind"),
+        ("app.yaml", "timezone: Asia/Dhaka", "timezone: Mars/Olympus", "unknown timezone"),
+        (
+            "app.yaml",
+            "  bangladesh_boards: [bdjobs]",
+            "  bangladesh_boards: [nope]",
+            "unknown source",
+        ),
+        (
+            "app.yaml",
+            "  max_years_gap: {student_intern: 2, ",
+            "  max_years_gap: {",
+            "missing levels",
+        ),
+        ("app.yaml", "  jd_max_chars_llm: 6000", "  jd_max_chars_llm: 9000", "cannot exceed"),
+        (
+            "geography.yaml",
+            "  - {name: Oman, cities: [Muscat]}",
+            "  - {name: Qatar}",
+            "duplicate region",
+        ),
         (
             "sources.yaml",
             "    kind: disabled\n    enabled: false\n"

@@ -37,3 +37,37 @@ normalization:
   company_suffixes: [ltd, limited, inc, incorporated, llc, plc, pvt, private, co, corp, corporation, gmbh, bv, sa, ag, pte, bd]
   # Upserts per database batch.
   store_batch_size: 50
+
+# Dates such as deadlines are judged in this time zone.
+timezone: Asia/Dhaka
+
+freshness:
+  # A job is fresh when posted at most this many days ago.
+  max_age_days: 10
+
+location_policy:
+  # Sources whose jobs are in Bangladesh unless they name a foreign place.
+  bangladesh_boards: [bdjobs]
+  # Remote job with no stated eligibility: decide from the description (false)
+  # or accept as is (true).
+  accept_unspecified_remote: false
+  # Accept regions that contain Bangladesh but do not name it ("APAC", "Asia").
+  accept_region_lists_containing_bd: false
+
+seniority_gate:
+  # A job asking for this many more years than the user has is never sent.
+  max_years_gap: {student_intern: 2, fresh_grad: 3, junior: 3, mid: 4, senior: 99}
+  # Title seniority signals (title_rules.yaml levels) never sent per user level.
+  blocked_title_levels:
+    student_intern: [mid, senior, lead_plus]
+    fresh_grad: [senior, lead_plus]
+    junior: [lead_plus]
+    mid: []
+    senior: []
+  # Years of experience assumed for a level when the user gave none.
+  default_years: {student_intern: 0, fresh_grad: 0, junior: 1, mid: 3, senior: 5}
+
+cse_gate:
+  # A title the taxonomy doesn't know goes to the LLM classifier only if it (or the
+  # listing's tags) contains one of these; otherwise it is not a CSE role.
+  tech_signals: [software, developer, engineer, engineering, engr, programmer, programming, coder, data, database, dba, IT, ICT, MIS, computer, CSE, technical, technology, tech, cloud, devops, SRE, security, cyber, cybersecurity, infosec, AI, ML, machine learning, deep learning, NLP, LLM, web, frontend, front-end, backend, back-end, full stack, full-stack, fullstack, mobile, android, iOS, app, application, network, networking, system, systems, sysadmin, QA, SQA, test, testing, tester, automation, platform, infrastructure, API, blockchain, web3, game, unity, embedded, firmware, IoT, robotics, analytics, BI, python, java, javascript, typescript, react, node, PHP, laravel, ".NET", "C#", "C++", golang, rust, flutter, kotlin, swift, SQL, linux, kubernetes, docker, AWS, azure, GCP, ERP, SAP, salesforce, odoo, CRM, UI, UX, digital, solutions, architect, scientist, research, lecturer, instructor]

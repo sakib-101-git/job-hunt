@@ -5,6 +5,7 @@ import re
 from collections import Counter
 from collections.abc import Iterable
 from typing import Annotated, Literal, Self
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import (
     AfterValidator,
@@ -237,14 +238,18 @@ class Locations(Strict):
     def districts(self) -> list[District]:
         return [district for division in self.divisions for district in division.districts]
 
-    def place_names(self) -> set[str]:
-        """Every spelling of the country, divisions, districts and areas, casefolded."""
+    def place_names_raw(self) -> set[str]:
+        """Every spelling of the country, divisions, districts and areas, as written."""
         names = {self.country.name, *self.country.aliases}
         for division in self.divisions:
             names.update([division.name, *division.aliases])
             for district in division.districts:
                 names.update([district.name, *district.aliases, *district.areas])
-        return {name.casefold() for name in names}
+        return names
+
+    def place_names(self) -> set[str]:
+        """`place_names_raw`, casefolded."""
+        return {name.casefold() for name in self.place_names_raw()}
 
 
 # --- app.yaml -----------------------------------------------------------------
@@ -282,11 +287,92 @@ class NormalizationSettings(Strict):
         return self
 
 
+ExperienceLevel = Literal["student_intern", "fresh_grad", "junior", "mid", "senior"]
+EXPERIENCE_LEVELS: tuple[ExperienceLevel, ...] = (
+    "student_intern",
+    "fresh_grad",
+    "junior",
+    "mid",
+    "senior",
+)
+
+
+class FreshnessSettings(Strict):
+    max_age_days: int = Field(ge=1)
+
+
+class LocationPolicy(Strict):
+    bangladesh_boards: list[Ident] = []
+    accept_unspecified_remote: bool
+    accept_region_lists_containing_bd: bool
+
+
+class SeniorityGate(Strict):
+    max_years_gap: dict[ExperienceLevel, float]
+    blocked_title_levels: dict[ExperienceLevel, list[Seniority]]
+    default_years: dict[ExperienceLevel, float]
+
+    @model_validator(mode="after")
+    def _every_level(self) -> Self:
+        for name in ("max_years_gap", "blocked_title_levels", "default_years"):
+            if missing := sorted(set(EXPERIENCE_LEVELS) - set(getattr(self, name))):
+                raise ValueError(f"{name} is missing levels: {', '.join(missing)}")
+        return self
+
+
+class CseGateSettings(Strict):
+    tech_signals: list[NonEmpty] = Field(min_length=1)
+
+
 class App(Strict):
     version: Literal[1]
     title_matching: TitleMatching
     database: DatabaseSettings
     normalization: NormalizationSettings
+    timezone: NonEmpty
+    freshness: FreshnessSettings
+    location_policy: LocationPolicy
+    seniority_gate: SeniorityGate
+    cse_gate: CseGateSettings
+
+    @model_validator(mode="after")
+    def _known_timezone(self) -> Self:
+        try:
+            ZoneInfo(self.timezone)
+        except (ZoneInfoNotFoundError, ValueError) as exc:
+            raise ValueError(f"unknown timezone {self.timezone!r}") from exc
+        return self
+
+
+# --- geography.yaml -----------------------------------------------------------
+
+
+class Region(Strict):
+    name: NonEmpty
+    aliases: list[NonEmpty] = []
+    includes_bangladesh: bool
+
+
+class OtherCountry(Strict):
+    name: NonEmpty
+    aliases: list[NonEmpty] = []
+    cities: list[NonEmpty] = []
+
+
+class Geography(Strict):
+    version: Literal[1]
+    worldwide_phrases: list[NonEmpty] = Field(min_length=1)
+    remote_words: list[NonEmpty] = Field(min_length=1)
+    timezone_markers: list[NonEmpty] = []
+    filler_words: list[NonEmpty] = []
+    regions: list[Region] = []
+    countries: list[OtherCountry] = []
+
+    @model_validator(mode="after")
+    def _check(self) -> Self:
+        names = [r.name for r in self.regions] + [c.name for c in self.countries]
+        _require_unique("region and country names", (n.casefold() for n in names))
+        return self
 
 
 # --- sources.yaml -------------------------------------------------------------
