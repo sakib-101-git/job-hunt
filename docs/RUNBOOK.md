@@ -82,14 +82,51 @@ another when it recovers). A feed answering 304 Not Modified is not "empty".
   from an obfuscated RPC and holds almost no software roles.
 - **The Muse:** US-centric; worldwide-remote roles are rare.
 
-### LinkedIn (owner's alert emails only; next phase)
+### Company career boards (`company_boards`)
 
-- Read over IMAP with a Gmail App Password, never the account password. v1 searched
-  `FROM "jobs-noreply@linkedin.com" SINCE <date>` and took job IDs from
-  `/jobs/view/<id>` links.
-- LinkedIn changes the email HTML from time to time. Keep a redacted real email as a
-  test fixture and update the parser against it.
-- linkedin.com pages are never scraped.
+Public ATS APIs: Greenhouse, Lever, Ashby, Workable (its public widget API, which
+includes descriptions) and SmartRecruiters (a details request per new job). The
+companies are listed in `config/sources.yaml` with what was checked for each.
+
+To add a company:
+
+1. Find its board token (the part after the ATS host in its careers URL).
+2. Check the API answers 200, e.g.
+   `curl -s https://boards-api.greenhouse.io/v1/boards/<token>/jobs | head`.
+3. Check it hires in Bangladesh or remote-worldwide: look for locations such as
+   "Dhaka", "Bangladesh", "Worldwide", "Anywhere" or "Remote, Global" (not
+   "Remote - US").
+4. Add `{name, ats, token, verified}` with what you saw, and run
+   `uv run jobhunt fetch company_boards`.
+
+Checked 2026-10-18: Populate, Canonical, Supabase, Toptal and Polygon Technology
+have matching roles; SELISE and Brain Station 23 (Dhaka) have valid Workable
+boards with no open roles yet. Big remote employers such as GitLab, Stripe and
+Datadog were left out: none of their current roles is worldwide. One company's
+board failing is a warning in the run report; all of them failing fails the source.
+
+### Hacker News "Who is hiring?" (`hn_whoishiring`)
+
+Algolia HN API: the newest thread by `whoishiring` (`search_by_date`), then its
+comments (`search?tags=comment,story_<id>&hitsPerPage=1000`, about 400 a month).
+Only top-level comments matching `require` (REMOTE) and one of `require_any`
+(worldwide, anywhere, global) are kept; the location gate still checks each one.
+Posts are free text, so titles are best effort: segments matching `not_a_title`
+(links, contract types, pay) are skipped, and when no role is left the poster's
+first line is used as is.
+
+### LinkedIn (owner's alert emails only)
+
+- Read-only over IMAP with a Gmail App Password (`IMAP_HOST`, `IMAP_EMAIL`,
+  `IMAP_APP_PASSWORD`); the source shows as "not configured" until all three are
+  set. It searches `FROM "jobs-noreply@linkedin.com" SINCE <lookback>`.
+- Each job comes from a `/jobs/view/<id>` link: the link text is the title and the
+  card's next two text lines are company and location. Alerts carry no posting
+  date; the email's send time is kept as `alert_sent_at`.
+- **The parser is built against a synthetic email**
+  (`pipeline/tests/fixtures/emails/linkedin_alert_synthetic.eml`). Replace it with a
+  real alert email, personal details redacted, and adjust `parse_alert` if needed.
+- linkedin.com pages are never fetched.
 
 ## Config: adding titles, tracks, skills and places
 

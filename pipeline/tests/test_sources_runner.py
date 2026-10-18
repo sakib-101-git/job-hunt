@@ -177,6 +177,16 @@ async def test_disabled_sources_never_run(db: SqliteBackend, config: Config) -> 
     assert report.runs == []
 
 
+async def test_sources_missing_env_are_not_configured(db: SqliteBackend, config: Config) -> None:
+    report = await run_sources(
+        config.sources, db, _fetcher(config, []), NOW, {}, {"linkedin_alerts"}
+    )
+    [run] = report.runs
+    assert run.status == "not_configured"
+    assert run.error == "IMAP_HOST, IMAP_EMAIL, IMAP_APP_PASSWORD"
+    assert (await load_state(db, "linkedin_alerts")).consecutive_failures == 0
+
+
 async def test_failing_source_raises_alert_at_threshold(db: SqliteBackend, config: Config) -> None:
     fetcher = _fetcher(config, [])
     alerts = []

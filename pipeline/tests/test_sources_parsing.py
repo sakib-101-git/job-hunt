@@ -35,7 +35,8 @@ async def _fetch(
 
 
 async def test_every_listing_is_well_formed(config: Config) -> None:
-    for name in sorted(p.name for p in FIXTURES.iterdir()):
+    configured = set(config.sources.sources)
+    for name in sorted(p.name for p in FIXTURES.iterdir() if p.name in configured):
         result, _ = await _fetch(config, name)
         assert result.listings, name
         for listing in result.listings:

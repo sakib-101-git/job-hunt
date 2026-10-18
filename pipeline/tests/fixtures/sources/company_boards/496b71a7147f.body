@@ -1,0 +1,88 @@
+{
+ "id": "744000156124949",
+ "name": "Software Engineer (Frontend)",
+ "uuid": "bfcaf5e3-f36b-4ca1-b322-872adf91c318",
+ "jobId": "607c9393-54ff-4bf5-88a8-0c2fd1767215",
+ "jobAdId": "7eb3d1f5-f098-4613-aa52-a434cf76aa4b",
+ "defaultJobAd": true,
+ "refNumber": "REF114H",
+ "company": {
+  "name": "Polygon Technology",
+  "identifier": "PolygonTechnology"
+ },
+ "location": {
+  "city": "Dhaka",
+  "region": "1213",
+  "country": "bd",
+  "address": "House 57, Road 25, Block A, Dhaka 1213",
+  "postalCode": "1213",
+  "remote": false,
+  "hybrid": false,
+  "fullLocation": "Dhaka, 1213, Bangladesh"
+ },
+ "customField": [
+  {
+   "fieldId": "62e8f3246d33c20a779a748b",
+   "fieldLabel": "Brands",
+   "valueId": "default",
+   "valueLabel": "Polygon Technology"
+  },
+  {
+   "fieldId": "COUNTRY",
+   "fieldLabel": "Country/Region",
+   "valueId": "bd",
+   "valueLabel": "Bangladesh"
+  }
+ ],
+ "releasedDate": "2026-10-17T08:33:30.859Z",
+ "creator": {
+  "name": "",
+  "avatarUrl": ""
+ },
+ "postingUrl": "https://jobs.smartrecruiters.com/PolygonTechnology/744000156124949-software-engineer-frontend-",
+ "applyUrl": "https://jobs.smartrecruiters.com/PolygonTechnology/744000156124949-software-engineer-frontend-?oga=true",
+ "referralUrl": "https://jobs.smartrecruiters.com/external-referrals/company/PolygonTechnology/publication/bfcaf5e3-f36b-4ca1-b322-872adf91c318?dcr_ci=PolygonTechnology",
+ "jobAd": {
+  "sections": {
+   "companyDescription": {
+    "title": "Company Description",
+    "text": "<p>At Polygon Technology, we specialize in building cutting-edge software solutions that empower businesses around the world. With a strong focus on innovation, quality, and user experience, we are proud to deliver high-performance applications across platforms. Our team is driven by a passion for technology, a commitment to excellence, and a collaborative spirit.</p>"
+   },
+   "jobDescription": {
+    "title": "Job Description",
+    "text": "<p>We are looking for a skilled <strong>Frontend Engineer</strong> with <strong>3 to 5 years of experience</strong> to join our Engineering Team. The ideal candidate will have strong hands-on experience in building modern, scalable, and responsive web applications using <strong>React.js, Next.js, and related frontend technologies</strong>. You will work closely with cross functional teams to deliver high quality digital products and exceptional user experiences.</p><p><strong>Key Responsibilities</strong></p><p><strong>Frontend Application Development</strong></p><ul><li><p>Design, develop, and maintain modern web applications using React.js, Next.js, JavaScript, HTML, CSS, and related technologies.</p></li></ul><p><strong>User Interface Development</strong></p><ul><li><p>Convert UI/UX designs into responsive, user friendly interfaces while ensuring consistency across different devices and browsers.</p></li></ul><p><strong>API Integration</strong></p><ul><li><p>Integrate frontend applications with RESTful APIs and backend services, ensuring seamless communication and optimal performance.</p></li></ul><p><strong>Performance Optimization</strong></p><ul><li><p>Optimize application performance, accessibility, responsiveness, and overall user experience through modern frontend best practices.</p></li></ul><p><strong>Code Quality and Maintenance</strong></p><ul><li><p>Write clean, maintainable, and well documented code.</p></li><li><p>Participate in code reviews and continuously improve development standards.</p></li></ul><p><strong>Collaboration and Delivery</strong></p><ul><li><p>Work closely with Product Managers, Backend Developers, UI/UX Designers, DevOps Engineers, and QA teams to deliver high quality software solutions on time.</p></li></ul>"
+   },
+   "qualifications": {
+    "title": "Qualifications",
+    "text": "<ul><li><p>Bachelor's degree in Computer Science, Software Engineering, or a related field.</p></li><li><p><strong>4 to 6&#xa0;years</strong> of professional experience in frontend development.</p></li><li><p>Strong hands-on experience with <strong>React.js </strong>and<strong> Next.js</strong>.</p></li><li><p>Strong understanding of <strong>JavaScript fundamentals, HTML5, CSS3, browser APIs, and modern frontend development practices.</strong></p></li><li><p>Hands-on experience with <strong>Bootstrap, Ant Design (AntD), and SASS.</strong></p></li><li><p>Experience integrating frontend applications with <strong>RESTful APIs</strong> and backend services.</p></li><li><p>Good understanding of browser <strong>rendering, DOM, Virtual DOM, and web performance optimization</strong>.</p></li><li><p>Familiarity with <strong>Node.js, Express.js, MongoDB, and Mongoose</strong>.</p></li><li><p>Experience working with <strong>Git</strong> and <strong>Agile development</strong> methodologies.</p></li><li><p>Strong debugging, analytical, problem solving, and communication skills.</p></li><li><p>Previous experience working on <strong>FinTech, Banking, Payment Gateway, or Financial Services platforms</strong> will be considered a strong advantage.</p></li><li><p>Candidates who can <strong>join immediately or within a short notice period will be given preference.</strong></p></li></ul>"
+   },
+   "additionalInformation": {
+    "title": "Additional Information",
+    "text": "<p><strong>💡 Why Join Polygon Technology?</strong></p><ul><li>Be part of a fast-growing tech company delivering data-driven solutions</li><li>Work with cutting-edge technologies and mission-critical systems</li><li>Collaborate with a skilled and experienced engineering team</li><li>Competitive salary and growth-oriented environment</li><li>Across Bangladesh (on-site required)</li></ul><p><strong>Other Information</strong></p><ul><li>Salary Range: As per company policy</li><li>Employment Type: Full Time</li><li>Perks: Fully subsidized meals</li><li>Routine: Sunday - Thursday</li></ul>"
+   }
+  }
+ },
+ "active": true,
+ "visibility": "PUBLIC",
+ "industry": {
+  "id": "it_and_services",
+  "label": "Information Technology And Services"
+ },
+ "function": {
+  "id": "engineering",
+  "label": "Engineering"
+ },
+ "experienceLevel": {
+  "id": "mid_senior_level",
+  "label": "Mid-Senior Level"
+ },
+ "typeOfEmployment": {
+  "id": "permanent",
+  "label": "Full-time"
+ },
+ "language": {
+  "code": "en",
+  "label": "English",
+  "labelNative": "English (US)"
+ }
+}

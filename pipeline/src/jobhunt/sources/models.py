@@ -39,3 +39,5 @@ class SourceResult:
     listings: list[RawListing]
     # True when every URL answered 304 Not Modified: no news, not an empty source.
     unchanged: bool = False
+    # Parts that failed while the rest worked (one company's board, one email).
+    warnings: tuple[str, ...] = ()

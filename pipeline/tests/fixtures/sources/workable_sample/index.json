@@ -1,0 +1,7 @@
+{
+  "GET https://apply.workable.com/api/v1/widget/accounts/huggingface?details=true": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "07d717b836e7.body",
+    "status": 200
+  }
+}

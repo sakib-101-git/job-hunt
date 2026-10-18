@@ -1,0 +1,42 @@
+{
+  "GET https://api.ashbyhq.com/posting-api/job-board/supabase": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "cf4c421937ca.body",
+    "status": 200
+  },
+  "GET https://api.lever.co/v0/postings/toptal?mode=json": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "1be1272d3a8f.body",
+    "status": 200
+  },
+  "GET https://api.smartrecruiters.com/v1/companies/PolygonTechnology/postings/744000156124949": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "496b71a7147f.body",
+    "status": 200
+  },
+  "GET https://api.smartrecruiters.com/v1/companies/PolygonTechnology/postings?limit=100": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "ade89a5138dc.body",
+    "status": 200
+  },
+  "GET https://apply.workable.com/api/v1/widget/accounts/brainstation-23?details=true": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "64db05ebfe6e.body",
+    "status": 200
+  },
+  "GET https://apply.workable.com/api/v1/widget/accounts/selise?details=true": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "1ae9fa0a65e2.body",
+    "status": 200
+  },
+  "GET https://boards-api.greenhouse.io/v1/boards/applytopopulate/jobs?content=true": {
+    "content_type": "application/json",
+    "file": "eef726ae13b2.body",
+    "status": 200
+  },
+  "GET https://boards-api.greenhouse.io/v1/boards/canonical/jobs?content=true": {
+    "content_type": "application/json",
+    "file": "817ab3ae7749.body",
+    "status": 200
+  }
+}

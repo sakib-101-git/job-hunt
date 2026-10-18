@@ -215,3 +215,20 @@ eight minutes, inside the brief's ten-minute bootstrap target.
 `Fetcher`, so parsing and paging are tested end to end without network access.
 Fixtures are trimmed to a few items, and emails and phone numbers in job text are
 replaced with `[email]` and `[phone]`.
+
+### 2026-10-18: Company boards, HN and LinkedIn
+
+- Company boards are one source (`company_boards`) over a verified company list,
+  so adding a company is a config change. Job ids are `<ats>:<token>:<id>`.
+  Workable's v3 list endpoint is POST-only; its public widget API
+  (`/api/v1/widget/accounts/<token>?details=true`) gives the same jobs with
+  descriptions in one GET. SmartRecruiters (not in the brief's list) was added
+  because a Dhaka employer (Polygon Technology) uses it.
+- Seven companies passed the check; most well-known remote employers did not,
+  because their current roles are region-restricted.
+- HN keep/skip patterns live in config. A post's title is never invented: with no
+  role segment, the poster's own first line is the title.
+- LinkedIn alerts are read over IMAP, read-only, and only when the owner's IMAP
+  variables are set (`required_env`: such a source is "not configured", never
+  "failed"). The parser was written against a synthetic email until a real,
+  redacted one is available.
