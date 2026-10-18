@@ -1,0 +1,7 @@
+{
+  "GET https://jobicy.com/api/v2/remote-jobs?count=100&geo=anywhere": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "0fa8dcc9ebaf.body",
+    "status": 200
+  }
+}

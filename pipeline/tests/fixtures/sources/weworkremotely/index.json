@@ -1,0 +1,37 @@
+{
+  "GET https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss": {
+    "content_type": "application/rss+xml; charset=utf-8",
+    "file": "185e9ebf0673.body",
+    "status": 200
+  },
+  "GET https://weworkremotely.com/categories/remote-design-jobs.rss": {
+    "content_type": "application/rss+xml; charset=utf-8",
+    "file": "c415d22bc23e.body",
+    "status": 200
+  },
+  "GET https://weworkremotely.com/categories/remote-devops-sysadmin-jobs.rss": {
+    "content_type": "application/rss+xml; charset=utf-8",
+    "file": "efa4e25a648c.body",
+    "status": 200
+  },
+  "GET https://weworkremotely.com/categories/remote-front-end-programming-jobs.rss": {
+    "content_type": "application/rss+xml; charset=utf-8",
+    "file": "3c447d4b8342.body",
+    "status": 200
+  },
+  "GET https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss": {
+    "content_type": "application/rss+xml; charset=utf-8",
+    "file": "f84a8a4b1e83.body",
+    "status": 200
+  },
+  "GET https://weworkremotely.com/categories/remote-product-jobs.rss": {
+    "content_type": "application/rss+xml; charset=utf-8",
+    "file": "d67032a927d1.body",
+    "status": 200
+  },
+  "GET https://weworkremotely.com/categories/remote-programming-jobs.rss": {
+    "content_type": "application/rss+xml; charset=utf-8",
+    "file": "3a4e03d3fcd6.body",
+    "status": 200
+  }
+}

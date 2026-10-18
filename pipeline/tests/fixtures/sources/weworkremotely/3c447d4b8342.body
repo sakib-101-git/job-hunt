@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:ns0="http://search.yahoo.com/mrss" version="2.0">
+  <channel>
+    <title>We Work Remotely: Front-End Programming Jobs</title>
+    <link>https://weworkremotely.com/categories/remote-front-end-programming-jobs.rss</link>
+    <description>We Work Remotely: Front-End Programming Jobs</description>
+    <language>en-US</language>
+    <ttl>60</ttl>
+    <item>
+      <ns0:content url="https://wwr-pro.s3.amazonaws.com/logos/0171/6508/logo.gif" type="image/png" />
+      <title>Humane World for Animals: Web Designer, eCRM</title>
+      <region>Anywhere in the World</region>
+      <country />
+      <state>District of Columbia</state>
+      <skills>A/B Testing, AWS, Compliance, Google Analytics, HTML/CSS, JavaScript, MySQL, Node.js, PHP, SASS, UI/UX, UX design, Jira, CI/CD Pipelines, Microsoft Project/Trello/Jira, Legal Compliance, GitHub, and Claude.ai</skills>
+      <category>Front-End Programming</category>
+      <type>Full-Time</type>
+      <description>&lt;img src="https://we-work-remotely.imgix.net/logos/0171/6508/logo.gif?ixlib=rails-4.0.0&amp;w=50&amp;h=50&amp;dpr=2&amp;fit=fill&amp;auto=compress" /&gt;
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; Humane World for Animals
+    &lt;br /&gt;&lt;strong&gt;URL:&lt;/strong&gt; &lt;a href="https://humaneworld.org"&gt;https://humaneworld.org&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;The general salary range for this full-time position is $80,000 – 115,000. Salary offers will be commensurate with experience, qualifications, skills, training and education.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&amp;nbsp;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Humane World for Animals, a global leader in animal advocacy and protection, is seeking a Web Developer, eCRM to support Digital Marketing and other departments by providing front-end, global web development solutions for fundraising, advocacy engagement, and other strategic priorities — incorporating AI-assisted and agentic development tools to accelerate delivery while maintaining rigorous human oversight, quality, and security standards.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Responsibilities:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Collaborates regularly with Digital Marketing, Brand and Visuals, and IS teams to discuss project requirements and makes technical recommendations. Writes efficient code and maintains custom donation forms, advocacy forms, other webpages, and email templates. Incorporates best practices for user experience, accessibility, page speed optimization, and GDPR compliance implementation. Adheres to global regulations and standards, regional data compliance, and security compliance;&lt;/li&gt;
+&lt;li&gt;Uses AI-assisted development tools and agentic coding assistants to accelerate coding, refactoring, debugging, testing, and documentation. Proactively identifies opportunities for AI-assisted and agent-built solutions and owns the ongoing maintenance, monitors their performance over time and updates or retires them as needed. Follows established guardrails and usage standards for AI tools and applies human-in-the-loop review to all AI-generated code and configurations, validating output for accuracy, security, accessibility, and brand/technical standards before deployment;&lt;/li&gt;
+&lt;li&gt;Follows quality assurance procedures and troubleshoots technical issues affecting donation forms, advocacy forms, webpages, and email templates in Engaging Networks. Works closely with vendor partners;&lt;/li&gt;
+&lt;li&gt;Works with the Information Security team to ensure that digital properties meet security standards, including managing script inventory, attestation, and other requirements for PCI compliance;&lt;/li&gt;
+&lt;li&gt;Collaborates with the testing team to gather testing requirements and implement new features to run A/B and multivariate tests on forms;&lt;/li&gt;
+&lt;li&gt;Creates and maintains clear and concise documentation of custom web development, support guides, and incident reports;&lt;/li&gt;
+&lt;li&gt;Performs other duties as assigned.&amp;nbsp;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Qualifications and Requirements:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Bachelor's degree in computer programming, web development, or related field, or equivalent work experience required;&amp;nbsp;&lt;/li&gt;
+&lt;li&gt;A minimum of four (4) years of experience in front-end web development and developing custom websites required;&lt;/li&gt;
+&lt;li&gt;Demonstrated experience with Engaging Networks or other eCRMs;&lt;/li&gt;
+&lt;li&gt;Proficient in HTML5, Sass and CSS, JavaScript, PHP, MySQL, GitHub, Engaging Networks modules, Webpack, Node, npm, core AWS services, and Mailgun. Familiar with Segment or other CDPs;&lt;/li&gt;
+&lt;li&gt;Direct experience with AI coding assistants and agentic development tools such as Microsoft Copilot Studio, Claude Code, and GitHub Copilot;&lt;/li&gt;
+&lt;li&gt;Knowledge of best practices for responsive, mobile-first web design, UX, accessibility, page speed optimization, browser support, and GDPR compliance;&lt;/li&gt;
+&lt;li&gt;Familiar with cookie consent tools, preferably Iubenda, for configuring compliance settings;&lt;/li&gt;
+&lt;li&gt;Experience building interactive data visualizations that translate campaigns into compelling stories for supporters to increase engagement;&lt;/li&gt;
+&lt;li&gt;Excellent attention to detail when coding projects based on Adobe XD files or Figma;&lt;/li&gt;
+&lt;li&gt;Understanding of digital marketing strategies for US and international audiences;&lt;/li&gt;
+&lt;li&gt;Stays on top of AI trends in web development, including personalization and workflow automation, and their responsible application to fundraising and advocacy technology;&lt;/li&gt;
+&lt;li&gt;Strong written and verbal communication skills;&lt;/li&gt;
+&lt;li&gt;Must be able to multi-task in a fast-paced, collaborative environment to deliver high quality work on deadline. Familiarity with Jira and Confluence a plus;&lt;/li&gt;
+&lt;li&gt;Data informed problem solver having experience with A/B testing platforms and Google Analytics;&lt;/li&gt;
+&lt;li&gt;Proactive and ability to work both independently and as an effective team member in a team environment;&lt;/li&gt;
+&lt;li&gt;Interest in animal protection issues preferred.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;This is a full-time remote position based in the United States.&amp;nbsp;Candidates must be able to accomodate Eastern Time hours, as needed.&amp;nbsp;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;Q&lt;em&gt;ualified applicants will receive consideration for employment without regard to race, color, religion, sex, age, national origin, sexual orientation, gender identity, and disability, marital or parental status or protected veteran status.&amp;nbsp; EOE&lt;/em&gt;&amp;nbsp;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/humane-world-for-animals-web-designer-ecrm-1"&gt;https://weworkremotely.com/remote-jobs/humane-world-for-animals-web-designer-ecrm-1&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Fri, 02 Oct 2026 17:39:45 +0000</pubDate>
+      <expires_at>Sun, 01 Nov 2026 17:39:45 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/humane-world-for-animals-web-designer-ecrm-1</guid>
+      <link>https://weworkremotely.com/remote-jobs/humane-world-for-animals-web-designer-ecrm-1</link>
+    </item>
+    <item>
+      <ns0:content url="https://wwr-pro.s3.amazonaws.com/logos/0171/6490/logo.gif" type="image/png" />
+      <title>HR Plus: Web Developer (Fresh graduate welcome, WFH policy, on-job-training)</title>
+      <region>Anywhere in the World</region>
+      <country />
+      <state />
+      <skills>CMS Development, Cross-Browser Development, Version Control, DevOps, and Cross-Selling</skills>
+      <category>Front-End Programming</category>
+      <type>Full-Time</type>
+      <description>&lt;img src="https://we-work-remotely.imgix.net/logos/0171/6490/logo.gif?ixlib=rails-4.0.0&amp;w=50&amp;h=50&amp;dpr=2&amp;fit=fill&amp;auto=compress" /&gt;
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; Hong Kong, Hong Kong SAR, Hong Kong
+    &lt;br /&gt;&lt;strong&gt;URL:&lt;/strong&gt; &lt;a href="http://hrplus.tech"&gt;http://hrplus.tech&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;div class="mt-5"&gt;
+
+&lt;div class="redactor-styles"&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;About the Role:&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Are you a talented and driven Web Developer looking to join a young and energetic team? Look no further! Our client, a fast-growing firm in the exciting field of web development, is seeking a skilled Web Developer to join their dynamic team. With a focus on innovation and growth, they offer a supportive and collaborative work environment where you can thrive.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Here's what you can gain from this opportunity:&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Hands-on experience in web development for various companies in different settings.&lt;/li&gt;&lt;li&gt;Down-to-earth, hands-on training from experienced seniors.&lt;/li&gt;&lt;li&gt;A chance to join a rapidly growing industry and build a successful career in web development.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Benefits:&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Competitive salary package based on skills and experience.&lt;/li&gt;&lt;li&gt;Young and energetic work environment that fosters collaboration and innovation.&lt;/li&gt;&lt;li&gt;5-Day work week for a healthy work-life balance.&lt;/li&gt;&lt;li&gt;Work From Home (WFH) option available one day per week.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Responsibilities:&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Develop and implement web applications and system enhancements.&lt;/li&gt;&lt;li&gt;Take ownership of web projects from development to production.&lt;/li&gt;&lt;li&gt;Revamp the company's directory website to improve functionality and enhance search engine optimization (SEO) practices.&lt;/li&gt;&lt;li&gt;Increase website capabilities, such as advanced searching features and adherence to industry standards.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Requirements:&lt;/em&gt;&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;1 year or more of related experience preferred, fresh graduates are also welcomed.&lt;/li&gt;&lt;li&gt;Strong knowledge and experience in PHP and WordPress, MySQL, HTML, CSS, and JavaScript.&lt;/li&gt;&lt;li&gt;Knowledge of server-side programming and web server configuration/administration is advantageous.&lt;/li&gt;&lt;li&gt;Experience in developing web systems, API integration, and data handling.&lt;/li&gt;&lt;li&gt;Familiarity with Git/Gitlab is a plus.&lt;/li&gt;&lt;li&gt;Experience in UX design is a valuable asset.&lt;/li&gt;&lt;li&gt;Self-motivated, independent, highly responsible, and able to work under pressure.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;Personal data provided by job applicants will be used strictly in accordance with the employer's personal data policies. All information received will be kept in strict confidence and only for employment-related purposes.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;"We are an equal opportunity employer and all qualified applicants will receive consideration for employment without regard to race, color, religion, sex, national origin, disability status, protected veteran status, or any other characteristic protected by law."&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/hr-plus-web-developer-fresh-graduate-welcome-wfh-policy-on-job-training"&gt;https://weworkremotely.com/remote-jobs/hr-plus-web-developer-fresh-graduate-welcome-wfh-policy-on-job-training&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Tue, 29 Sep 2026 19:13:52 +0000</pubDate>
+      <expires_at>Thu, 29 Oct 2026 19:13:52 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/hr-plus-web-developer-fresh-graduate-welcome-wfh-policy-on-job-training</guid>
+      <link>https://weworkremotely.com/remote-jobs/hr-plus-web-developer-fresh-graduate-welcome-wfh-policy-on-job-training</link>
+    </item>
+    </channel>
+</rss>

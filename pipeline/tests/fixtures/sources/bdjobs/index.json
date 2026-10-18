@@ -1,0 +1,27 @@
+{
+  "GET https://api.bdjobs.com/Jobs/api/JobSearch/GetJobSearch?category=8&isPro=0&pg=1&postedWithin=2&rpp=100": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "5d4b71ae4173.body",
+    "status": 200
+  },
+  "GET https://gateway.bdjobs.com/ActtivejobsTest/api/JobSubsystem/jobDetails?jobId=1544018&ln=1": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "f84874d6a6d3.body",
+    "status": 200
+  },
+  "GET https://gateway.bdjobs.com/ActtivejobsTest/api/JobSubsystem/jobDetails?jobId=1544029&ln=1": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "a4328e2458d9.body",
+    "status": 200
+  },
+  "GET https://gateway.bdjobs.com/ActtivejobsTest/api/JobSubsystem/jobDetails?jobId=1546635&ln=1": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "fa0c95993195.body",
+    "status": 200
+  },
+  "GET https://gateway.bdjobs.com/ActtivejobsTest/api/JobSubsystem/jobDetails?jobId=1546715&ln=1": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "9845c7e06e00.body",
+    "status": 200
+  }
+}

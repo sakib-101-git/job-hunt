@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:ns0="http://search.yahoo.com/mrss" version="2.0">
+  <channel>
+    <title>We Work Remotely: Remote jobs in design, programming, marketing and more</title>
+    <link>https://weworkremotely.com/categories/remote-programming-jobs.rss</link>
+    <description>We Work Remotely: Remote jobs in design, programming, marketing and more</description>
+    <language>en-US</language>
+    <ttl>60</ttl>
+    <item>
+      <ns0:content url="https://wwr-pro.s3.amazonaws.com/logos/0171/6508/logo.gif" type="image/png" />
+      <title>Humane World for Animals: Web Designer, eCRM</title>
+      <region>Anywhere in the World</region>
+      <category>Front-End Programming</category>
+      <description>&lt;img src="https://we-work-remotely.imgix.net/logos/0171/6508/logo.gif?ixlib=rails-4.0.0&amp;w=50&amp;h=50&amp;dpr=2&amp;fit=fill&amp;auto=compress" /&gt;
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; Humane World for Animals
+    &lt;br /&gt;&lt;strong&gt;URL:&lt;/strong&gt; &lt;a href="https://humaneworld.org"&gt;https://humaneworld.org&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;The general salary range for this full-time position is $80,000 – 115,000. Salary offers will be commensurate with experience, qualifications, skills, training and education.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&amp;nbsp;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Humane World for Animals, a global leader in animal advocacy and protection, is seeking a Web Developer, eCRM to support Digital Marketing and other departments by providing front-end, global web development solutions for fundraising, advocacy engagement, and other strategic priorities — incorporating AI-assisted and agentic development tools to accelerate delivery while maintaining rigorous human oversight, quality, and security standards.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Responsibilities:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Collaborates regularly with Digital Marketing, Brand and Visuals, and IS teams to discuss project requirements and makes technical recommendations. Writes efficient code and maintains custom donation forms, advocacy forms, other webpages, and email templates. Incorporates best practices for user experience, accessibility, page speed optimization, and GDPR compliance implementation. Adheres to global regulations and standards, regional data compliance, and security compliance;&lt;/li&gt;
+&lt;li&gt;Uses AI-assisted development tools and agentic coding assistants to accelerate coding, refactoring, debugging, testing, and documentation. Proactively identifies opportunities for AI-assisted and agent-built solutions and owns the ongoing maintenance, monitors their performance over time and updates or retires them as needed. Follows established guardrails and usage standards for AI tools and applies human-in-the-loop review to all AI-generated code and configurations, validating output for accuracy, security, accessibility, and brand/technical standards before deployment;&lt;/li&gt;
+&lt;li&gt;Follows quality assurance procedures and troubleshoots technical issues affecting donation forms, advocacy forms, webpages, and email templates in Engaging Networks. Works closely with vendor partners;&lt;/li&gt;
+&lt;li&gt;Works with the Information Security team to ensure that digital properties meet security standards, including managing script inventory, attestation, and other requirements for PCI compliance;&lt;/li&gt;
+&lt;li&gt;Collaborates with the testing team to gather testing requirements and implement new features to run A/B and multivariate tests on forms;&lt;/li&gt;
+&lt;li&gt;Creates and maintains clear and concise documentation of custom web development, support guides, and incident reports;&lt;/li&gt;
+&lt;li&gt;Performs other duties as assigned.&amp;nbsp;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Qualifications and Requirements:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Bachelor's degree in computer programming, web development, or related field, or equivalent work experience required;&amp;nbsp;&lt;/li&gt;
+&lt;li&gt;A minimum of four (4) years of experience in front-end web development and developing custom websites required;&lt;/li&gt;
+&lt;li&gt;Demonstrated experience with Engaging Networks or other eCRMs;&lt;/li&gt;
+&lt;li&gt;Proficient in HTML5, Sass and CSS, JavaScript, PHP, MySQL, GitHub, Engaging Networks modules, Webpack, Node, npm, core AWS services, and Mailgun. Familiar with Segment or other CDPs;&lt;/li&gt;
+&lt;li&gt;Direct experience with AI coding assistants and agentic development tools such as Microsoft Copilot Studio, Claude Code, and GitHub Copilot;&lt;/li&gt;
+&lt;li&gt;Knowledge of best practices for responsive, mobile-first web design, UX, accessibility, page speed optimization, browser support, and GDPR compliance;&lt;/li&gt;
+&lt;li&gt;Familiar with cookie consent tools, preferably Iubenda, for configuring compliance settings;&lt;/li&gt;
+&lt;li&gt;Experience building interactive data visualizations that translate campaigns into compelling stories for supporters to increase engagement;&lt;/li&gt;
+&lt;li&gt;Excellent attention to detail when coding projects based on Adobe XD files or Figma;&lt;/li&gt;
+&lt;li&gt;Understanding of digital marketing strategies for US and international audiences;&lt;/li&gt;
+&lt;li&gt;Stays on top of AI trends in web development, including personalization and workflow automation, and their responsible application to fundraising and advocacy technology;&lt;/li&gt;
+&lt;li&gt;Strong written and verbal communication skills;&lt;/li&gt;
+&lt;li&gt;Must be able to multi-task in a fast-paced, collaborative environment to deliver high quality work on deadline. Familiarity with Jira and Confluence a plus;&lt;/li&gt;
+&lt;li&gt;Data informed problem solver having experience with A/B testing platforms and Google Analytics;&lt;/li&gt;
+&lt;li&gt;Proactive and ability to work both independently and as an effective team member in a team environment;&lt;/li&gt;
+&lt;li&gt;Interest in animal protection issues preferred.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;This is a full-time remote position based in the United States.&amp;nbsp;Candidates must be able to accomodate Eastern Time hours, as needed.&amp;nbsp;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;Q&lt;em&gt;ualified applicants will receive consideration for employment without regard to race, color, religion, sex, age, national origin, sexual orientation, gender identity, and disability, marital or parental status or protected veteran status.&amp;nbsp; EOE&lt;/em&gt;&amp;nbsp;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/humane-world-for-animals-web-designer-ecrm-1"&gt;https://weworkremotely.com/remote-jobs/humane-world-for-animals-web-designer-ecrm-1&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Fri, 02 Oct 2026 17:39:45 +0000</pubDate>
+      <guid>https://weworkremotely.com/remote-jobs/humane-world-for-animals-web-designer-ecrm-1</guid>
+      <link>https://weworkremotely.com/remote-jobs/humane-world-for-animals-web-designer-ecrm-1</link>
+    </item>
+    <item>
+      <title>Doximity: Commercial Data Scientist</title>
+      <region>Anywhere in the World</region>
+      <category>Full-Stack Programming</category>
+      <description>
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; San Francisco, CA or Remote (U.S.)
+&lt;/p&gt;
+
+&lt;h3&gt;&lt;strong&gt;Commercial Data Scientist&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Doximity is the leading clinical AI company with the largest network of U.S. clinicians. Doximity’s AI-powered workflow platform is trusted by over 85% of U.S. physicians and 300+ health systems. Doximity's mission is to help clinicians be more productive so they can provide better care for their patients.&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;At Doximity, we value curiosity, ownership, inclusion, and a commitment to making a meaningful impact. If you're excited about solving complex problems that improve healthcare, we'd love to hear from you.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;em&gt;This role can be filled in the Northeast (New York, NJ, Philadelphia, Boston), our San Francisco headquarters, OR other remote locations in the U.S.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;As a Commercial Data Scientist&lt;/strong&gt;, you’ll work within cross-functional delivery teams alongside other analysts, engineers, and commercial stakeholders in discovering data insights to help improve healthcare.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;How you’ll make an impact:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Deliver novel and impactful insights for client organizations using machine learning and AI technologies.&lt;/li&gt;
+&lt;li&gt;Work closely with our Product, Platform Data, Insights &amp;amp; Strategy, and Sales teams to create client-facing analyses.&lt;/li&gt;
+&lt;li&gt;Showcase your engineering skills by creating data products from scratch and automating code so they can be re-used by other teammates and future projects.&lt;/li&gt;
+&lt;li&gt;Leverage Doximity's extensive datasets to identify and classify behavioral patterns of medical professionals on our platform.&lt;/li&gt;
+&lt;li&gt;Embrace the challenge of a fast-paced environment to exceed client expectations&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The Core Values of the Client Intelligence team&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;As an organization we value diversity - &lt;/strong&gt;in backgrounds and in experiences. Healthcare is a universal concern, and we need people from all backgrounds to help build a better future for all. Below are additional core values specific to the Insights Team.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Collaboration&lt;/strong&gt;—The best candidates and teammates are not only strong in their own aptitudes but care deeply about supporting each other's growth.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Passion for Data&lt;/strong&gt;—You’re going to help our clients and team members with data-driven decision making. We need someone that can manipulate millions of rows of data and also ask the right questions to find the important insights.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Reliability&lt;/strong&gt; – Our team is efficient, flexible, and agile only because we trust the reliability of each member. We need self-starters and goal-oriented individuals for our continued success.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Curiosity&lt;/strong&gt; – Continuous learning is a cornerstone at Doximity, and curious individuals thrive in our environment. We’re looking for someone who is curious enough about data to go above-and-beyond the task for the true insight.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Respect&lt;/strong&gt; – A key dynamic that allows our team to flourish is respect: for ourselves and our quality of work, for our teammates, and for our internal clients who are under the pressure of deadlines and finance goals.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;About you:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;At least &lt;strong&gt;4 years&lt;/strong&gt; of professional experience as a Data Scientist or other related roles working with complex, high-volume, structured and unstructured datasets.&lt;/li&gt;
+&lt;li&gt;Prior experience in a data science consulting role at firms such as ZS, Trinity, IQVIA, BlueMatter, etc., where you thrived in a fast-paced environment&lt;/li&gt;
+&lt;li&gt;Advanced knowledge of statistical concepts — particularly exploratory data analysis, experimental design, and probability theory.&lt;/li&gt;
+&lt;li&gt;Deep understanding of modern machine learning techniques&lt;/li&gt;
+&lt;li&gt;Proven ability to design, train, and evaluate large-scale production models using frameworks such as PyTorch or TensorFlow.&lt;/li&gt;
+&lt;li&gt;Advanced SQL proficiency — skilled at writing and optimizing complex queries across multiple tables and data relationships.&lt;/li&gt;
+&lt;li&gt;Advanced Python skills, including understanding of object-oriented programming, production-grade code design, and modern data science libraries.&lt;/li&gt;
+&lt;li&gt;Hands-on experience with distributed data processing tools and concepts for scalable analysis and model training.&lt;/li&gt;
+&lt;li&gt;Excellent data visualization and storytelling abilities, with the capacity to translate technical insights into clear, compelling narratives for internal and client stakeholders.&lt;/li&gt;
+&lt;li&gt;Curious, fast learner with a demonstrated passion for data, continuous learning, and staying current with advances in machine learning research.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Fun&lt;/strong&gt; &lt;strong&gt;Facts About the Client Intelligence team&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;We have access to one of the richest healthcare datasets in the world, with deep information on hundreds of thousands of clinicians and their connections.&lt;/li&gt;
+&lt;li&gt;Business decisions at Doximity are driven by our data, analyses, and insights.&lt;/li&gt;
+&lt;li&gt;The members of our team bring a diverse set of technical and cultural backgrounds.&lt;/li&gt;
+&lt;li&gt;We like to have fun - company outings, team lunches, and other social events!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Compensation&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The anticipated total compensation for this role is $119,333 - $172,800 depending on factors such as experience, skills, location, and internal equity.&lt;/p&gt;
+&lt;p&gt;Our total compensation package may include:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Base salary&lt;/li&gt;
+&lt;li&gt;Equity (where applicable)&lt;/li&gt;
+&lt;li&gt;Annual bonus or incentive compensation (where applicable)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Specific compensation details will be discussed during the interview process.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Benefits&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In addition to competitive compensation, Doximity offers a comprehensive benefits package for full time employees. Some of our offerings include:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Medical, dental, and vision insurance&lt;/li&gt;
+&lt;li&gt;401(k) with company match&lt;/li&gt;
+&lt;li&gt;Flexible paid time off and company holidays&lt;/li&gt;
+&lt;li&gt;Paid parental leave&lt;/li&gt;
+&lt;li&gt;Professional development and learning opportunities&lt;/li&gt;
+&lt;li&gt;Wellness and mental health resources&lt;/li&gt;
+&lt;li&gt;Remote work support and home office stipend (where applicable)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Why You'll Love Working Here&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;At Doximity, you'll join a mission-driven company where your work has a meaningful impact on healthcare. We believe great ideas come from empowered teams, and we're committed to creating an environment where people can do their best work.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Make a real impact.&lt;/strong&gt; Help build products that support over a million healthcare professionals and ultimately improve patient care.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Work with exceptional teammates.&lt;/strong&gt; Collaborate with thoughtful, talented colleagues who value curiosity, humility, and continuous learning.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Enjoy flexibility and trust.&lt;/strong&gt; We support flexible ways of working and empower employees with the autonomy to own their work.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Grow your career.&lt;/strong&gt; Take on meaningful challenges, develop new skills, and shape your career through mentorship and professional development.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Bring your authentic self.&lt;/strong&gt; We're committed to fostering an inclusive culture where diverse perspectives are welcomed, respected, and celebrated.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Our Hiring Process &amp;amp; AI Tools&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Doximity may use artificial intelligence (AI)-enabled tools throughout the hiring process to help improve the candidate experience and support our recruiting team. These tools may assist with administrative tasks such as scheduling, general communication, interview coordination, note-taking, or summarizing interview feedback. Human recruiters and hiring managers make all hiring decisions. We are committed to using AI responsibly, transparently, and in accordance with applicable laws.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Equal Employment Opportunity&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Doximity is proud to be an Equal Opportunity Employer. We are committed to creating an inclusive workplace where everyone can thrive. We consider all qualified applicants without regard to race, color, religion, creed, sex, gender identity or expression, sexual orientation, national origin, ancestry, age, disability, veteran status, genetic information, marital status, or any other characteristic protected by applicable federal, state, or local law.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;If you require a reasonable accommodation during the application or interview process, please let us know so we can support your participation.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/doximity-commercial-data-scientist"&gt;https://weworkremotely.com/remote-jobs/doximity-commercial-data-scientist&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Thu, 01 Oct 2026 07:30:56 +0000</pubDate>
+      <guid>https://weworkremotely.com/remote-jobs/doximity-commercial-data-scientist</guid>
+      <link>https://weworkremotely.com/remote-jobs/doximity-commercial-data-scientist</link>
+    </item>
+    </channel>
+</rss>

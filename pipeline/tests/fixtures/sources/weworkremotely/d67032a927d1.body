@@ -1,0 +1,230 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss version="2.0">
+  <channel>
+    <title>We Work Remotely: Product Jobs</title>
+    <link>https://weworkremotely.com/categories/remote-product-jobs.rss</link>
+    <description>We Work Remotely: Product Jobs</description>
+    <language>en-US</language>
+    <ttl>60</ttl>
+    <item>
+      <title>Legion: Principal Product Manager, Agentic AI</title>
+      <region>Anywhere in the World</region>
+      <country>🇺🇸 United States of America</country>
+      <state />
+      <skills />
+      <category>Product</category>
+      <type>Full-Time</type>
+      <description>
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; Remote, United States
+&lt;/p&gt;
+
+&lt;h1&gt;&lt;strong&gt;Principal Product Manager, Agentic AI&lt;/strong&gt;&lt;/h1&gt;
+&lt;h2&gt;REMOTE, United States&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;JOB OVERVIEW&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Legion is building AI agents that carry out workforce management work, not agents that describe it.&lt;/p&gt;
+&lt;p&gt;Much of what is presented as AI in workforce management today is a conversational layer over an existing scheduling screen. The more substantial problem — software that reasons over demand, labor regulation, and employee preferences, then acts, with a person in the loop wherever the stakes require one — remains unsolved across the category. Legion intends to solve it, and this role leads the product work to get there.&lt;/p&gt;
+&lt;p&gt;You will take an agent surface from operational research through specification, prototype, evaluation, and enterprise deployment, working hands-on throughout. You will work closely with Legion's AI Lab engineers and with our CEO, who is engaged in this work daily.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;RESPONSIBILITIES AND DUTIES&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Agent definition.&lt;/strong&gt; Determine what an agent is responsible for, which tools it may call, what it must escalate, what it must never do, and what a manager sees when it acts. These decisions affect employee pay and legal compliance. Much of this work is pre-launch, so you will shape the direction rather than inherit it.&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Problem selection.&lt;/strong&gt; The hardest judgment in agentic product work is identifying which workflows suit an agent and which do not. You will spend substantial time inside customer operations — district managers, store managers, labor operations, frontline employees — and return with a ranked, defensible view of where an agent creates measurable value and where it does not.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The human-in-the-loop contract.&lt;/strong&gt; Scheduling decisions affect income, childcare arrangements, and legal protections. For each agent action you will define where autonomy is appropriate, the escalation thresholds, how a manager overrides the system, what is logged, and how a compliance team audits the outcome. Legion treats this as a first-class design problem.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Build quality.&lt;/strong&gt; You are accountable for what ships, not for what was specified. That means staying engaged through implementation: reviewing the build against the specification as it comes together, using the product yourself before anyone else is asked to, joining bug triage and design review, catching drift from intent while it is still cheap to correct, and holding a release when the quality is not there. Our customers experience the build, not the document. A well-written specification that produced a product managers do not trust is failed product work, and we assess it that way.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Evaluation.&lt;/strong&gt; Build and maintain the evaluation sets that determine whether an agent is ready to ship and whether it is degrading in production — writing the cases, reviewing failure traces, setting the pass criteria. You will be the person who holds a release when the demonstration is persuasive and the evaluation is not.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Specifications.&lt;/strong&gt; Legion uses Functional Requirements Documents as its ground-truth specification layer; release notes, enablement material, and sales content are generated from maintained specifications rather than reconstructed from code or institutional memory. Write FRDs that meet that standard and keep them accurate after release. A specification is where the work begins, not where your responsibility ends.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Commercialization.&lt;/strong&gt; Partner with go-to-market on packaging, metering, pricing inputs, and field readiness. Agentic products raise difficult commercial questions — what unit to meter, what a customer is paying for when software performs work a person previously did — and you will be expected to hold a considered position on them.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Design-partner delivery.&lt;/strong&gt; Lead agent deployments with large enterprise design partners: scoping the pilot, establishing success criteria before it begins, joining failure reviews, and determining what becomes generally available and what remains bespoke.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TECHNICAL EXPECTATIONS&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Legion is looking for a product manager who builds, rather than one who directs others who build. In a typical week, this role involves:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Writing and iterating on prompts and system prompts directly, and explaining why a change improved a behavior&lt;/li&gt;
+&lt;li&gt;Standing up a working prototype of a proposed agent — tool definitions, structured outputs, retries, guardrails — before engineering is asked to build anything&lt;/li&gt;
+&lt;li&gt;Using agentic coding tools (Claude Code or equivalent) daily: prototyping, data analysis, specification work, and reading the codebase behind your specifications&lt;/li&gt;
+&lt;li&gt;Reviewing an execution trace and diagnosing whether a failure originates in a tool description, a retrieval gap, a context-window constraint, an under-specified output schema, or a genuine model limitation&lt;/li&gt;
+&lt;li&gt;Building and running evaluation sets, and interpreting the results without a data scientist to translate them&lt;/li&gt;
+&lt;li&gt;Holding an informed position on retrieval design, tool-use patterns, structured output, model routing, latency and cost trade-offs, and multi-tenant safety in enterprise SaaS&lt;/li&gt;
+&lt;li&gt;Opening pull requests against our codebase — a prototype, a prompt change, an evaluation fixture, a specification stub. Pushing code is permitted and actively encouraged for product managers who want to work that way. It is not a requirement of the role, and the same review standards apply to everyone.&lt;/li&gt;
+&lt;li&gt;Following model releases, agent frameworks, and protocol changes, and translating them into roadmap implications within days rather than quarters&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We recognize that this is a demanding technical bar for a product role. It reflects what the work actually requires.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;REQUIRED SKILLS AND QUALIFICATIONS&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;7+ years in product management (Senior) or 10+ years (Principal), including at least 2 years shipping LLM-backed features to external, paying users — not internal tools, proofs of concept, or hackathon projects&lt;/li&gt;
+&lt;li&gt;Demonstrated hands-on capability of the kind described above. Expect to show your work.&lt;/li&gt;
+&lt;li&gt;Substantial enterprise B2B SaaS experience: multi-tenant architecture, role-based access control, audit trails, single sign-on, data residency, security review, and enterprise procurement. You should be able to anticipate what a customer's security questionnaire will ask about an LLM feature.&lt;/li&gt;
+&lt;li&gt;A record of taking an ambiguous, operationally complex domain problem through to a shipped product with demonstrated adoption — not only launch&lt;/li&gt;
+&lt;li&gt;Evidence of staying with a product through implementation and owning its quality at release. We will ask about a release you delayed or stopped, what you found, and how you found it.&lt;/li&gt;
+&lt;li&gt;The judgment to recognize what current models cannot do reliably, and the willingness to say so when a room expects a different answer&lt;/li&gt;
+&lt;li&gt;Comfort working inside a codebase. An engineering background is not required, but you should be able to read the code behind what you are specifying, run it locally, and open a pull request.&lt;/li&gt;
+&lt;li&gt;Strong written communication. Legion runs on documents, and candidates are evaluated substantially on how they write.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;PREFERRED QUALIFICATIONS AND ATTRIBUTES&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Direct experience in workforce management, HCM, ERP, supply chain, or another operationally complex enterprise domain with compliance exposure&lt;/li&gt;
+&lt;li&gt;Familiarity with labor compliance regimes — predictive scheduling ordinances, meal and rest break rules, union work rules — or demonstrated ability to become fluent in a comparable regulatory domain quickly&lt;/li&gt;
+&lt;li&gt;Background in demand forecasting, optimization, or decision systems&lt;/li&gt;
+&lt;li&gt;Experience building platform or authoring surfaces that customers configure themselves&lt;/li&gt;
+&lt;li&gt;An engineering or technical degree, or prior experience as an engineer or data scientist&lt;/li&gt;
+&lt;li&gt;Experience with products sold into frontline-heavy industries: retail, hospitality, healthcare, or manufacturing&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;SCOPE OF ROLE, STATED PLAINLY&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;So that candidates can assess fit early:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;This is an individual contributor role. There is no team to inherit and no management responsibility at present.&lt;/li&gt;
+&lt;li&gt;The role is accountable for what ships, not for what is specified. Writing the specification is a portion of the work, not the whole of it.&lt;/li&gt;
+&lt;li&gt;This is not an AI strategy or vendor-evaluation role. The work is product definition, prototyping, specification, evaluation, and delivery.&lt;/li&gt;
+&lt;li&gt;The role requires forming an independent point of view from operational research. Direction will not be handed down in detail.&lt;/li&gt;
+&lt;li&gt;The environment carries genuine ambiguity. The category is being defined as we work in it, and model capabilities shift underneath the roadmap.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;SELECTION PROCESS&amp;nbsp;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Our process includes a practical exercise: a sanitized workforce management problem, for which candidates produce an agent design — scope, tools, failure modes, human-in-the-loop contract, and evaluation plan — together with a working prototype they built themselves, using any model provider they prefer. The exercise is then discussed with the people the candidate would work alongside. We weigh it heavily, and we compensate candidates for the time.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;COMPENSATION &amp;amp; BENEFITS&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Salary Range: $280,000-$300,000 +bonus (tied to business outcomes) +Stock Equity&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;At Legion, we offer competitive compensation and benefits packages to all employees. As a fully remote employer, pay for positions is determined using local, national, and industry-specific survey data.&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;Our posted salary range is done so in good faith based on national data and may be refined for a candidate's region/town/cost of living. We strive to make competitive offers that allow employees room for future growth. Salaries will be based on the applicant’s location, level of experience, education, and specialized knowledge and skills. Additionally, we consider the external market rate, the amount we have budgeted internally, and the internal equity for the same position within the company.&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;Benefits include, but are not limited to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$0 monthly premium and other flexible medical, dental, and vision plans effective on the first day of employment&lt;/li&gt;
+&lt;li&gt;401k plan&lt;/li&gt;
+&lt;li&gt;Discretionary Paid Time Off and Paid Holidays&lt;/li&gt;
+&lt;li&gt;Parental Leave&amp;nbsp;&lt;/li&gt;
+&lt;li&gt;Equity&amp;nbsp;&lt;/li&gt;
+&lt;li&gt;Monthly Wellness Reimbursement&lt;/li&gt;
+&lt;li&gt;Monthly Lunch on Legion&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;&lt;strong&gt;ABOUT LEGION&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Join Legion's mission to turn hourly jobs into good jobs. We're a remote, mission-driven team seeking exceptional talent to propel this vision. Embrace a culture that's collaborative, fast-paced, and entrepreneurial. With us, you'll grow your skills, work closely with experienced executives, and contribute significantly to our mission.&lt;/p&gt;
+&lt;p&gt;Legion Technologies delivers the industry’s most innovative workforce management platform. It enables businesses to maximize labor efficiency and employee engagement simultaneously. The award-winning, AI-driven Legion WFM platform is intelligent, automated, and employee-centric. It’s proven to deliver 13x ROI through schedule optimization, reduced attrition, increased productivity, and increased operational efficiency. Legion delivers cutting-edge technology in an easy-to-use platform and mobile app that employees love.&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;If you're ready to make an impact and grow your career, Legion is where you belong. Join us in making hourly work rewarding and fulfilling.&lt;/p&gt;
+&lt;h3&gt;&lt;strong&gt;BACKGROUND AND OPPORTUNITY&amp;nbsp;&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;There are almost 75 million hourly workers in the United States, representing more than half of the entire workforce. Historically, managing hourly employees has been difficult due to high attrition (average of 60%) and high replacement costs (average of $3,200 per employee in retail). The ongoing labor shortage and competition from the gig economy make it more difficult to attract and retain hourly employees. The top reasons hourly employees leave their jobs are a lack of schedule empowerment, poor communication with employers, and an inability to get paid early. Gen Z and the millennial workforce demand gig-like flexibility, modern technology, and compelling work options. Legion’s mission is to turn hourly jobs into good jobs, serving the hourly workers who make up the majority of the US workforce. We believe in empowering employees and helping employers be efficient and innovative by enabling intelligent automation powered by Legion’s Workforce Management platform to optimize labor efficiency and enhance the employee experience simultaneously. Legion WFM was built for the cloud with AI at the core and designed to handle the complexity of modern businesses and meet the needs of today’s hourly employees.&amp;nbsp; Our team is comprised of dedicated individuals from all backgrounds and experiences, globally distributed across all time zones.&lt;/p&gt;
+&lt;p&gt;For more information, visit&lt;a href="https://legion.co"&gt; https://legion.co&lt;/a&gt;&amp;nbsp;&lt;/p&gt;
+&lt;h3&gt;&lt;strong&gt;EQUAL EMPLOYMENT OPPORTUNITY&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Legion Technologies is proud to be an equal-opportunity employer and is committed to maintaining a diverse and inclusive work environment. All qualified applicants will be considered for employment without regard to race, color, religion, sex, age, disability, marital status, familial status, sexual orientation, pregnancy, genetic information, gender identity, gender expression, national origin, ancestry, citizenship status, veteran status, and any other legally protected status under federal, state, or local anti-discrimination laws.&lt;/p&gt;
+&lt;h3&gt;&lt;strong&gt;DISABILITY ACCOMMODATION&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;For individuals with disabilities who need additional assistance at any point in the application and interview process, please email [email]&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;We have noticed a rise in recruiting impersonations across the industry, where scammers attempt to access candidates' personal and financial information through fake interviews and offers. All Legion recruiting email communications will always come from the @&lt;a href="http://legion.co"&gt;legion.co&lt;/a&gt; domain. Any outreach claiming to be from Legion via other sources should be ignored. If you are uncertain whether you have been contacted by an official Legion employee, reach out to [email]&lt;/p&gt;&lt;div class="content-conclusion"&gt;&lt;p&gt;&lt;span&gt;&lt;em&gt;Legion is an equal opportunity employer. All applicants will be considered for employment without attention to race, religion, color, sex, sexual orientation, gender identity, age, national origin, veteran, disability status, or any other basis covered by appropriate law.&lt;/em&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;h2&gt;How We Determine What We Pay&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;As a global employer, Legion determines pay for positions using local, national, and industry-specific survey data. We evaluate external equity and the cost of labor/prevailing wage index in the relative marketplace for jobs directly comparable to jobs within our company. Our posted salary range is based on national data and may be refined for a candidate's region/town/cost of living. For new hires, we strive to make competitive offers allowing the new employee room for future growth. Salaries will be based on the applicant’s location, level of experience, education, and specialized knowledge and skills. Additionally, we consider the external market rate, the amount we have budgeted internally, and internal equity within the company for the same position. An employee/candidate with a stronger skill set will receive higher pay.&lt;/em&gt;&lt;/p&gt;
+&lt;h1&gt;Job Applicant Privacy Policy&lt;/h1&gt;
+&lt;p&gt;This Job Applicant Privacy Policy (“&lt;strong&gt;Policy&lt;/strong&gt;”) describes how Legion Technologies, Inc. (“&lt;strong&gt;Legion&lt;/strong&gt;”, “&lt;strong&gt;we&lt;/strong&gt;”, “&lt;strong&gt;us&lt;/strong&gt;” and “&lt;strong&gt;our&lt;/strong&gt;”) collects, uses, and discloses “personal information” as defined under California law from and about job applicants who are residents of California.&lt;/p&gt;
+&lt;p&gt;This Policy does not apply to our handling of data gathered about you in your role as a user of our consumer-facing services. When you interact with us as in that role, the&amp;nbsp;&lt;a href="https://legion.co/privacy-policy/"&gt;Legion Privacy Policy&lt;/a&gt;&amp;nbsp;applies.&lt;/p&gt;
+&lt;div class="section-anchor position-relative"&gt;&lt;/div&gt;
+&lt;ol class="ol-bold"&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Types of Personal Information We Handle&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;We collect, store, and use various types of personal information through the application and recruitment process. We collect such information either directly from you or (where applicable) from another person or entity, such as an employment agency or consultancy, background check provider, or other referral sources. This information includes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Identification and contact information, and related identifiers&lt;/strong&gt;&amp;nbsp;such as full name, date and place of birth, citizenship and permanent residence, home and business addresses, telephone numbers, email addresses, and such information about your beneficiaries or emergency contacts.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Professional or employment-related information,&lt;/strong&gt;&amp;nbsp;including:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Recruitment, employment, or engagement information&lt;/strong&gt;&amp;nbsp;such as application forms and information included in a resume, cover letter, or otherwise provided through any application or engagement process; and copies of identification documents, such as driver’s licenses, passports, and visas; and background screening results and references.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Career information&lt;/strong&gt;&amp;nbsp;such as job titles; work history; work dates and work locations; information about skills, qualifications, experience, publications, speaking engagements, and preferences; and professional memberships&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Education Information&lt;/strong&gt;&amp;nbsp;such as institutions attended, degrees, certifications, training courses, publications, and transcript information.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Legally protected classification information&lt;/strong&gt;&amp;nbsp;such as race, sex/gender, religious/ philosophical beliefs, gender identity/expression, sexual orientation, marital status, military service, nationality, ethnicity, request for family care leave, political opinions, and criminal history.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Other information&lt;/strong&gt;&amp;nbsp;such as any information you voluntarily choose to provide in connection with your job application.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li class="mt-3"&gt;
+&lt;p&gt;&lt;strong&gt;How We Use Personal Information&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;We collect, use, share, and store personal information from job applicants for our and our service providers’ business and operational purposes in the recruitment process such as: processing your application, tracking your application through the recruitment process, contacting references with your authorization, conducting background checks you authorize, and making hiring decisions. We will also use job applicant information for internal analysis purposes to understand the applicants who apply and to improve our recruitment process. We may sometimes need to use applicant information for legal purposes, such as in connection with any challenges made to our hiring decisions.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li class="mt-3"&gt;
+&lt;p&gt;&lt;strong&gt;With Whom We Share Personal Information&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;We will disclose job applicant personal information to the following types of entities or in the following circumstances (where applicable):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Internally&lt;/strong&gt;: to other Legion personnel involved in the recruiting and hiring process.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Vendors&lt;/strong&gt;: such as technology service providers, travel management providers, human resources suppliers, background check companies, and employment agencies or recruiters, where applicable.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Legal Compliance&lt;/strong&gt;: when required to do so by law, regulation, or court order or in response to a request for assistance by the police or other law enforcement agency.&lt;/li&gt;
+&lt;li&gt;L&lt;strong&gt;itigation Purposes&lt;/strong&gt;: to seek legal advice from our external lawyers or in connection with litigation with a third party.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Business Transaction Purposes&lt;/strong&gt;: in connection with the sale, purchase, or merger.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li class="mt-3"&gt;&lt;strong&gt;How to Contact Us About this Policy&lt;/strong&gt;&amp;nbsp;– If you have any questions about this Policy, please contact &lt;a href="mailto:[email]"&gt;[email]&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/legion-principal-product-manager-agentic-ai"&gt;https://weworkremotely.com/remote-jobs/legion-principal-product-manager-agentic-ai&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Sat, 17 Oct 2026 07:31:02 +0000</pubDate>
+      <expires_at>Mon, 16 Nov 2026 07:31:02 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/legion-principal-product-manager-agentic-ai</guid>
+      <link>https://weworkremotely.com/remote-jobs/legion-principal-product-manager-agentic-ai</link>
+    </item>
+    <item>
+      <title>Customer.io: Global Controller</title>
+      <region>Anywhere in the World</region>
+      <country />
+      <state />
+      <skills />
+      <category>Product</category>
+      <type>Full-Time</type>
+      <description>
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; Americas Remote
+&lt;/p&gt;
+
+&lt;h3&gt;About &lt;a href="http://Customer.io"&gt;Customer.io&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Over 9,000 companies — from scrappy startups to global brands — use our platform to send billions of emails, push notifications, in-app messages, and SMS every day. &lt;a href="http://Customer.io"&gt;Customer.io&lt;/a&gt; powers automated communication that people actually want to receive. We help teams send smarter, more relevant messages using real-time behavioral data.&lt;/p&gt;
+&lt;h3&gt;About the role&lt;/h3&gt;
+&lt;p&gt;Hi, my name is Diep N, VP, Finance at &lt;a href="http://customer.io/"&gt;Customer.io&lt;/a&gt;, and I'm looking for a Global Controller to take the close, the books, and our control environment and make them theirs.&lt;/p&gt;
+&lt;p&gt;We're a global, remote-first, private company built on subscription and usage-based revenue, and as we grow we need a controller who can lead the team already in place and sharpen the fundamentals. You'll lead a team of ~7, growing, across revenue accounting, close, AP/AR, payroll, and treasury, and partner closely with me and, given our CFO's broad remit, with stakeholders across Sales, Legal, IT, HR, and Engineering.&lt;/p&gt;
+&lt;h3&gt;What you'll do&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Lead monthly and quarterly close, GL, AP/AR, payroll, and account reconciliations, delivering accurate, timely US GAAP financials. Close currently runs ~10 business days; get us to 6-8 days within your first 12 months, with fewer post-close adjustments and aged reconciliations.&lt;/li&gt;
+&lt;li&gt;Own revenue accounting and serve as our technical accounting authority on subscription and usage-based revenue recognition (ASC 606), including the ARR-to-GAAP bridge: reconciling ARR, billings, deferred revenue, contract assets, and usage true-ups to reported revenue, and explaining the delta to leadership and the board in plain terms.&lt;/li&gt;
+&lt;li&gt;Author technical accounting position memos on contract modifications, SSP allocation, variable consideration, and capitalized contract costs, the work that makes "technical accounting authority" real.&lt;/li&gt;
+&lt;li&gt;Own equity compensation accounting (ASC 718): grant accuracy, 409A timing, expense, modifications, and cap-table integrity, in partnership with stock plan administration.&lt;/li&gt;
+&lt;li&gt;Manage and grow a team of ~7, with room to scale, building trust quickly and developing the leads beneath you.&lt;/li&gt;
+&lt;li&gt;Build a control framework suited to a global, remote-first, private company with subscription and usage-based revenue, keeping the books audit-ready.&lt;/li&gt;
+&lt;li&gt;Own our accounting systems roadmap and drive automation across close and reporting.&lt;/li&gt;
+&lt;li&gt;Own select treasury operations, including cash management and banking relationships, and partner on FX exposure monitoring given our multi-currency footprint.&lt;/li&gt;
+&lt;li&gt;Run our external audit relationship and coordinate with external tax partners on compliance, provisions, and filings.&lt;/li&gt;
+&lt;li&gt;Manage the realities of a distributed, remote-first global team: statutory accounting coordination, payroll and contractor controls, entity reporting, and working with Legal, HR, and Tax on international compliance.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What we're looking for&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;10+ years of progressive accounting experience, including leading a team through managers or leads.&lt;/li&gt;
+&lt;li&gt;A Big 4 (or equivalent top-tier public accounting) foundation.&lt;/li&gt;
+&lt;li&gt;Deep US GAAP mastery, particular strength in subscription and usage-based revenue recognition (ASC 606).&lt;/li&gt;
+&lt;li&gt;A concrete, personally-owned automation or AI deployment in accounting with a measurable result, eliminating a manual reconciliation, reducing close time, or lowering error rate, that you can speak to in detail.&lt;/li&gt;
+&lt;li&gt;Experience scaling an accounting function that was already running, not building one from zero.&lt;/li&gt;
+&lt;li&gt;A proven track record with external audits and keeping books audit-ready.&lt;/li&gt;
+&lt;li&gt;Strong leadership and communication skills, with credibility partnering with senior, cross-functional stakeholders.&lt;/li&gt;
+&lt;li&gt;Nice to have: internal controls or SOX-readiness experience; remote-first/globally distributed company experience; M&amp;amp;A or deal accounting exposure; CPA license, active or inactive.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Compensation &amp;amp; Benefits&lt;/h3&gt;
+&lt;p&gt;We believe in transparency. Starting salary for this role ranges from $250k to $280k USD (or equivalent in local currency), structured by geographic zone and depending on experience. In addition to base salary, this role includes an equity grant in the form of stock options, so you share in the success you help build.&lt;/p&gt;
+&lt;p&gt;Our inclusive benefits package supports your well-being and growth, including 100% coverage of medical, dental, vision, mental health, and supplemental insurance premiums for you and your family. We also offer 16 weeks paid parental leave, unlimited PTO, stipends for remote work and wellness, a professional development budget, and more.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://customer.io/careers#:~:text=our%20collective%20success.-,BENEFITS,-Our%C2%A0"&gt;See full benefits here →&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;Our Process&lt;/h3&gt;
+&lt;p&gt;No gotchas, no trick questions - just a clear, human process designed to help both of us make an informed decision.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;30-minute recruiter screen&lt;/li&gt;
+&lt;li&gt;45-minute hiring manager screen&lt;/li&gt;
+&lt;li&gt;Two 30-minute cross-functional chats: one with a Legal partner, one with a People partner&lt;/li&gt;
+&lt;li&gt;60-minute case review call&lt;/li&gt;
+&lt;li&gt;30-minute bar raiser call with our CFO&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;All final candidates will be asked to complete a background check and employment verifications as part of our pre-employment process.&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://Customer.io"&gt;Customer.io&lt;/a&gt; recognizes the stifling impact of systemic injustice on diverse communities. We commit to using our influence to increase inclusion and equity within the tech industry. We strive to build an inclusive team culture, implement bias-free hiring practices, and develop community partnerships to expand our global impact.&lt;/p&gt;
+&lt;p&gt;Zoom is the only video conference platform that we use, virtual interviews will be conducted using the video capability (i.e., not via the chat), and offers will be extended in writing on official &lt;a href="http://customer.io/"&gt;Customer.io&lt;/a&gt; letterhead. Please be vigilant in all of your job search activity, and if you have any questions please contact &lt;a href="mailto:[email]"&gt;[email]&lt;/a&gt;.&lt;/p&gt;
+&lt;h3&gt;Join us!&lt;/h3&gt;
+&lt;p&gt;Check out our &lt;a href="https://customer.io/careers/"&gt;careers page&lt;/a&gt; for more information about why you should &lt;a href="https://customer.io/about/"&gt;come work with us!&lt;/a&gt; We believe in empathy, transparency, responsibility, and, yes, a little awkwardness. If you're excited by what you read — apply now.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/customer-io-global-controller"&gt;https://weworkremotely.com/remote-jobs/customer-io-global-controller&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Sat, 17 Oct 2026 07:30:55 +0000</pubDate>
+      <expires_at>Mon, 16 Nov 2026 07:30:55 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/customer-io-global-controller</guid>
+      <link>https://weworkremotely.com/remote-jobs/customer-io-global-controller</link>
+    </item>
+    </channel>
+</rss>

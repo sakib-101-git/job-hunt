@@ -1,0 +1,7 @@
+{
+  "GET https://www.workingnomads.com/api/exposed_jobs/": {
+    "content_type": "application/json",
+    "file": "963f3596923e.body",
+    "status": 200
+  }
+}
