@@ -146,8 +146,9 @@ def outcome_statements(
     """Store `outcome` on the job: status, reason, evidence, gates_json, domains."""
     statements = [
         Statement(
+            # A re-gated job is scored against every user again (scored_at).
             "UPDATE jobs SET status = ?, filter_reason = ?, remote_eligibility_evidence = ?,"
-            " gates_json = ? WHERE id = ?",
+            " gates_json = ?, scored_at = NULL WHERE id = ?",
             (
                 outcome.status,
                 outcome.filter_reason,

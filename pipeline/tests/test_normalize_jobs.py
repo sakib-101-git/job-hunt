@@ -1,12 +1,12 @@
 import json
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Sequence
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import pytest
 
 from jobhunt.config import Config
-from jobhunt.db import SqliteBackend, apply_migrations
+from jobhunt.db import Result, SqliteBackend, Statement, apply_migrations
 from jobhunt.jobs.store import store_jobs
 from jobhunt.normalize.jobs import JobNormalizer
 from jobhunt.normalize.text import clean_text, html_to_text, truncate
@@ -191,3 +191,40 @@ async def test_rerun_in_the_same_second_is_not_new(
     record = normalizer.record(_listing())
     assert [j.is_new for j in await store_jobs(db, [record], NOW, batch_size=10)] == [True]
     assert [j.is_new for j in await store_jobs(db, [record], NOW, batch_size=10)] == [False]
+
+
+class CountingDb(SqliteBackend):
+    """Counts the statements that write to jobs."""
+
+    def __init__(self) -> None:
+        super().__init__(":memory:")
+        self.writes = 0
+
+    async def batch(self, statements: Sequence[Statement]) -> list[Result]:
+        self.writes += sum(1 for s in statements if s.sql.lstrip().startswith("INSERT"))
+        return await super().batch(statements)
+
+
+@pytest.mark.anyio
+async def test_unchanged_listings_are_not_rewritten(
+    repo_root: Path, normalizer: JobNormalizer
+) -> None:
+    db = CountingDb()
+    await apply_migrations(db, repo_root / "migrations")
+    record = normalizer.record(_listing())
+    await store_jobs(db, [record], NOW, 10, refresh_hours=24)
+    first = db.writes
+    # Polled again an hour later, unchanged: nothing is written.
+    again = await store_jobs(db, [record], NOW + timedelta(hours=1), 10, refresh_hours=24)
+    assert db.writes == first
+    assert again[0].is_new is False
+    row = (await db.query("SELECT last_seen_at FROM jobs"))[0]
+    assert row["last_seen_at"] == "2026-10-18T09:00:00Z"
+    # A day later the sighting is refreshed; a change is written at once.
+    await store_jobs(db, [record], NOW + timedelta(hours=25), 10, refresh_hours=24)
+    assert db.writes == first + 1
+    changed = normalizer.record(_listing(title="Senior Python Developer"))
+    await store_jobs(db, [changed], NOW + timedelta(hours=26), 10, refresh_hours=24)
+    assert db.writes == first + 2
+    assert (await db.query("SELECT title FROM jobs"))[0]["title"] == "Senior Python Developer"
+    await db.aclose()

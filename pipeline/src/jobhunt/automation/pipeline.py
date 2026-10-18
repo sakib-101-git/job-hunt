@@ -37,6 +37,8 @@ log = logging.getLogger(__name__)
 TOKEN_ENV = "TELEGRAM_BOT_TOKEN"  # noqa: S105 (a variable name)
 ADMINS_ENV = "ADMIN_TELEGRAM_IDS"
 _NOT_TRIED = {"skipped", "not_configured"}  # not due, or its secrets aren't set
+SECRET_SUFFIXES = ("_TOKEN", "_KEY", "_PASSWORD", "_SECRET")
+MIN_SECRET_LENGTH = 8
 
 
 @dataclass
@@ -135,7 +137,9 @@ class Pipeline:
         normalizer = JobNormalizer(config)
         listings = sources.listings
         batch = config.app.normalization.store_batch_size
-        stored = await store_jobs(self.db, [normalizer.record(x) for x in listings], now, batch)
+        refresh = config.app.normalization.last_seen_refresh_hours
+        records = [normalizer.record(x) for x in listings]
+        stored = await store_jobs(self.db, records, now, batch, refresh)
         bootstrap = {run.source for run in sources.runs if run.bootstrap}
         items = [
             GateItem(job.id, listing, now, listing.source in bootstrap)
@@ -199,10 +203,18 @@ class Pipeline:
             report = StageReport(name, error=str(exc))
         except Exception as exc:  # one stage failing must not stop the others
             log.exception("stage %s failed", name)
-            report = StageReport(name, error=f"{type(exc).__name__}: {exc}"[:500])
+            report = StageReport(name, error=self._scrub(f"{type(exc).__name__}: {exc}")[:500])
         report.seconds = time.monotonic() - started
         summary.stages.append(report)
         return report
+
+    def _scrub(self, text: str) -> str:
+        """Error text goes to the public run summary: blank out any secret
+        (an API URL with the bot token in it, say)."""
+        for name, value in self._environ.items():
+            if len(value) >= MIN_SECRET_LENGTH and name.endswith(SECRET_SUFFIXES):
+                text = text.replace(value, "***")
+        return text
 
     async def cycle(self, trigger: str) -> RunSummary:
         """One full pipeline run."""

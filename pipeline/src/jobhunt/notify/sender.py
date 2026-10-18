@@ -33,9 +33,7 @@ _PENDING = """
 SELECT n.id AS notification_id, n.attempts, n.match_id, n.job_id, n.created_at,
        u.id AS user_id, u.chat_id, p.delivery_mode, p.quiet_hours_json, p.max_per_cycle,
        m.breakdown_json, m.explanation_json, m.gate_results_json, m.scorer_version,
-       j.first_seen_at,
-       (SELECT MAX(s.sent_at) FROM notifications s
-        WHERE s.user_id = n.user_id AND s.status = 'sent') AS last_sent_at
+       j.first_seen_at, u.last_sent_at
 FROM notifications n
 JOIN users u ON u.id = n.user_id
 JOIN user_prefs p ON p.user_id = n.user_id
@@ -260,8 +258,19 @@ async def _finish(
     error: str | None = None,
 ) -> None:
     attempts = int(str(row["attempts"])) + (1 if status in {"sent", "failed"} else 0)
+    stamp = timestamp(now) if status == "sent" else None
+    user_sent = (
+        [
+            Statement(
+                "UPDATE users SET last_sent_at = ? WHERE id = ?", (stamp, int(str(row["user_id"])))
+            )
+        ]
+        if stamp
+        else []
+    )
     await db.batch(
         [
+            *user_sent,
             Statement(
                 "UPDATE notifications SET status = ?, telegram_message_id = ?, attempts = ?,"
                 " last_error = ?, sent_at = ?, lease_id = NULL, lease_until = NULL WHERE id = ?",
@@ -270,10 +279,10 @@ async def _finish(
                     message_id,
                     attempts,
                     error,
-                    timestamp(now) if status == "sent" else None,
+                    stamp,
                     int(str(row["notification_id"])),
                 ),
-            )
+            ),
         ]
     )
 

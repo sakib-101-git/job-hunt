@@ -1,0 +1,5 @@
+# Lines check_hardcoding.py accepts: "path: text the line contains", one per line,
+# each with a comment saying why.
+
+# A docstring example of how numbers are shortened, not a tunable.
+pipeline/src/jobhunt/score/render.py: """2.50 -> 2.5, 3.00 -> 3

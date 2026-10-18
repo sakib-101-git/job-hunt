@@ -217,6 +217,41 @@ async def test_client_errors(
         await client.complete_json(config.llm.chain[0], "s", "u", "n", {})
 
 
+@pytest.mark.parametrize(
+    ("body", "detail"),
+    [
+        (
+            {
+                "error": {
+                    "message": "Failed to validate JSON",
+                    "code": "json_validate_failed",
+                    "failed_generation": '{"summary": "Jane Doe, Dhaka"}',
+                }
+            },
+            "json_validate_failed",
+        ),
+        ([{"error": {"code": 400, "status": "INVALID_ARGUMENT", "message": "bad"}}], "no error"),
+        ({"error": [{"status": "INVALID_ARGUMENT"}]}, "INVALID_ARGUMENT"),
+        ("plain text body", "no error details"),
+    ],
+)
+async def test_client_errors_never_quote_the_answer(
+    config: Config, body: object, detail: str
+) -> None:
+    response = (
+        httpx.Response(400, json=body)
+        if not isinstance(body, str)
+        else httpx.Response(400, text=body)
+    )
+    with pytest.raises(LlmError) as raised:
+        await _client(config, FakeLlm(response)).complete_json(
+            config.llm.chain[0], "s", "u", "n", {}
+        )
+    assert detail in str(raised.value)
+    assert "Jane" not in str(raised.value)
+    assert "Failed to validate" not in str(raised.value)
+
+
 async def test_client_network_error(config: Config) -> None:
     def boom(_: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("down")

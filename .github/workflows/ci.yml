@@ -68,6 +68,7 @@ jobs:
         with:
           fetch-depth: 0
       - run: python3 scripts/repo_guard.py tracked-files
+      - run: python3 scripts/check_hardcoding.py
       - uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
