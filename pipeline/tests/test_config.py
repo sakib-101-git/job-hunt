@@ -123,6 +123,38 @@ def test_default_config_dir_outside_checkout(
             "  executive: [officer]\n  officer: [exec]",
             "duplicate equivalent words",
         ),
+        (
+            "sources.yaml",
+            "    disabled_reason: US-centric; worldwide-remote roles are rare. Brief §6.1.\n",
+            "",
+            "needs a disabled_reason",
+        ),
+        (
+            "sources.yaml",
+            "    kind: remoteok\n    enabled: true\n",
+            "    kind: remoteok\n    enabled: true\n    disabled_reason: x\n",
+            "must not have a disabled_reason",
+        ),
+        (
+            "sources.yaml",
+            "    kind: disabled\n    enabled: false\n    disabled_reason: US-centric",
+            "    kind: disabled\n    enabled: true\n    disabled_reason: US-centric",
+            "an enabled source must not have",
+        ),
+        (
+            "sources.yaml",
+            "    url: https://remoteok.com/api",
+            "    url: http://remoteok.com/api",
+            "url",
+        ),
+        ("sources.yaml", "    kind: remoteok", "    kind: monster", "kind"),
+        (
+            "sources.yaml",
+            "    kind: disabled\n    enabled: false\n"
+            "    disabled_reason: US-centric; worldwide-remote roles are rare. Brief §6.1.\n",
+            "    kind: disabled\n    enabled: true\n",
+            "cannot be enabled",
+        ),
     ],
 )
 def test_broken_config_is_rejected(

@@ -1,0 +1,7 @@
+{
+  "GET https://remoteok.com/api": {
+    "content_type": "application/json",
+    "file": "9a00f632c09b.body",
+    "status": 200
+  }
+}

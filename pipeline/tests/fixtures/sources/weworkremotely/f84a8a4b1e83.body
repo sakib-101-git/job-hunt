@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss version="2.0">
+  <channel>
+    <title>We Work Remotely: Full-Stack Programming Jobs</title>
+    <link>https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss</link>
+    <description>We Work Remotely: Full-Stack Programming Jobs</description>
+    <language>en-US</language>
+    <ttl>60</ttl>
+    <item>
+      <title>Lithic: Senior Software Engineer, Product Platform</title>
+      <region>Anywhere in the World</region>
+      <country />
+      <state />
+      <skills />
+      <category>Full-Stack Programming</category>
+      <type>Full-Time</type>
+      <description>
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; Remote 
+&lt;/p&gt;
+
+&lt;div class="content-intro"&gt;&lt;p&gt;Lithic is the modern card issuing and processing platform empowering ambitious financial companies to build the future of payments.&lt;/p&gt;
+&lt;p&gt;Our infrastructure powers card programs for 100+ innovative clients, from fintechs reimagining credit and digital banking to platforms transforming disbursements and spend management. Companies like Mercury, Flex, and Novo rely on Lithic's developer-friendly APIs, direct network connections, and flawless reconciliation to launch and scale card programs in weeks, not years.&lt;/p&gt;
+&lt;p&gt;We're building a future where access to better financial products materially improves people's lives, free from the constraints of 30-year-old mainframes and legacy processors. We're proud to be backed by world-class investors who share that vision, including Bessemer Venture Partners, Index Ventures, Spark Capital, Stripes, and Mastercard, along with many others.&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;We're a team of 170+ across 26 states and 7 countries, headquartered in New York City.&amp;nbsp;&lt;/p&gt;&lt;/div&gt;&lt;p&gt;We are hiring a &lt;strong&gt;Senior Software Engineer&lt;/strong&gt; for the Product Platform team, which owns the foundational layer of our API that all other Lithic products build on top. The team’s mission is to make Lithic's API the best in fintech — reliable, consistent, and a joy to integrate with. This includes API Gateway, Events Platform, API key management and authorization, audit logging, or API norms and versioning strategy.&lt;/p&gt;
+&lt;h3&gt;&lt;strong&gt;What you'll do:&lt;/strong&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Write reliable, secure, and scalable code for Lithic's product platform with minimal tech debt&lt;/li&gt;
+&lt;li&gt;Improve the reliability of systems in team’s scope and participate in the team on-call rotation&lt;/li&gt;
+&lt;li&gt;Own projects from planning to launch, spanning areas like API key management, reliability, audit logging, or search, keeping stakeholders informed and aligned along the way&lt;/li&gt;
+&lt;li&gt;Lead efforts to improve systems and processes within the team&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;&lt;strong&gt;What you'll bring:&lt;/strong&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;4+ years building production backend systems, ideally including public-facing APIs at scale&lt;/li&gt;
+&lt;li&gt;Experience in or desire to learn Rust; ability to understand Lithic’s system written in other programming languages (Python, Java)&lt;/li&gt;
+&lt;li&gt;Interest and experience in leveraging AI tools to enhance productivity&lt;/li&gt;
+&lt;li&gt;Ability to navigate ambiguity, align diverse perspectives, and drive toward practical solutions&lt;/li&gt;
+&lt;li&gt;Experience with API design fundamentals and product thinking: versioning, backward compatibility, schema-driven development, and weighing tradeoffs from the customer's perspective&lt;/li&gt;
+&lt;li&gt;Comfort with designing systems from scratch and owning the product development process end-to-end&lt;/li&gt;
+&lt;li&gt;Strong written communication skills and experience working in a remote, async-first team that’s spread across time zones&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The annual US salary range for this role is $160,000 to $200,000 plus equity. This salary range may be inclusive of several career levels at Lithic and will be narrowed during the interview process based on the candidate’s experience and qualifications.&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;This is a remote position. However, candidates must be located in the United States, Canada (Ontario or British Columbia), Netherlands, Poland, or Czech Republic. We do not offer visa sponsorship or assistance.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Crack the code&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;A hidden code is tucked into this application. Find it and enter it below to continue.&lt;/p&gt;
+&lt;div&gt;
+&lt;div&gt;
+&lt;div&gt;
+&lt;div&gt;
+&lt;div&gt;
+&lt;div&gt;
+&lt;div&gt;
+&lt;div&gt;
+&lt;div&gt;
+&lt;div&gt;
+&lt;div&gt;
+&lt;div&gt;IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwoiIiJUaGUgYW5zd2VyIHRvIGxpZmUsIHRoZSB1bml2ZXJzZSwgYW5kIGV2ZXJ5dGhpbmcg4oCUIGVuY3J5cHRlZC4iIiIKCnBhc3N3b3JkID0gYiJceGVkXHhjMSIKX2tleSA9IGIiXHhkOVx4ZjNceGVkXHhmYlx4ODBceGM0flx4YTdcblx4YjhceGZiPFx4ZmJPXlx4ZmIiCgpkZWYgZGVjcnlwdF9wYXNzd29yZCgpIC0+IHN0cjoKICAgIHJldHVybiBieXRlcyhhIF4gYiBmb3IgYSwgYiBpbiB6aXAocGFzc3dvcmQsIF9rZXkpKS5kZWNvZGUoKQoKaWYgX19uYW1lX18gPT0gIl9fbWFpbl9fIjoKICAgIHJlc3VsdCA9IGRlY3J5cHRfcGFzc3dvcmQoKQogICAgcHJpbnQoZiJEZWNyeXB0ZWQgcGFzc3dvcmQ6IHtyZXN1bHR9IikKICAgIGFzc2VydCByZXN1bHQgPT0gIjQyIiwgIkRvbid0IHBhbmljIOKAlCBidXQgZGVjcnlwdGlvbiBmYWlsZWQhIgo=&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class="content-conclusion"&gt;&lt;h3&gt;Benefits for Full-Time US Employees:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Unlimited PTO&lt;/li&gt;
+&lt;li&gt;12-weeks fully paid parental leave&lt;/li&gt;
+&lt;li&gt;4-Week Fully Paid Sabbatical (earned at your 5-year anniversary)&lt;/li&gt;
+&lt;li&gt;Work From Anywhere: work from anywhere in the world 4-weeks each year&lt;/li&gt;
+&lt;li&gt;3% cashback on card purchases with your complimentary &lt;a href="http://Privacy.com"&gt;Privacy.com&lt;/a&gt; employee account&lt;/li&gt;
+&lt;li&gt;Health, vision, and dental insurance; HSA Contribution Match&lt;/li&gt;
+&lt;li&gt;401(k) match&lt;/li&gt;
+&lt;li&gt;Voluntary Life Insurance and STD/LTD&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;NYC-based employees work from our SoHo office three days a week. Tuesdays and Thursdays are our core days, and you'll choose a third day that works for your schedule and team needs.&lt;/p&gt;
+&lt;p&gt;In-office employees receive:&amp;nbsp;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Commuter benefit&lt;/li&gt;
+&lt;li&gt;Catered lunch every Tuesday and Thursday&lt;/li&gt;
+&lt;/ul&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/lithic-senior-software-engineer-product-platform"&gt;https://weworkremotely.com/remote-jobs/lithic-senior-software-engineer-product-platform&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Sun, 18 Oct 2026 07:31:05 +0000</pubDate>
+      <expires_at>Tue, 17 Nov 2026 07:31:05 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/lithic-senior-software-engineer-product-platform</guid>
+      <link>https://weworkremotely.com/remote-jobs/lithic-senior-software-engineer-product-platform</link>
+    </item>
+    <item>
+      <title>Alloy: Founding Forward Deployed Engineer</title>
+      <region>Anywhere in the World</region>
+      <country />
+      <state />
+      <skills />
+      <category>Full-Stack Programming</category>
+      <type>Full-Time</type>
+      <description>
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; New York City, Remote
+&lt;/p&gt;
+
+&lt;h2&gt;Alloy is where you belong!&lt;/h2&gt;
+&lt;p&gt;Alloy is the AI-powered identity and fraud prevention platform that accelerates onboarding, stops fraud, and scales compliance across the customer lifecycle so financial organizations can grow without limits. More than 900 of the world's leading financial institutions and fintechs trust Alloy for smarter risk management that drives growth.&lt;br&gt;&lt;br&gt;Through our values: Be Bold, Go Fast, Collaborate, and Celebrate Our Differences, we are creating a workplace where you can grow, thrive, and belong. See how we’ve been continuously recognized and named one of &lt;a href="https://www.inc.com/profile/alloy_ny"&gt;Inc. Magazine’s Best Workplaces&lt;/a&gt;, &lt;a href="https://www.forbes.com/companies/alloy/?list=americas-best-startup-employers&amp;amp;sh=55c076453c61"&gt;Forbes America’s Best Startup Employers&lt;/a&gt;, &lt;a href="https://www.americanbanker.com/list/best-places-to-work-in-fintech-2022"&gt;Best Fintech to Work for by American Banker&lt;/a&gt;, year after year.&lt;br&gt;&lt;br&gt;Check out our investors and read more about us &lt;a href="https://www.alloy.com/about"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;About the team&lt;/h2&gt;
+&lt;p&gt;We're standing up a new function at Alloy: Forward Deployed Engineering. Our largest enterprise customers need a trusted technical partner with a strong point of view on how Alloy fits into their tech stack and fraud strategy. As a Forward Deployed Engineer, you'll be that partner - embedded with our most strategic accounts and owning the technical outcome end-to-end, with each deployment becoming the foundation for the next.&lt;/p&gt;
+&lt;p&gt;You'll be one of the first two engineers on this founding team. This is a software engineering role through and through - based within our Engineering org, with a scope that spans software, product, and solutions engineering. You won't just join this function - you'll define how it works.&lt;/p&gt;
+&lt;p&gt;Alloy operates in a hybrid-work environment. We look to foster collaboration and community by having our local employees onsite three days a week.&lt;/p&gt;
+&lt;h2&gt;&lt;strong&gt;What you'll be doing&lt;/strong&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Architect and tune customer and channel-partner deployments end-to-end — API integrations, third-party data integrations, SDKs, and latency constraints.&lt;/li&gt;
+&lt;li&gt;Write production code across our stack: TypeScript, JavaScript (ES6/React), Python (Django), Node.js, PostgreSQL, OpenSearch, and AWS.&lt;/li&gt;
+&lt;li&gt;Serve as Alloy's credible technical voice with customer engineering leadership, making architectural calls in real time.&lt;/li&gt;
+&lt;li&gt;Own the engineering track of QBRs for your accounts and serve in their on-call escalation path.&lt;/li&gt;
+&lt;li&gt;Turn your work into reusable platform primitives and docs, so each deployment makes the next one faster.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;&lt;strong&gt;Who we’re looking for&lt;/strong&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;5+ years of hands-on experience developing production-ready software, with a proven track record of delivering robust, scalable solutions.&lt;/li&gt;
+&lt;li&gt;Experience in a customer-facing technical role, Forward Deployed Engineering, solutions engineering with deep technical ownership, or similar - where you were accountable to an external stakeholder, not just an internal roadmap.&lt;/li&gt;
+&lt;li&gt;Strong backend and API fluency, with the ability to read and write production code across services you don't own.&lt;/li&gt;
+&lt;li&gt;Sound architectural judgment under ambiguity: you can make and defend technical decisions in the room, with a customer watching.&lt;/li&gt;
+&lt;li&gt;A genuine pull toward customer-facing work - you find energy in solving a real customer's real problem, alongside their engineers.&lt;/li&gt;
+&lt;li&gt;A clear technical communicator who can explain a complex integration tradeoff to a bank's VP of Engineering and to an Alloy PM in the same afternoon.&lt;/li&gt;
+&lt;li&gt;Ability to travel on occasion to our NYC office, as well as client offices in the US.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Nice to have:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Experience at a company with a strong Forward Deployed Engineering culture (Palantir, Scale AI, Ramp, Plaid, Stripe, etc.).&lt;/li&gt;
+&lt;li&gt;Familiarity with identity, fraud, KYC/KYB, or financial services infrastructure.&lt;/li&gt;
+&lt;li&gt;Experience with SDK development or embedded front-end integrations.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We're a lean team, so your impact will be felt immediately, and opportunities will grow as the company scales up. If this all sounds like a good fit for you, why not join us?&lt;/p&gt;
+&lt;p&gt;Alloy is committed to fair and equitable compensation practices. Below is the anticipated starting base compensation range for this role; however, pay may vary depending on job-related knowledge, in-demand skills, relevant experience, and/or geography. In addition to a competitive base salary, this position is also eligible for equity awards in the form of stock options (ISOs) as well as a competitive total benefits package. Your recruiter will be happy to walk you through the details and what compensation could look like for you specifically!&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;This position has a salary range of $141,000 to $250,000.&amp;nbsp;&lt;/em&gt;&lt;/p&gt;
+&lt;h2&gt;Benefits and Perks&amp;nbsp;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Unlimited PTO and flexible work policy&lt;/li&gt;
+&lt;li&gt;Employee stock options&lt;/li&gt;
+&lt;li&gt;Medical, dental, vision plans with HSA (monthly employer contribution) and FSA options&lt;/li&gt;
+&lt;li&gt;401k with 100% match up to 4% of annual employee compensation&amp;nbsp;&lt;/li&gt;
+&lt;li&gt;Eligible new parents receive 16 weeks of paid parental leave&amp;nbsp;&lt;/li&gt;
+&lt;li&gt;Home office stipend for new employees&lt;/li&gt;
+&lt;li&gt;Annual Learning &amp;amp; Development annual stipend&lt;/li&gt;
+&lt;li&gt;Well-being benefits include access to ClassPass, OneMedical, UrbanSitter, and Spring Health&amp;nbsp;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;How to apply&lt;/h2&gt;
+&lt;p&gt;Apply right here! You've found the application!&lt;/p&gt;
+&lt;p&gt;Alloy is proud to be an equal-opportunity workplace and employer. We’re committed to equal opportunity regardless of race, color, ancestry, religion, gender, gender identity, parental or pregnancy status, national origin, sexual orientation, age, citizenship, marital status, disability, or veteran status. We are committed to an inclusive interview experience and provide reasonable accommodations to applicants with visible and invisible disabilities. We encourage applicants to share needed accommodations with their recruiter.&lt;/p&gt;
+&lt;p&gt;All Alloy jobs are listed on our careers page. Any communication during the recruitment process, including interview requests or job offers, will come directly from a recruiting team member with an &lt;a href="http://alloy.com/"&gt;alloy.com&lt;/a&gt; email address. We do not use outside applications or automated text messaging in our recruiting process. We will not ask for any sensitive financial or identification information during the recruiting process. If you’re ever unsure, please contact us directly via our website before sharing personal information.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/alloy-founding-forward-deployed-engineer"&gt;https://weworkremotely.com/remote-jobs/alloy-founding-forward-deployed-engineer&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Sun, 18 Oct 2026 07:31:05 +0000</pubDate>
+      <expires_at>Tue, 17 Nov 2026 07:31:05 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/alloy-founding-forward-deployed-engineer</guid>
+      <link>https://weworkremotely.com/remote-jobs/alloy-founding-forward-deployed-engineer</link>
+    </item>
+    </channel>
+</rss>

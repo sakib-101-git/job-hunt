@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss version="2.0">
+  <channel>
+    <title>We Work Remotely: DevOps and Sysadmin Jobs</title>
+    <link>https://weworkremotely.com/categories/remote-devops-sysadmin-jobs.rss</link>
+    <description>We Work Remotely: DevOps and Sysadmin Jobs</description>
+    <language>en-US</language>
+    <ttl>60</ttl>
+    <item>
+      <title>PlanetScale: Enterprise Support Engineer</title>
+      <region>Anywhere in the World</region>
+      <country />
+      <state />
+      <skills />
+      <category>DevOps and Sysadmin</category>
+      <type>Full-Time</type>
+      <description>
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; Remote - NA, APAC, EMEA
+&lt;/p&gt;
+
+&lt;p&gt;PlanetScale is growing rapidly and reinventing the database space. The PlanetScale platform offers both Postgres and Vitess clusters. Vitess, an open-source database clustering system for horizontal scaling of MySQL, enables businesses to efficiently handle large-scale data workloads — without sacrificing developer experience.&lt;/p&gt;
+&lt;p&gt;Our customers entrust us with what is often their most precious digital asset, their data, so the stakes couldn't be higher. We're looking for a Software Engineer to join our core engineering team and help us build the next generation of database infrastructure.&lt;/p&gt;
+&lt;h3&gt;What's the job to be done?&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;You will advise and handle support requests from enterprise customers on the PlanetScale platform.&lt;/li&gt;
+&lt;li&gt;You will become a customer-facing subject-matter expert for enterprise customers on the PlanetScale platform.&lt;/li&gt;
+&lt;li&gt;You will identify product gaps in a customer-specific context and work with Technical Account Management, Engineering and Sales Engineering teams to prioritize and escalate them.&lt;/li&gt;
+&lt;li&gt;You will be part of an on call rotation for high priority issues.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;These attributes best describe you…&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;You are comfortable in front of customers, empathetic but understanding when to push back to help customers become successful on their own.&lt;/li&gt;
+&lt;li&gt;You have excellent debugging and troubleshooting skills; with a mix of enough experience and intuition to zero in on root-causes for bugs that can leave others stumped.&lt;/li&gt;
+&lt;li&gt;You are comfortable stepping outside your comfort zone. Be it delving into unfamiliar code in Vitess, one of its dependencies, or a random MySQL connector, written in a language you may not know (yet!). Working with code as your main source of documentation doesn't fluster you, and you are happy to help add/correct it as necessary where it may be inaccurate.&lt;/li&gt;
+&lt;li&gt;You can operate independently, but you know when you are in too deep and need to ask for help.&lt;/li&gt;
+&lt;li&gt;You know how to work under pressure in times of urgency. We and our customers both take issues with their data platform seriously.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What you will need&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Experience supporting production databases and applications, preferably at scale.&lt;/li&gt;
+&lt;li&gt;Experience with database internals and peformance tuning, specifically for PostgreSQL and MySQL databases&lt;/li&gt;
+&lt;li&gt;Working knowledge of Kubernetes.&lt;/li&gt;
+&lt;li&gt;Strong ability to communicate and deal directly with customers, whether in email, Slack, video conference, or in person.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What else will help you be successful&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Knowledge of common application deployment platforms and frameworks. Eg Python, Go, Node, PHP&lt;/li&gt;
+&lt;li&gt;Experience with cloud platforms (AWS, GCP, Azure)&lt;/li&gt;
+&lt;li&gt;Knowledge of monitoring, observability, and debugging tools&lt;/li&gt;
+&lt;li&gt;Contributions to open-source projects, especially in the database or infrastructure space&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Why PlanetScale&lt;/h3&gt;
+&lt;p&gt;We're redefining how high-growth companies manage data at scale—and we work with some of the most exciting brands in gaming, consumer tech, and B2B SaaS. As a Software Engineer, you'll be at the core of building the platform that powers world-class apps used by hundreds of millions of users worldwide. PlanetScale is a profitable company with a philosophy centered around building small teams of p99 individuals and is recognized as one of the fastest growing companies in America.&lt;/p&gt;
+&lt;p&gt;At PlanetScale we believe in supporting people to do their best work and thrive no matter the location. Our mission is to build a diverse, equitable, and inclusive company. We strive to build an inclusive environment where all people feel that they are equally respected and valued, whether they are a candidate or an employee. We welcome applicants of any educational background, gender identity and expression, sexual orientation, religion, ethnicity, age, citizenship, socioeconomic status, disability, pregnancy status, and veteran status.&lt;/p&gt;
+&lt;p&gt;If you have a disability, please let us know if there's any way we can make the interview process better for you; we're happy to accommodate!&lt;/p&gt;
+&lt;h3&gt;Total Compensation and Pay Transparency&lt;/h3&gt;
+&lt;p&gt;An employee's total compensation consists of base salary + variable comp where appropriate + benefits + equity. A member of our Talent Acquisition team will be happy to answer any further questions when we engage with you to begin the interview process.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Salary range:&lt;/strong&gt; US $120,000 - $200,000&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/planetscale-enterprise-support-engineer"&gt;https://weworkremotely.com/remote-jobs/planetscale-enterprise-support-engineer&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Sun, 18 Oct 2026 07:30:58 +0000</pubDate>
+      <expires_at>Tue, 17 Nov 2026 07:30:58 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/planetscale-enterprise-support-engineer</guid>
+      <link>https://weworkremotely.com/remote-jobs/planetscale-enterprise-support-engineer</link>
+    </item>
+    <item>
+      <title>BeyondTrust: Enterprise Account Manager - Riyadh (Saudi National)</title>
+      <region>Anywhere in the World</region>
+      <country />
+      <state />
+      <skills />
+      <category>DevOps and Sysadmin</category>
+      <type>Full-Time</type>
+      <description>
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; Remote Saudi Arabia
+&lt;/p&gt;
+
+&lt;p&gt;BeyondTrust is a place where you can bring your purpose to life through the work that you do, creating a safer world through our cybersecurity SaaS portfolio.&lt;/p&gt;
+&lt;p&gt;Our culture of flexibility, trust, and continual learning means you will be recognized for your growth, and for the impact you make on our success. You will be surrounded by people who challenge, support, and inspire you to be the best version of yourself.&lt;/p&gt;
+&lt;p&gt;The Role&lt;/p&gt;
+&lt;p&gt;Identify, generate, qualify, and close new business for customers and prospects in a defined territory.&amp;nbsp; Responsible for managing the full sales lifecycle, and building the go-to-market &lt;br&gt;plan (including direct and indirect business).&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;What You’ll Do&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Develop new and existing accounts within the defined territory.&lt;/li&gt;
+&lt;li&gt;Establish and deliver a sales strategy that outlines a roadmap to quota attainment&lt;/li&gt;
+&lt;li&gt;Sales forecasting, lead generation, prospecting, and strategic relationship development&lt;/li&gt;
+&lt;li&gt;Upsell ‘New Products’ to existing customers.&lt;/li&gt;
+&lt;li&gt;Work with assigned Account Executive – Enterprise Assist to cover and proactively hunt for Add-on opportunities within the territory intelligently.&lt;/li&gt;
+&lt;li&gt;Maintain whitespace for all focus customers.&lt;/li&gt;
+&lt;li&gt;Partner closely with the Vice President, SEs, PMs, and wider POD to deliver strategic goals&lt;/li&gt;
+&lt;li&gt;Algin with the Channel team and Channel Partners to deliver value to our customers and BeyondTrust wherever possible&lt;/li&gt;
+&lt;li&gt;Align with the SDR team to proactively cover your total addressable market (focus and non-focus territory accounts)&lt;/li&gt;
+&lt;li&gt;Attend corporate trade shows and events&lt;/li&gt;
+&lt;li&gt;Maintain sales pipeline activity in Salesforce&lt;/li&gt;
+&lt;li&gt;Schedule and conduct product demonstrations and detailed presentations to prospects, customers, and partners&lt;/li&gt;
+&lt;li&gt;Lead RFP responses for your accounts&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;What You’ll Bring&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Must be located in Riyadh, Saudi Arabia&lt;/li&gt;
+&lt;li&gt;Bachelor’s degree&lt;/li&gt;
+&lt;li&gt;8+ years’ sales experience with a demonstrated track record of consistently meeting or exceeding annual quota&lt;/li&gt;
+&lt;li&gt;Knowledge of the Italian top account and mid-market landscape&lt;/li&gt;
+&lt;li&gt;Experience with enterprise software, IT services, SaaS, IoT, or related managed services sales to global organizations&lt;/li&gt;
+&lt;li&gt;Experience with Salesforce&lt;/li&gt;
+&lt;li&gt;Already cyber security vendor on cloud/sub solutions channel oriented&lt;/li&gt;
+&lt;li&gt;Able to command sales message and sales&lt;/li&gt;
+&lt;li&gt;Experience leveraging the channel to drive business&lt;/li&gt;
+&lt;li&gt;Excellent communication skills&lt;/li&gt;
+&lt;li&gt;Ability to travel within the region&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Nice To Have&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Prior experience selling PAM software solutions&lt;/li&gt;
+&lt;li&gt;Completed 2 professional sales training courses (Sandler, SPIN, DISC, TAS, or Miller)&lt;/li&gt;
+&lt;li&gt;Strategic Account Management&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Better Together&lt;/p&gt;
+&lt;p&gt;Diversity. Inclusion. They’re more than just words for us. They are the guiding values of how we build our teams, cultivate leaders, and create a culture where people feel connected.&lt;/p&gt;
+&lt;p&gt;We take care of our employees so they can take care of our customers. Customers who&amp;nbsp;come from all walks of life just like us. We hire incredible people from diverse backgrounds because when we are different together, we are stronger together.&lt;/p&gt;
+&lt;p&gt;About Us&lt;/p&gt;
+&lt;p&gt;BeyondTrust is the global identity security leader protecting Paths to Privilege™. Our identity-centric approach goes beyond securing privileges and access, empowering organizations with the most effective solution to manage the entire identity attack surface and neutralize threats, whether from external attacks or insiders.&lt;/p&gt;
+&lt;p&gt;BeyondTrust is leading the charge in transforming identity security to prevent breaches and limit the blast radius of attacks, while creating a superior customer experience and operational efficiencies. We are trusted by 20,000 customers, including 75 of the Fortune 100, and our global ecosystem of partners.&lt;/p&gt;
+&lt;p&gt;Learn more at &lt;a href="http://www.beyondtrust.com/"&gt;www.beyondtrust.com&lt;/a&gt;.&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;#LI-BG1&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/beyondtrust-enterprise-account-manager-riyadh-saudi-national"&gt;https://weworkremotely.com/remote-jobs/beyondtrust-enterprise-account-manager-riyadh-saudi-national&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Sat, 17 Oct 2026 07:31:02 +0000</pubDate>
+      <expires_at>Mon, 16 Nov 2026 07:31:02 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/beyondtrust-enterprise-account-manager-riyadh-saudi-national</guid>
+      <link>https://weworkremotely.com/remote-jobs/beyondtrust-enterprise-account-manager-riyadh-saudi-national</link>
+    </item>
+    </channel>
+</rss>

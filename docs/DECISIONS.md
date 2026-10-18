@@ -174,3 +174,44 @@ Additions to the brief's data model:
 else `JOBHUNT_SQLITE_PATH`. Constraint violations raise `ConstraintError` on both.
 The Worker uses the D1 binding directly through `bot/src/db/` with prepared
 statements; its tests apply the same migrations with `applyD1Migrations`.
+
+## Sources
+
+### 2026-10-18: Fetching
+
+httpx 0.28.1 with HTTP/2 (h2 4.4.1). One `Fetcher` per run: per-host concurrency
+and minimum spacing between requests (overrides per host in `sources.yaml`),
+retries on 429/5xx/network errors with jittered exponential backoff, Retry-After
+honoured but capped, other 4xx fail at once. Feeds that return their whole list in
+one response use conditional GETs; the validators live in `source_state.state_json`
+per URL, since several sources poll more than one URL (migration 0002). Sources run
+concurrently; one failing never stops the others.
+
+### 2026-10-18: Source terms decide what is enabled
+
+Checked each site's terms and robots.txt (details in docs/RUNBOOK.md):
+
+- Enabled: BDJobs, Remote OK, We Work Remotely, Jobicy, Working Nomads, Himalayas.
+  Their attribution and Apply-link rules are recorded in `sources.yaml` and will
+  shape the alert message.
+- Remotive is implemented but disabled: its terms forbid using its jobs to collect
+  signups and ask for at most four requests a day. The owner can enable it.
+- Himalayas forbids passing its jobs on to "other job boards, aggregators or job
+  search engines". A bot that delivers jobs to its own users, with Himalayas
+  credited and Apply on Himalayas' link, is the integration their clause 113
+  allows ("personal and commercial integrations"), not a further job board.
+
+### 2026-10-18: BDJobs by category, not by keyword
+
+The search API's `category=8` (IT/Telecommunication) covers the whole IT market
+(about 300 open jobs) in four pages, instead of hundreds of keyword searches.
+`postedWithin` keeps incremental runs small; details are fetched only for jobs not
+yet stored. A bootstrap run of ~300 detail requests at 1.5 s spacing takes about
+eight minutes, inside the brief's ten-minute bootstrap target.
+
+### 2026-10-18: Fixtures are recorded, not hand-written
+
+`jobhunt fetch --record` saves real responses; tests replay them through the same
+`Fetcher`, so parsing and paging are tested end to end without network access.
+Fixtures are trimmed to a few items, and emails and phone numbers in job text are
+replaced with `[email]` and `[phone]`.

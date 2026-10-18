@@ -264,3 +264,120 @@ class App(Strict):
     version: Literal[1]
     title_matching: TitleMatching
     database: DatabaseSettings
+
+
+# --- sources.yaml -------------------------------------------------------------
+
+HttpsUrl = Annotated[str, StringConstraints(pattern=r"^https://\S+$")]
+
+
+class HostOverride(Strict):
+    min_delay_seconds: float | None = Field(default=None, ge=0)
+    concurrency: int | None = Field(default=None, ge=1)
+
+
+class HttpSettings(Strict):
+    user_agent: NonEmpty
+    timeout_seconds: float = Field(gt=0)
+    max_retries: int = Field(ge=0)
+    backoff_base_seconds: float = Field(ge=0)
+    backoff_max_seconds: float = Field(ge=0)
+    per_host_concurrency: int = Field(ge=1)
+    per_host_min_delay_seconds: float = Field(ge=0)
+    host_overrides: dict[NonEmpty, HostOverride] = {}
+
+
+class HealthSettings(Strict):
+    failures_before_alert: int = Field(ge=1)
+    empty_runs_before_alert: int = Field(ge=1)
+
+
+class SourceBase(Strict):
+    enabled: bool
+    disabled_reason: NonEmpty | None = None
+    min_interval_minutes: int = Field(ge=1)
+    attribution: NonEmpty
+
+    @model_validator(mode="after")
+    def _reason_when_disabled(self) -> Self:
+        if not self.enabled and not self.disabled_reason:
+            raise ValueError("a disabled source needs a disabled_reason")
+        if self.enabled and self.disabled_reason:
+            raise ValueError("an enabled source must not have a disabled_reason")
+        return self
+
+
+class BdjobsSource(SourceBase):
+    kind: Literal["bdjobs"]
+    search_url: HttpsUrl
+    details_url: HttpsUrl
+    job_url: Annotated[str, StringConstraints(pattern=r"^https://\S*\{id\}\S*$")]
+    headers: dict[NonEmpty, NonEmpty] = {}
+    category: NonEmpty
+    results_per_page: int = Field(ge=1)
+    max_pages: int = Field(ge=1)
+    posted_within_days: int = Field(ge=1)
+
+
+class UrlSource(SourceBase):
+    url: HttpsUrl
+    params: dict[NonEmpty, NonEmpty] = {}
+
+
+class RemoteokSource(UrlSource):
+    kind: Literal["remoteok"]
+
+
+class JobicySource(UrlSource):
+    kind: Literal["jobicy"]
+
+
+class WorkingNomadsSource(UrlSource):
+    kind: Literal["workingnomads"]
+
+
+class RemotiveSource(UrlSource):
+    kind: Literal["remotive"]
+
+
+class HimalayasSource(UrlSource):
+    kind: Literal["himalayas"]
+    max_pages: int = Field(ge=1)
+    api_key_env: Annotated[str, StringConstraints(pattern=r"^[A-Z][A-Z0-9_]*$")] | None = None
+
+
+class RssSource(SourceBase):
+    kind: Literal["rss"]
+    feeds: list[HttpsUrl] = Field(min_length=1)
+
+
+class DisabledSource(SourceBase):
+    """A source with no implementation, kept to record why it is off."""
+
+    kind: Literal["disabled"]
+
+    @model_validator(mode="after")
+    def _never_enabled(self) -> Self:
+        if self.enabled:
+            raise ValueError("kind 'disabled' has no implementation and cannot be enabled")
+        return self
+
+
+SourceSettings = Annotated[
+    BdjobsSource
+    | RemoteokSource
+    | JobicySource
+    | WorkingNomadsSource
+    | RemotiveSource
+    | HimalayasSource
+    | RssSource
+    | DisabledSource,
+    Field(discriminator="kind"),
+]
+
+
+class Sources(Strict):
+    version: Literal[1]
+    http: HttpSettings
+    health: HealthSettings
+    sources: dict[Ident, SourceSettings] = Field(min_length=1)

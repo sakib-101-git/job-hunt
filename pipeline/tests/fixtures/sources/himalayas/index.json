@@ -1,0 +1,17 @@
+{
+  "GET https://himalayas.app/jobs/api/search?country=BD&page=1&sort=recent": {
+    "content_type": "application/json",
+    "file": "828a9962787b.body",
+    "status": 200
+  },
+  "GET https://himalayas.app/jobs/api/search?country=BD&page=2&sort=recent": {
+    "content_type": "application/json",
+    "file": "5ad293e09b1c.body",
+    "status": 200
+  },
+  "GET https://himalayas.app/jobs/api/search?country=BD&page=3&sort=recent": {
+    "content_type": "application/json",
+    "file": "5ecefe9da19f.body",
+    "status": 200
+  }
+}

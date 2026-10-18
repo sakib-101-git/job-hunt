@@ -5,16 +5,26 @@ Commands are added as each pipeline stage lands:
 - `doctor` checks that this environment can run the pipeline at all.
 - `validate-config` loads and cross-checks every file in config/.
 - `build-shared` writes the Worker's generated config (`--check` only compares).
+- `sources` lists the configured sources; `fetch` runs some live, without a
+  database, and can record their responses as test fixtures.
 """
 
 import argparse
+import asyncio
+import os
 import sys
 from collections.abc import Sequence
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
+
+import httpx
 
 from jobhunt import __version__, shared
 from jobhunt.config import ConfigError, find_repo_root, load_config
+from jobhunt.sources import FetchContext, build_source
+from jobhunt.sources.http import Fetcher, FetchError
+from jobhunt.sources.recording import RecordingTransport
 
 REQUIRED_PYTHON = (3, 12)
 
@@ -99,6 +109,59 @@ def _build_shared(check: bool) -> int:
     return 0
 
 
+def _sources() -> int:
+    try:
+        config = load_config()
+    except ConfigError as exc:
+        return _fail(str(exc))
+    for name, s in config.sources.sources.items():
+        status = f"every {s.min_interval_minutes} min" if s.enabled else f"off: {s.disabled_reason}"
+        _write(f"{name:16} {s.kind:14} {status}")
+    return 0
+
+
+async def _fetch(names: Sequence[str], bootstrap: bool, record: Path | None, show: int) -> int:
+    try:
+        config = load_config()
+    except ConfigError as exc:
+        return _fail(str(exc))
+    http = config.sources.http
+    client = None
+    if record is not None:
+        client = httpx.AsyncClient(
+            transport=RecordingTransport(record),
+            follow_redirects=True,
+            timeout=http.timeout_seconds,
+        )
+    fetcher = Fetcher(http, client=client)
+    failed = False
+    try:
+        for name in names:
+            settings = config.sources.sources.get(name)
+            source = build_source(name, settings) if settings else None
+            if settings is None or source is None:
+                failed = True
+                _fail(f"{name}: no such source, or it has no implementation")
+                continue
+            ctx = FetchContext(fetcher, datetime.now(UTC), bootstrap, frozenset(), os.environ)
+            try:
+                result = await source.fetch(ctx)
+            except FetchError as exc:
+                failed = True
+                _fail(f"{name}: {exc}")
+                continue
+            note = "" if settings.enabled else " (disabled in config)"
+            _write(f"{name}: {len(result.listings)} listings{note}")
+            for listing in result.listings[:show]:
+                posted = listing.posted_at.date().isoformat() if listing.posted_at else "-"
+                _write(f"  {posted}  {listing.title} | {listing.company} | {listing.location}")
+    finally:
+        await fetcher.aclose()
+        if client is not None:
+            await client.aclose()
+    return 1 if failed else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="jobhunt")
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -107,6 +170,12 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("validate-config", help="load and cross-check every file in config/")
     build = commands.add_parser("build-shared", help="write the Worker's generated config")
     build.add_argument("--check", action="store_true", help="fail if the file is out of date")
+    commands.add_parser("sources", help="list the configured job sources")
+    fetch = commands.add_parser("fetch", help="fetch sources live and print what they return")
+    fetch.add_argument("names", nargs="+", metavar="SOURCE")
+    fetch.add_argument("--bootstrap", action="store_true", help="fetch as on a first run")
+    fetch.add_argument("--record", type=Path, metavar="DIR", help="save responses as fixtures")
+    fetch.add_argument("--show", type=int, default=5, metavar="N", help="listings to print")
     return parser
 
 
@@ -118,6 +187,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _validate_config()
     if args.command == "build-shared":
         return _build_shared(args.check)
+    if args.command == "sources":
+        return _sources()
+    if args.command == "fetch":
+        return asyncio.run(_fetch(args.names, args.bootstrap, args.record, args.show))
     raise AssertionError(f"unhandled command {args.command!r}")  # argparse rejects unknown ones
 
 

@@ -11,6 +11,7 @@ from jobhunt.config.models import (
     App,
     Locations,
     Skills,
+    Sources,
     Taxonomy,
     TitleRules,
     Tracks,
@@ -31,6 +32,7 @@ class Config:
     title_rules: TitleRules
     skills: Skills
     locations: Locations
+    sources: Sources
 
 
 def find_repo_root(start: Path) -> Path | None:
@@ -97,4 +99,5 @@ def load_config(config_dir: Path | None = None) -> Config:
         title_rules=_load(directory / "taxonomy" / "title_rules.yaml", TitleRules),
         skills=_load(directory / "skills.yaml", Skills),
         locations=_load(directory / "locations.yaml", Locations),
+        sources=_load(directory / "sources.yaml", Sources),
     )

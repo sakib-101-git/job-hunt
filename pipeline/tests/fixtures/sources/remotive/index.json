@@ -1,0 +1,7 @@
+{
+  "GET https://remotive.com/api/remote-jobs?category=software-dev": {
+    "content_type": "application/json; charset=utf-8",
+    "file": "2cdbfa81c272.body",
+    "status": 200
+  }
+}
