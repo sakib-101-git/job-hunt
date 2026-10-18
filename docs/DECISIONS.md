@@ -423,3 +423,29 @@ comes from the stored breakdown, values are escaped (`& < >`) exactly once, and
 each alert credits its source ("via Jobicy"), as the sources' terms require.
 Jobs scored on rules-only facts say "Quick match: AI review pending". A test
 checks the locale covers every label, enum value and rule the renderer can hit.
+
+## Notifications
+
+### 2026-10-18: Outbox, then send
+
+`jobhunt match` stores matches and queues one `notifications` row per new match
+at or above the user's minimum score; `jobhunt notify` sends what is queued. The
+row is unique per (user, job fingerprint), so a job seen on two boards, or
+matched by two overlapping runs, is sent once. Seeded jobs (a source's first
+run) and users who are not active get no rows.
+
+Sending re-checks freshness and the deadline, honours delivery mode (instant
+users every run, digest users on the digest run or `/digest`) and quiet hours,
+and sends at most `max_per_cycle` full alerts per user; the rest go out as one
+list. Every row ends sent (with Telegram's message id), failed (with the error;
+retried on later runs up to `max_attempts`) or skipped (with the reason), and
+the run's counts say exactly that: a failed send is never counted as sent.
+
+### 2026-10-18: Telegram limits
+
+The Bot FAQ allows about 30 messages a second overall and one a second per chat;
+the client stays under both (25/s, 1.1 s). A 429 waits Telegram's `retry_after`,
+5xx and network errors back off, and a 403 marks the user blocked so they get
+nothing more. Messages use HTML with link previews off. Inline buttons send
+`<code>:<match id>` (codes in `config/app.yaml`, shared with the Worker through
+build-shared), well under Telegram's 64-byte `callback_data` limit.

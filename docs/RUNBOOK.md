@@ -226,6 +226,18 @@ to each model or to the rules-only fallback.
 - **Wording:** every word of a message is in `locales/en.json`; a test fails if
   a label, rule or enum value the renderer uses is missing.
 
+## Notifications
+
+- **Run by hand:** `uv run jobhunt match` scores and queues;
+  `TELEGRAM_BOT_TOKEN=... uv run jobhunt notify` sends instant alerts, `--digest`
+  the daily digest, `--user ID` one user's queue whatever their mode.
+- **A user says they got nothing:** check `users.status` (a 403 sets `blocked`),
+  `user_prefs.min_score`, `delivery_mode` and `quiet_hours_json`, then their rows
+  in `notifications`: `last_error` says why a row failed or was skipped.
+- **Failed rows** are retried by later runs until `attempts` reaches
+  `notifications.max_attempts` in `config/app.yaml`. To resend one, set its
+  `status` back to `pending` and `attempts` to 0.
+
 ## Database migrations
 
 Migrations live in `migrations/` and are shared: wrangler applies them to D1 and
