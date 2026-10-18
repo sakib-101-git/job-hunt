@@ -2,47 +2,87 @@
 
 Operational notes for JobHunt. Sections are added as each part of the system lands.
 
-## Sources: quirks and history
+## Sources
 
-These notes come from v1 (October 2026). Every endpoint is re-verified before the
-v2 source is implemented, and this section is updated with what was found. The v1
-implementation can still be read with `git show 426e331:src/scrapers/<name>.py`.
+Every source is configured in `config/sources.yaml` and implemented in
+`pipeline/src/jobhunt/sources/`. Each endpoint, the site's terms and its robots.txt
+were checked on 2026-10-18; re-check before changing a source.
+
+### Checking a source by hand
+
+```bash
+cd pipeline
+uv run jobhunt sources                          # what is configured, and why some are off
+uv run jobhunt fetch bdjobs jobicy --show 10    # live fetch, nothing stored
+uv run jobhunt fetch jobicy --record /tmp/rec   # also save every response
+```
+
+Tests never touch the network: they replay `pipeline/tests/fixtures/sources/<name>/`.
+To refresh a fixture, record it as above, keep a handful of items, scrub emails and
+phone numbers from job text, and copy the directory over.
+
+### Adding a source
+
+1. Check the endpoint, its terms (attribution, redistribution, rate limits) and
+   robots.txt. Write down what you found here.
+2. Add a settings model in `jobhunt/config/models.py` and an entry in
+   `config/sources.yaml` with `min_interval_minutes` and `attribution`.
+3. Implement `fetch(ctx) -> SourceResult` returning `RawListing`s. Never invent a
+   location, date or "Worldwide": missing stays `None`.
+4. Record a fixture and test the parser against it.
+
+### Health alerts
+
+A source that fails `failures_before_alert` runs in a row, or returns nothing for
+`empty_runs_before_alert` runs after it used to return jobs, raises one alert (and
+another when it recovers). A feed answering 304 Not Modified is not "empty".
 
 ### BDJobs (primary Bangladesh source)
 
-- The old HTML search (`jobs.bdjobs.com/jobsearch.asp`) is dead: it 302s to an empty
-  Angular shell.
-- v1 used the JSON API `GET https://api.bdjobs.com/Jobs/api/JobSearch/GetJobSearch`
-  with `keyword`, `pg` (1-based page), `rpp` (results per page) and `isPro=0`.
-  The response has `data[]`, `premiumData[]` and `common`.
-- v1 sent `Accept: application/json, text/plain, */*`, `Origin: https://bdjobs.com`
-  and `Referer: https://bdjobs.com/`, as the web client does.
-- The JD comes straight from the listing item (`jobContext`, `eduRec`, `experience`),
-  so no detail fetch is needed.
-- Fields used: `publishDate`, `location`, `WorkPlace` (`Office`, `Home` or empty;
-  `Home` means remote). The deadline field name still has to be identified.
-- `Confidential` is a real company value (also the fallback when `companyName` is
-  empty). Keep it as-is.
-- BDJobs lists jobs abroad too (for example, Gulf countries). v1 let every BDJobs job
-  bypass the location checks, so overseas jobs leaked through. v2 must detect them.
-- If the endpoint or parameters change, re-inspect the Angular bundle: fetch
-  `https://bdjobs.com/h/main-*.js` and find the env chunk's `searchEndpoint`.
+- Search: `GET api.bdjobs.com/Jobs/api/JobSearch/GetJobSearch` with `category=8`
+  (IT/Telecommunication, about 300 open jobs), `pg`, `rpp` (up to 100), `isPro=0`
+  and `postedWithin=<days>` on incremental runs. Other filters the web client knows:
+  `industry`, `location`, `jobNature`, `jobLevel`, `deadline`, `keyword`, `workplace`.
+- Details: `GET gateway.bdjobs.com/ActtivejobsTest/api/JobSubsystem/jobDetails?jobId=<id>&ln=1`
+  gives the full description (`JobDescription`, `EducationRequirements`,
+  `experience`, `SkillsRequired`, `JobKeyPoints`), `DeadlineDB`, `JobLocation`,
+  `JobWorkPlace`, `JobNature`, `overseasnote` and `Closed`. Despite "Test" in the
+  host name, it is what bdjobs.com itself calls. Details are fetched only for jobs
+  not stored yet.
+- Send `Origin`/`Referer: https://bdjobs.com` as the web client does.
+- `Confidential` is a real company value. Keep it.
+- BDJobs lists jobs abroad too; `overseas_note` and the location feed the
+  location gate (defect D5).
+- Terms (bdjobs.com/tos.asp) say nothing about automated access; bdjobs.com's
+  robots.txt only blocks internal folders and api.bdjobs.com has none.
+- If the endpoints change: download `https://bdjobs.com/h/`, follow its
+  `chunk-*.js` files and search them for `searchEndpoint` and `detailsApiBaseUrl`.
 
-### skill.jobs (disabled)
+### Remote boards
 
-- It has a clean JSON API (`studio.skill.jobs/api/job_search/`) behind Cloudflare.
-  Cloudflare returns 403 to datacenter IPs such as GitHub Actions runners, while
-  residential Bangladesh IPs work. Header changes do not get past IP/TLS filtering,
-  and bypassing it is out of scope. BDJobs covers the same employers.
+| Source | Endpoint | Eligibility field | Terms |
+|---|---|---|---|
+| Remote OK | `remoteok.com/api` (latest 100; first item is a legal notice) | `location`, often empty | Link back to the Remote OK job URL and name Remote OK. robots.txt: crawl-delay 1. |
+| We Work Remotely | `weworkremotely.com/categories/<category>.rss` (7 tech feeds) | `<region>`, `<country>`, `<state>` | Public feeds; link to the WWR job page. |
+| Jobicy | `jobicy.com/api/v2/remote-jobs?count=100&geo=anywhere` | `jobGeo` | Credit Jobicy with a direct link; Apply opens the job's own URL. |
+| Working Nomads | `www.workingnomads.com/api/exposed_jobs/` (current list) | `location` | No published terms; robots.txt allows it. |
+| Himalayas | `himalayas.app/jobs/api/search?country=BD&sort=recent&page=N` (20 a page) | `locationRestrictions` (empty means worldwide) | Clause 113: Apply uses `applicationLink`, visible credit, never pass jobs on to other job boards. Optional free key (`HIMALAYAS_API_KEY`): 60 requests/minute. |
 
-### Shomvob (disabled)
+### Disabled sources
 
-- `shomvob.com/jobs` returns 404. The site is a Next.js app whose job list comes from
-  an obfuscated Supabase RPC; `backend-api.shomvob.co` only exposes
-  `get-top-companies`.
-- It mostly lists blue-collar jobs and yields almost no software roles.
+- **Remotive:** its API terms forbid "displaying our jobs in order to collect
+  signups", which a bot with onboarding does, ask for at most 4 requests a day,
+  delay jobs by 24 hours, and robots.txt disallows `/api/*`. The source is
+  implemented and tested; enabling it is the owner's decision.
+- **skill.jobs:** `studio.skill.jobs/api/job_search/` answers from Bangladeshi
+  residential IPs (checked 2026-10-18) but sits behind Cloudflare, which v1 saw
+  answer 403 to GitHub Actions runners. Re-check from a runner before enabling; never
+  try to get around Cloudflare.
+- **Shomvob:** `shomvob.com/jobs` still returns 404 (2026-10-18); its job list comes
+  from an obfuscated RPC and holds almost no software roles.
+- **The Muse:** US-centric; worldwide-remote roles are rare.
 
-### LinkedIn (owner's alert emails only)
+### LinkedIn (owner's alert emails only; next phase)
 
 - Read over IMAP with a Gmail App Password, never the account password. v1 searched
   `FROM "jobs-noreply@linkedin.com" SINCE <date>` and took job IDs from
@@ -50,17 +90,6 @@ implementation can still be read with `git show 426e331:src/scrapers/<name>.py`.
 - LinkedIn changes the email HTML from time to time. Keep a redacted real email as a
   test fixture and update the parser against it.
 - linkedin.com pages are never scraped.
-
-### Remote boards used by v1
-
-| Source | v1 endpoint | v1 defect to fix |
-|---|---|---|
-| Remotive | `https://remotive.com/api/remote-jobs?search=<kw>&limit=20` | missing location defaulted to "Worldwide" |
-| RemoteOK | `https://remoteok.com/api?tags=<tag>` | missing location defaulted to "Worldwide" |
-| We Work Remotely | `https://weworkremotely.com/categories/remote-*-programming-jobs.rss` | hard-coded "Worldwide"; ignored `<region>` |
-| Jobicy | `https://jobicy.com/api/v2/remote-jobs?count=50&tag=<tag>` | |
-| Working Nomads | `https://www.workingnomads.com/api/exposed_jobs/` | |
-| The Muse | public API | US-centric; disabled by default in v2 |
 
 ## Config: adding titles, tracks, skills and places
 
