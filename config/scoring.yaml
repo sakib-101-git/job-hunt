@@ -1,0 +1,54 @@
+# The scoring rubric (brief §6.7). The LLM never produces a score: code computes
+# it from extracted facts, the user's profile and these numbers. Change a number
+# here, bump scorer_version, and re-check the golden set (evaluation phase).
+version: 1
+scorer_version: scorer.v1
+
+# Component maxima; they sum to 10.
+weights: {role: 3.0, skills: 3.0, experience: 2.0, education: 1.0, preference: 1.0}
+
+role:
+  primary: 3.0              # job's primary domain is a primary domain of a chosen track
+  secondary_or_include: 2.25 # a secondary domain hits, or the title is in a track's include_titles
+  adjacent: 1.5             # only an adjacent domain hits (if the user keeps adjacent domains)
+
+skills:
+  must_weight: 2            # coverage = (2 * must matched + nice matched) / (2 * must + nice)
+  nice_weight: 1
+  none_listed: 1.5          # the posting lists no skills
+
+experience:
+  met: 2.0                  # asks at most the user's years
+  gap_points: {1: 1.0, 2: 0.5}  # asks this many more years: these points; more: 0
+  unknown: 1.5              # the posting gives no years
+  seniority_mismatch_penalty: 0.5
+  # Job seniority that fits each user level; anything else costs the penalty.
+  fitting_seniority:
+    student_intern: [intern, entry]
+    fresh_grad: [intern, entry, junior]
+    junior: [entry, junior, mid]
+    mid: [junior, mid, senior]
+    senior: [mid, senior, lead_plus]
+
+education:
+  accepted: 1.0             # CSE/CS/IT/software accepted, or no degree required
+  broad: 0.75               # "any engineering" or "any science"
+  other_field: 0.0          # a specific non-CSE field is required
+  accepted_fields: [cse, cs, it, software, any]
+  broad_fields: [any_engineering, any_science]
+
+preference:                 # capped at weights.preference
+  city: 0.5                 # in one of the user's preferred cities
+  work_mode: 0.3            # remote job for a user who chose remote, on-site in BD for a BD user
+  salary_disclosed: 0.2
+
+# Score labels, highest first.
+labels:
+  - {min: 8.0, key: strong}
+  - {min: 6.0, key: good}
+  - {min: 4.0, key: partial}
+  - {min: 0.0, key: weak}
+
+# Marks in the alert: a component earning at least `full` of its maximum gets ✅,
+# more than nothing gets ➖, nothing gets ❌.
+marks: {full: 0.75}

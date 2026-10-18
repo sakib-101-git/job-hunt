@@ -621,3 +621,94 @@ class Llm(Strict):
         if unknown := sorted({e.provider for e in self.chain} - set(self.providers)):
             raise ValueError(f"chain uses unknown providers: {', '.join(unknown)}")
         return self
+
+
+# --- scoring.yaml -------------------------------------------------------------
+
+Points = Annotated[float, Field(ge=0, le=10)]
+
+
+class Weights(Strict):
+    role: Points
+    skills: Points
+    experience: Points
+    education: Points
+    preference: Points
+
+
+class RoleScoring(Strict):
+    primary: Points
+    secondary_or_include: Points
+    adjacent: Points
+
+
+class SkillsScoring(Strict):
+    must_weight: int = Field(ge=1)
+    nice_weight: int = Field(ge=0)
+    none_listed: Points
+
+
+class ExperienceScoring(Strict):
+    met: Points
+    gap_points: dict[int, Points]
+    unknown: Points
+    seniority_mismatch_penalty: Points
+    fitting_seniority: dict[ExperienceLevel, list[Seniority]]
+
+
+class EducationScoring(Strict):
+    accepted: Points
+    broad: Points
+    other_field: Points
+    accepted_fields: list[NonEmpty]
+    broad_fields: list[NonEmpty]
+
+
+class PreferenceScoring(Strict):
+    city: Points
+    work_mode: Points
+    salary_disclosed: Points
+
+
+class ScoreLabel(Strict):
+    min: Points
+    key: Ident
+
+
+class Marks(Strict):
+    full: float = Field(gt=0, le=1)
+
+
+class Scoring(Strict):
+    version: Literal[1]
+    scorer_version: NonEmpty
+    weights: Weights
+    role: RoleScoring
+    skills: SkillsScoring
+    experience: ExperienceScoring
+    education: EducationScoring
+    preference: PreferenceScoring
+    labels: list[ScoreLabel] = Field(min_length=1)
+    marks: Marks
+
+    @model_validator(mode="after")
+    def _check(self) -> Self:
+        w = self.weights
+        if abs(w.role + w.skills + w.experience + w.education + w.preference - 10) > 1e-9:
+            raise ValueError("weights must sum to 10")
+        caps = {
+            "role.primary": (self.role.primary, w.role),
+            "experience.met": (self.experience.met, w.experience),
+            "education.accepted": (self.education.accepted, w.education),
+        }
+        for name, (value, cap) in caps.items():
+            if abs(value - cap) > 1e-9:
+                raise ValueError(f"{name} must equal its weight ({cap})")
+        if self.skills.none_listed > w.skills or self.experience.unknown > w.experience:
+            raise ValueError("default points cannot exceed the component weight")
+        if missing := sorted(set(EXPERIENCE_LEVELS) - set(self.experience.fitting_seniority)):
+            raise ValueError(f"fitting_seniority is missing levels: {', '.join(missing)}")
+        mins = [label.min for label in self.labels]
+        if mins != sorted(mins, reverse=True) or mins[-1] != 0:
+            raise ValueError("labels must go from the highest min down to 0")
+        return self

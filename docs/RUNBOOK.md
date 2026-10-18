@@ -214,6 +214,18 @@ to each model or to the rules-only fallback.
   `jobs.gates_json -> audit_flags` for the job, then fix the prompt (new version),
   not the code.
 
+## Scores
+
+- **Why did a user get this score?** `matches.explanation_json` has each
+  component's points, rule, the user's and the job's values and the posting's
+  quote; `matches.gate_results_json` has the per-user gates. The bot's "Why this
+  score?" button shows the same.
+- **Changing weights:** edit `config/scoring.yaml`, bump `scorer_version`, run
+  `make test` (the config is checked: weights sum to 10), and re-check the golden
+  set (evaluation phase) before merging. Feedback never changes weights by itself.
+- **Wording:** every word of a message is in `locales/en.json`; a test fails if
+  a label, rule or enum value the renderer uses is missing.
+
 ## Database migrations
 
 Migrations live in `migrations/` and are shared: wrangler applies them to D1 and

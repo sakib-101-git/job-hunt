@@ -12,6 +12,7 @@ from jobhunt.config.models import (
     Geography,
     Llm,
     Locations,
+    Scoring,
     Skills,
     Sources,
     Taxonomy,
@@ -38,6 +39,7 @@ class Config:
     sources: Sources
     geography: Geography
     llm: Llm
+    scoring: Scoring
 
 
 def find_repo_root(start: Path) -> Path | None:
@@ -125,4 +127,5 @@ def load_config(config_dir: Path | None = None) -> Config:
         sources=sources,
         geography=_load(directory / "geography.yaml", Geography),
         llm=llm,
+        scoring=_load(directory / "scoring.yaml", Scoring),
     )
