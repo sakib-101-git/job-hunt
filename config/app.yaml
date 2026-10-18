@@ -26,3 +26,14 @@ database:
   # D1 limits (docs/DECISIONS.md), checked before a request is sent.
   max_params_per_statement: 100
   max_statement_bytes: 100000
+
+normalization:
+  # Job description length kept in the database, and sent to the LLM.
+  jd_max_chars_stored: 8000
+  jd_max_chars_llm: 6000
+  # Query parameters dropped from job URLs ("*" matches any ending).
+  tracking_params: [utm_*, ref, refid, ref_id, trk, trkinfo, trackingid, gh_src, gh_jid, lever-source, source, src, fbclid, gclid, mc_cid, mc_eid, oga]
+  # Company name endings ignored when deciding whether two listings are one job.
+  company_suffixes: [ltd, limited, inc, incorporated, llc, plc, pvt, private, co, corp, corporation, gmbh, bv, sa, ag, pte, bd]
+  # Upserts per database batch.
+  store_batch_size: 50

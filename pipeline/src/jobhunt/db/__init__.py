@@ -11,6 +11,7 @@ from jobhunt.db.base import (
     Result,
     Row,
     Statement,
+    timestamp,
 )
 from jobhunt.db.d1 import D1HttpBackend
 from jobhunt.db.migrations import apply_migrations, read_migrations
@@ -49,4 +50,5 @@ __all__ = [
     "apply_migrations",
     "open_database",
     "read_migrations",
+    "timestamp",
 ]
