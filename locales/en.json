@@ -88,7 +88,8 @@
     "preference.other_city": "{city} (you prefer {preferred})",
     "preference.work_mode": "{mode} ✓",
     "preference.salary": "salary shown",
-    "preference.none": "none matched"
+    "preference.none": "none matched",
+    "preference.in_bangladesh": "in Bangladesh ✓"
   },
   "why": {
     "title": "<b>Why {score}/10 for “{title}”</b>",

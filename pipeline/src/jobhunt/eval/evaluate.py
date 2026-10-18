@@ -14,7 +14,7 @@ in one sitting, so its jobs are fresh at that moment.
 import dataclasses
 import json
 from collections import Counter
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
@@ -328,13 +328,19 @@ def field_accuracy(results: Sequence[JobResult]) -> dict[str, float | None]:
     return accuracy
 
 
-def skills_scores(results: Sequence[JobResult]) -> dict[str, float | None]:
-    """Micro-averaged precision, recall and F1 of the skills the posting asks for."""
+def skills_scores(
+    results: Sequence[JobResult], known: Collection[str] | None = None
+) -> dict[str, float | None]:
+    """Micro-averaged precision, recall and F1 of the skills the posting asks
+    for. Only skills.yaml ids (`known`) are compared: labels use them, and only
+    they can ever meet a user's skills; a skill named as written ("SLOs") is
+    neither right nor wrong here."""
     tp = fp = fn = 0
     for r in results:
         if r.facts is None:
             continue
-        found = {s.casefold() for s in (r.facts.required_skills + r.facts.preferred_skills)}
+        named = r.facts.required_skills + r.facts.preferred_skills
+        found = {s.casefold() for s in named if known is None or s in known}
         gold = {s.casefold() for s in r.job.labels.skills}
         tp += len(found & gold)
         fp += len(found - gold)

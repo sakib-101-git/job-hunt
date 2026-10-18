@@ -176,8 +176,12 @@ class Renderer:
             preferred = ", ".join(self.city_names.get(c, c) for c in detail["preferred_cities"])
             parts.append(t("component.preference.other_city", city=city, preferred=preferred))
         if "work_mode" in detail["hits"]:
-            mode = t.text("work_mode")[job.facts.work_mode] or job.facts.work_mode
-            parts.append(t("component.preference.work_mode", mode=mode))
+            # A hit with no stated mode is an on-site job in Bangladesh for a user
+            # who chose Bangladesh.
+            if mode := t.text("work_mode")[job.facts.work_mode]:
+                parts.append(t("component.preference.work_mode", mode=mode))
+            else:
+                parts.append(_escape(t.text("component.preference.in_bangladesh")))
         if "salary" in detail["hits"]:
             parts.append(_escape(t.text("component.preference.salary")))
         separator = str(t.text("alert.separator"))
@@ -233,7 +237,7 @@ class Renderer:
                 )
             )
             if quote := c.detail.get("evidence"):
-                lines.append(t("why.quote", text=quote))
+                lines.append(t("why.quote", text=" ".join(str(quote).split())))
         if job.location_evidence:
             lines.append(t("why.location", text=job.location_evidence))
         passed = ", ".join(g.gate for g in result.gates if g.status == "pass")

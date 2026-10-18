@@ -109,6 +109,9 @@ class LocationGate:
         if facts.country == "BD" or facts.remote_eligibility == "bangladesh_included":
             return GateResult(GATE, "pass", "bangladesh", evidence or "country: BD", warnings)
         if facts.remote_eligibility == "worldwide" and evidence:
+            if listing_result.reason == "worldwide_in_doubt" and self._is_tag(listing, evidence):
+                # The model only repeated the tag that was in doubt.
+                return GateResult(GATE, "fail", "worldwide_unconfirmed", evidence, warnings)
             return GateResult(GATE, "pass", "worldwide", evidence, warnings)
         if facts.remote_eligibility == "region_restricted":
             return GateResult(GATE, "fail", "region_restricted", evidence, warnings)
@@ -119,6 +122,17 @@ class LocationGate:
         return GateResult(GATE, "fail", "not_bangladesh", facts.country, warnings)
 
     # --- helpers --------------------------------------------------------------
+
+    @staticmethod
+    def _is_tag(listing: RawListing, evidence: str) -> bool:
+        """The quote comes from the listing's location tags, not its text."""
+        quote = re.sub(r"^\s*location\s*:\s*", "", evidence, flags=re.IGNORECASE).casefold()
+        tags = " ".join([listing.location or "", *listing.location_restrictions]).casefold()
+        return (
+            bool(quote.strip())
+            and quote.strip() in tags
+            and quote.strip() not in (listing.description.casefold())
+        )
 
     def _doubt(self, listing: RawListing, judged: list[_Entry]) -> str | None:
         """Why a worldwide tag can't be trusted on its own, or None."""

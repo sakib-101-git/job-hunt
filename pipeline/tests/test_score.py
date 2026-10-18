@@ -304,6 +304,22 @@ def test_why_shows_rules_quotes_and_version(config: Config, scorer: Scorer) -> N
     assert "&amp;amp;" not in text
 
 
+def test_unstated_work_mode_and_multiline_quotes_render_cleanly(
+    config: Config, scorer: Scorer
+) -> None:
+    # Found by rendering a golden-set alert: an on-site Bangladesh job with no
+    # stated work mode read "Preferences: unknown ✓", and BDJobs quotes kept
+    # their line breaks.
+    facts = _facts(work_mode="unknown", years_evidence="Experience\n\n• 0-1 years")
+    job = _job(facts=facts, city=None)
+    renderer = Renderer.from_config(config)
+    text = renderer.alert(job, scorer.score(job, _user()), _user(), NOW)
+    assert "Preferences: in Bangladesh ✓" in text
+    assert "unknown" not in text
+    why = renderer.why(job, scorer.score(job, _user()), _user())
+    assert "“Experience • 0-1 years”" in why
+
+
 def test_alert_ages_and_missing_parts(config: Config, scorer: Scorer) -> None:
     renderer = Renderer.from_config(config)
     today = _job(posted_at=NOW, deadline=None, company=None, location_raw=None, city=None)

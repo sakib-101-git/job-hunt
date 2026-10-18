@@ -101,7 +101,9 @@ class RulesExtractor:
             posted_date_in_text=None,
             language_requirements=[],
             red_flags=self._red_flags.find_all(text),
-            summary=" ".join(text.split()[:25]),
+            # Without a model there is no faithful one-line summary; the first
+            # words of a posting are usually its boilerplate.
+            summary="",
         )
 
 

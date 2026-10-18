@@ -114,5 +114,7 @@ class Extractor:
         facts, provider, model = result
         if facts.primary_domain is not None and facts.primary_domain not in self._slugs:
             facts = facts.model_copy(update={"primary_domain": None})
-        grounded = self._grounder.ground(facts, text, listing.deadline)
+        # Quotes are checked against exactly what the model was shown: the
+        # header lines (title, company, location) as well as the posting.
+        grounded = self._grounder.ground(facts, user, listing.deadline)
         return Extraction(grounded, provider, model)
