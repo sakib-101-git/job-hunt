@@ -1,0 +1,20 @@
+# Ruff settings for all Python in the repository (pipeline/ and scripts/).
+line-length = 100
+target-version = "py312"
+
+[lint]
+select = [
+  "E", "W", "F", "I", "N", "UP", "B", "C4", "SIM", "RET", "RUF",
+  "S",    # security
+  "T20",  # no print(); use logging
+  "PTH",  # pathlib instead of os.path / open()
+  "DTZ",  # timezone-aware datetimes only
+  "PT",   # pytest style
+  "ERA",  # no commented-out code
+]
+
+[lint.per-file-ignores]
+"**/tests/**" = ["S101"]
+
+[lint.isort]
+known-first-party = ["jobhunt", "repo_guard"]

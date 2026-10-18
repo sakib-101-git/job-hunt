@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Rejects commit messages that carry AI attribution. Installed by `make setup`
+# (git config core.hooksPath .githooks).
+set -euo pipefail
+exec python3 "$(git rev-parse --show-toplevel)/scripts/repo_guard.py" attribution "$1"
