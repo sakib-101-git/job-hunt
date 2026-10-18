@@ -1,0 +1,12 @@
+{
+  "GET https://hn.algolia.com/api/v1/search?hitsPerPage=1000&tags=comment%2Cstory_49922569": {
+    "content_type": "application/json",
+    "file": "af05091e4244.body",
+    "status": 200
+  },
+  "GET https://hn.algolia.com/api/v1/search_by_date?hitsPerPage=10&tags=story%2Cauthor_whoishiring": {
+    "content_type": "application/json",
+    "file": "1d379bab6d6f.body",
+    "status": 200
+  }
+}

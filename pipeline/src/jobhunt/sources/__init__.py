@@ -1,9 +1,12 @@
 """Job sources: one module per site, configured in config/sources.yaml."""
 
 from jobhunt.config.models import (
+    AtsSource,
     BdjobsSource,
     DisabledSource,
     HimalayasSource,
+    HnSource,
+    ImapSource,
     JobicySource,
     RemoteokSource,
     RemotiveSource,
@@ -11,9 +14,12 @@ from jobhunt.config.models import (
     SourceSettings,
     WorkingNomadsSource,
 )
+from jobhunt.sources.ats import CompanyBoards
 from jobhunt.sources.base import FetchContext, Source
 from jobhunt.sources.bdjobs import Bdjobs
 from jobhunt.sources.himalayas import Himalayas
+from jobhunt.sources.hn import HackerNews
+from jobhunt.sources.imap import LinkedInAlerts
 from jobhunt.sources.models import RawListing, SourceResult
 from jobhunt.sources.remote_boards import Jobicy, RemoteOk, Remotive, WorkingNomads
 from jobhunt.sources.rss import RssFeeds
@@ -36,6 +42,12 @@ def build_source(name: str, settings: SourceSettings) -> Source | None:
             return Himalayas(name, settings)
         case RssSource():
             return RssFeeds(name, settings)
+        case AtsSource():
+            return CompanyBoards(name, settings)
+        case HnSource():
+            return HackerNews(name, settings)
+        case ImapSource():
+            return LinkedInAlerts(name, settings)
         case DisabledSource():
             return None
 

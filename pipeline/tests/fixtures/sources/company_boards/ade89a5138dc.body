@@ -1,0 +1,68 @@
+{
+ "offset": 0,
+ "limit": 100,
+ "totalFound": 1,
+ "content": [
+  {
+   "id": "744000156124949",
+   "name": "Software Engineer (Frontend)",
+   "uuid": "bfcaf5e3-f36b-4ca1-b322-872adf91c318",
+   "jobAdId": "7eb3d1f5-f098-4613-aa52-a434cf76aa4b",
+   "defaultJobAd": true,
+   "refNumber": "REF114H",
+   "company": {
+    "identifier": "PolygonTechnology",
+    "name": "Polygon Technology"
+   },
+   "releasedDate": "2026-10-17T08:33:30.859Z",
+   "location": {
+    "city": "Dhaka",
+    "region": "1213",
+    "country": "bd",
+    "address": "House 57, Road 25, Block A, Dhaka 1213",
+    "postalCode": "1213",
+    "remote": false,
+    "hybrid": false,
+    "fullLocation": "Dhaka, 1213, Bangladesh"
+   },
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "department": {},
+   "function": {
+    "id": "engineering",
+    "label": "Engineering"
+   },
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "customField": [
+    {
+     "fieldId": "62e8f3246d33c20a779a748b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Polygon Technology"
+    },
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "bd",
+     "valueLabel": "Bangladesh"
+    }
+   ],
+   "visibility": "PUBLIC",
+   "ref": "https://api.smartrecruiters.com/v1/companies/PolygonTechnology/postings/744000156124949",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   }
+  }
+ ]
+}

@@ -1,0 +1,395 @@
+{
+ "jobs": [
+  {
+   "absolute_url": "https://job-boards.greenhouse.io/canonical/jobs/8002334",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_optional",
+   "internal_job_id": 2352169,
+   "location": {
+    "name": "Home Based - Americas; Home based - EMEA; Home based - Worldwide"
+   },
+   "metadata": [
+    {
+     "id": 186225,
+     "name": "People management responsibilities?",
+     "value": true,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 149021,
+     "name": "Employment Length",
+     "value": "Full-time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 675557,
+     "name": "Core skills",
+     "value": [
+      "Analysers",
+      "Competitor",
+      "Doer",
+      "Entrepreneur",
+      "Leader",
+      "Organiser",
+      "Planner",
+      "Problem Solver",
+      "Seller",
+      "Spokesperson",
+      "Stalwart"
+     ],
+     "value_type": "multi_select"
+    },
+    {
+     "id": 2739136,
+     "name": "External Departments (website)",
+     "value": [
+      "Alliances"
+     ],
+     "value_type": "multi_select"
+    },
+    {
+     "id": 2739137,
+     "name": "One line job description",
+     "value": "Lead, build and scale strategic ecosystem motions that expand Canonical’s reach, accelerate enterprise adoption, and convert open source demand into durable commercial growth.",
+     "value_type": "long_text"
+    },
+    {
+     "id": 3209541,
+     "name": "Canonical site",
+     "value": [],
+     "value_type": "multi_select"
+    },
+    {
+     "id": 3587161,
+     "name": "LinkedIn Posting Level",
+     "value": "Director",
+     "value_type": "single_select"
+    },
+    {
+     "id": 11961371,
+     "name": "Featured job (Talent Team to complete)",
+     "value": true,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 54742858,
+     "name": "Business Unit Type",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 54743567,
+     "name": "Req Category",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 56835606,
+     "name": "Discipline/Track",
+     "value": null,
+     "value_type": "single_select"
+    }
+   ],
+   "id": 8002334,
+   "updated_at": "2026-08-05T18:23:33-04:00",
+   "requisition_id": "976",
+   "title": "Alliances & Channels Leader",
+   "company_name": "Canonical",
+   "first_published": "2026-06-29T06:28:10-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;p&gt;&lt;span style=&quot;font-size: 14pt;&quot;&gt;&lt;strong&gt;Alliances &amp;amp; Channels Leader&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;\n&lt;p&gt;Canonical is a leading provider of open source software and operating systems to the global enterprise and technology markets. Our platform, Ubuntu, is very widely used in breakthrough enterprise initiatives such as public cloud, data science, AI, engineering innovation, and IoT. Our customers include the world&#39;s leading public cloud and silicon providers, and industry leaders in many sectors. The company is a pioneer of global distributed collaboration, with 1200+ colleagues in 75+ countries and very few office-based roles. Teams meet two to four times yearly in person, in interesting locations around the world, to align on strategy and execution.&lt;/p&gt;\n&lt;p&gt;The company is founder led, profitable and growing.&lt;/p&gt;\n&lt;p&gt;We have new senior leadership opportunities in our Global Alliances and Channels organisations, to lead business development and partnership with some of the most important actors in the global technology sector. As the publisher of Ubuntu and a leading provider of open source to major technology firms globally, Canonical works across a broad partner ecosystem that includes global system integrators, value-added resellers, regional distributors, independent software vendors, independent hardware vendors, silicon companies, public clouds and other strategic technology brands.&lt;/p&gt;\n&lt;p&gt;These partners shape the platforms, solutions, marketplaces, hardware and delivery motions through which enterprises adopt open source at scale. We are looking for exceptional partner leaders who can build durable, mutually valuable relationships, develop joint solutions, drive global go-to-market programmes, and convert partner potential into measurable customer impact, revenue growth and market expansion for Canonical.&lt;/p&gt;\n&lt;p&gt;Opportunities are available for both people leaders and senior individual contributors. In these roles, you will lead, build or scale one or more strategic partner motions for Canonical, either by managing a team or by directly driving high-impact partner initiatives. You will work closely with partners throughout their sales, product, delivery and executive planning cycles to make Canonical their trusted partner for enterprise open source solutions. Depending on your experience and Canonical’s business priorities, your focus may include Channels, GSI, ISV, IHV/OEM, Silicon, Cloud or cross-ecosystem partnerships.&lt;/p&gt;\n&lt;p&gt;Our Alliances and Channels teams build trusted relationships with partners at executive level, increase Canonical market share and attach rate, evangelise the partnership, and lead business interactions from engineers to CxO level. This role will own strategy, sell-to, sell-through and sell-with motions across assigned partners or sectors, as well as promotion of partner-related activities, from campaigns, enablement and executive engagement, to strategic opportunities and partner events.&lt;/p&gt;\n&lt;p&gt;&lt;strong&gt;Location: &lt;/strong&gt;These are globally remote positions.&lt;/p&gt;\n&lt;p&gt;&lt;strong&gt;The role entails&lt;/strong&gt;&lt;/p&gt;\n&lt;ul&gt;\n&lt;li&gt;Own and drive partner strategy, forecast, bookings and revenues for Canonical across one or more indirect routes to market&lt;/li&gt;\n&lt;li&gt;Lead and evolve a team or strategic partner portfolio towards accelerated revenue growth and market impact&lt;/li&gt;\n&lt;li&gt;Build strategic relationships with global and regional partners at executive levels&lt;/li&gt;\n&lt;li&gt;Design and execute joint go-to-market plans with partners, sales, product management, product marketing and engineering teams&lt;/li&gt;\n&lt;li&gt;Develop partner capability through sales engagement, technical enablement, joint marketing and disciplined business planning&lt;/li&gt;\n&lt;li&gt;Guide our offering from product management, to product marketing, and scale it through the support of our global sales organisation&lt;/li&gt;\n&lt;li&gt;Establish operating cadence, pipeline governance and data-driven accountability across complex partner relationships&lt;/li&gt;\n&lt;/ul&gt;\n&lt;p&gt;What we are looking for in you:&lt;/p&gt;\n&lt;ul&gt;\n&lt;li&gt;10+ years of experience in alliance, channel, partner, ecosystem or indirect sales management roles&lt;/li&gt;\n&lt;li&gt;Experience in one or more of GSIs, VARs, distributors, ISVs, IHVs/OEMs, silicon, public cloud, marketplaces or strategic technology alliances&lt;/li&gt;\n&lt;li&gt;Deep commercial experience encompassing revenue, margins, pipeline, forecasting and partner economics&lt;/li&gt;\n&lt;li&gt;Proven leadership and presentation skills, with the ability to engage confidently from engineer to CxO level&lt;/li&gt;\n&lt;li&gt;Ability to build trusted executive relationships while aligning product, sales, marketing, engineering and operations teams&lt;/li&gt;\n&lt;li&gt;Insight into open source, Ubuntu, enterprise infrastructure, cloud, AI, security and Canonical’s competition and opportunities&lt;/li&gt;\n&lt;li&gt;Track record of data-driven decision-making and disciplined execution across complex, global relationships&lt;/li&gt;\n&lt;li&gt;An autonomous, disciplined, hands-on, get-it-done mentality&lt;/li&gt;\n&lt;li&gt;An exceptional academic track record from high school and university.&lt;/li&gt;\n&lt;li&gt;Business level written and spoken English.&lt;/li&gt;\n&lt;li&gt;Sincere personal motivation aligned with our mission.&lt;/li&gt;\n&lt;li&gt;International travel 2-4 times a year for company events up to two weeks long.&lt;/li&gt;\n&lt;/ul&gt;\n&lt;p&gt;In addition we expect that you will match our values, by being:&lt;/p&gt;\n&lt;ul&gt;\n&lt;li&gt;Precise, taking care to deliver correctness and clarity.&lt;/li&gt;\n&lt;li&gt;Reliable, delivering high quality work that builds trust and confidence.&lt;/li&gt;\n&lt;li&gt;Accessible, collaborating to build products and systems that are usable.&lt;/li&gt;\n&lt;li&gt;Adroit, blending enthusiasm, knowledge, adaptability, style and character.&lt;/li&gt;\n&lt;/ul&gt;\n&lt;p&gt;&lt;strong&gt;What we offer colleagues&lt;/strong&gt;&lt;/p&gt;\n&lt;p&gt;We consider geographical location, experience, and performance in shaping compensation worldwide. We revisit compensation annually (and more often for graduates and associates) to ensure we recognize outstanding performance. In addition to base pay, we offer a performance-driven annual bonus or commission. We provide all team members with additional benefits which reflect our values and ideals. We balance our programs to meet local needs and ensure fairness globally.&lt;/p&gt;\n&lt;ul&gt;\n&lt;li&gt;Distributed work environment with twice-yearly team sprints in person&lt;/li&gt;\n&lt;li&gt;Personal learning and development budget of USD 2,000 per year&lt;/li&gt;\n&lt;li&gt;Annual compensation review&lt;/li&gt;\n&lt;li&gt;Recognition rewards&lt;/li&gt;\n&lt;li&gt;Annual holiday leave&lt;/li&gt;\n&lt;li&gt;Maternity and paternity leave&lt;/li&gt;\n&lt;li&gt;Team Member Assistance Program &amp;amp; Wellness Platform&lt;/li&gt;\n&lt;li&gt;Opportunity to travel to new locations to meet colleagues&lt;/li&gt;\n&lt;li&gt;Priority Pass and travel upgrades for long-haul company events&lt;/li&gt;\n&lt;/ul&gt;\n&lt;p&gt;&lt;strong&gt;About Canonical&lt;/strong&gt;&lt;/p&gt;\n&lt;p&gt;Canonical is a pioneering tech firm at the forefront of the global move to open source. As the company that publishes Ubuntu, one of the most important open-source projects and the platform for AI, IoT, and the cloud, we are changing the world of software. We recruit on a global basis and set a very high standard for people joining the company. We expect excellence; in order to succeed, we need to be the best at what we do. Most colleagues at Canonical have worked from home since our inception in 2004.​ Working here is a step into the future and will challenge you to think differently, work smarter, learn new skills, and raise your game.&lt;/p&gt;\n&lt;p&gt;&lt;strong&gt;Canonical is an equal opportunity employer&lt;/strong&gt;&lt;/p&gt;\n&lt;p&gt;We are proud to foster a workplace free from discrimination. Diversity of experience, perspectives, and background create a better work environment and better products.&lt;a href=&quot;https://canonical.com/careers/diversity/identity&quot;&gt; Whatever your identity, we will give your application fair consideration.&lt;br&gt;&lt;/a&gt;&lt;/p&gt;",
+   "departments": [
+    {
+     "id": 82559,
+     "name": "Alliances",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 44276,
+     "name": "Home Based - Americas",
+     "location": null,
+     "child_ids": [],
+     "parent_id": 73277
+    },
+    {
+     "id": 44278,
+     "name": "Home Based - EMEA",
+     "location": null,
+     "child_ids": [],
+     "parent_id": 73277
+    }
+   ],
+   "ai_disclaimer": null,
+   "include_ai_disclaimer": null,
+   "ai_opt_out_request_url": null
+  },
+  {
+   "absolute_url": "https://job-boards.greenhouse.io/canonical/jobs/3433732",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_optional",
+   "internal_job_id": 1947084,
+   "location": {
+    "name": "Home based - Worldwide"
+   },
+   "metadata": [
+    {
+     "id": 186225,
+     "name": "People management responsibilities?",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 149021,
+     "name": "Employment Length",
+     "value": "Full-time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 675557,
+     "name": "Core skills",
+     "value": [
+      "Analysers",
+      "Entrepreneur",
+      "Generalist",
+      "Problem Solver",
+      "Seller",
+      "Spokesperson",
+      "Technologist",
+      "Traveller"
+     ],
+     "value_type": "multi_select"
+    },
+    {
+     "id": 2739136,
+     "name": "External Departments (website)",
+     "value": [
+      "Engineering"
+     ],
+     "value_type": "multi_select"
+    },
+    {
+     "id": 2739137,
+     "name": "One line job description",
+     "value": "Help partners architect and implement Ubuntu solutions, maintaining a broad awareness of private and public cloud, edge, kubernetes, storage, AI and MLOps from Canonical.",
+     "value_type": "long_text"
+    },
+    {
+     "id": 3209541,
+     "name": "Canonical site",
+     "value": [],
+     "value_type": "multi_select"
+    },
+    {
+     "id": 3587161,
+     "name": "LinkedIn Posting Level",
+     "value": "Mid-Senior",
+     "value_type": "single_select"
+    },
+    {
+     "id": 11961371,
+     "name": "Featured job (Talent Team to complete)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 54742858,
+     "name": "Business Unit Type",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 54743567,
+     "name": "Req Category",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 56835606,
+     "name": "Discipline/Track",
+     "value": null,
+     "value_type": "single_select"
+    }
+   ],
+   "id": 3433732,
+   "updated_at": "2026-08-05T18:23:33-04:00",
+   "requisition_id": "769",
+   "title": "Alliances Field Engineer",
+   "company_name": "Canonical",
+   "first_published": "2021-09-20T14:14:26-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;p&gt;Canonical is a leading provider of open source software and operating systems to the global enterprise and technology markets. Our platform, Ubuntu, is very widely used in breakthrough enterprise initiatives such as public cloud, data science, AI, engineering innovation and IoT. Our customers include the world&#39;s leading public cloud and silicon providers, and industry leaders in many sectors. The company is a pioneer of global distributed collaboration, with 1000+ colleagues in 70+ countries and very few roles based in offices. Teams meet two to four times yearly in person, in interesting locations around the world, to align on strategy and execution.&lt;/p&gt;\n&lt;p&gt;The company is founder led, profitable and growing. We are hiring an &lt;strong&gt;Alliances Field Engineer&lt;/strong&gt; to help our biggest partners (companies like Intel, Nvidia, Google, Dell, HP, Accenture, Tata and the like) understand and embrace our open source platform for themselves and their customers.&lt;/p&gt;\n&lt;p&gt;Our worldwide field engineering team apply expert insights to real-world customer problems, enabling the enterprise adoption of Ubuntu, OpenStack, Kubernetes, AI/MLOps and a wide range of associated technologies. We are experts in the whole open source stack, from kernel to desktop, from cloud to the edge. Our team is also interested in business problems - building things reliably, efficiently and cost-effectively, and we have to learn to speak the language of our customers and their industries.&lt;/p&gt;\n&lt;p&gt;We help global companies embrace public and private cloud infrastructure, cloud native operations, and open source applications. For this team we are looking for several Alliances Engineers to support OEM (hardware manufacturers), GSI (global system integrators), ISV (independent software vendors), Channel partners and Public Cloud alliance partners. You will support various alliances and partners of Canonical to adopt our products and technologies, help business leaders to define joint go-to-market programs with partners from the technical standpoint.&lt;/p&gt;\n&lt;p&gt;We often say that our field engineers have &#39;the hardest job at Canonical&#39; because customers can ask about any aspect of our solutions and products and expect a thoughtful, well-informed answer. We always want to do the best thing for our partners and customers, regardless of our company interests, and field engineers are the people we trust to ensure that is true.&lt;/p&gt;\n&lt;p&gt;&lt;strong&gt;Location&lt;/strong&gt;: This is a home-based role, we are hiring worldwide.&lt;/p&gt;\n&lt;h3&gt;What your day will look like&lt;/h3&gt;\n&lt;ul&gt;\n&lt;li&gt;Understand Ubuntu, Linux, networking and services in real-world environments&lt;/li&gt;\n&lt;li&gt;Architect cloud infrastructure solutions like Kubernetes, Kubeflow, OpenStack, Ceph, and Spark either On-Premises or in Public Cloud (AWS, Azure, Google Cloud)&lt;/li&gt;\n&lt;li&gt;Architect and integrate popular open source software such as PostgreSQL, MongoDB, Kafka, Cassandra and NGINX&lt;/li&gt;\n&lt;li&gt;Help partners to offer and architect joint solutions utilizing Canonical’s technologies on top of the public clouds and in the data center&lt;/li&gt;\n&lt;li&gt;Design and publish joint Reference Architectures and perform technical validations with various partners&lt;/li&gt;\n&lt;li&gt;Prepare and run onboarding sessions/workshops with various partners’ teams to promote Canonical products and solutions&lt;/li&gt;\n&lt;/ul&gt;\n&lt;p&gt;If you have a passion for the latest open source technologies, cloud-native development, data center technologies such as Kubernetes and computer networking, you will love the Alliances Engineer role at Canonical.&lt;/p&gt;\n&lt;h3&gt;What we are looking for in you&amp;nbsp;&lt;/h3&gt;\n&lt;ul&gt;\n&lt;li&gt;Extensive experience with Linux (Ubuntu preferred), Kubernetes, Ceph, software automation&lt;/li&gt;\n&lt;li&gt;Experience designing and implementing solutions on top of public or private clouds&lt;/li&gt;\n&lt;li&gt;Python and bash understanding, troubleshooting skills&lt;/li&gt;\n&lt;li&gt;Fluent written and spoken English&lt;/li&gt;\n&lt;li&gt;Excellent communication and presentation skills&lt;/li&gt;\n&lt;li&gt;High motivation, ability to multi-task and follow-up reliably on commitments&lt;/li&gt;\n&lt;li&gt;Interest in customer-facing engagement, including pitching, demonstrating and understanding customer environment and needs&lt;/li&gt;\n&lt;li&gt;Interest in new technologies like LXD, Juju and Snaps&lt;/li&gt;\n&lt;li&gt;Ability to travel globally up to 30% of the time&lt;/li&gt;\n&lt;li&gt;Degree in Computer Science, Mathematics, Physics or related technical field experience&lt;/li&gt;\n&lt;/ul&gt;\n&lt;h3&gt;What we offer you&lt;/h3&gt;\n&lt;p&gt;We consider geographical location, experience, and performance in shaping compensation worldwide. We revisit compensation annually (and more often for graduates and associates) to ensure we recognise outstanding performance. In addition to base pay, we offer a performance-driven annual bonus. We provide all team members with additional benefits, which reflect our values and ideals. We balance our programs to meet local needs and ensure fairness globally.&lt;/p&gt;\n&lt;ul&gt;\n&lt;li&gt;Distributed work environment with twice-yearly team sprints in person - we’ve been working remotely since 2004!&lt;/li&gt;\n&lt;li&gt;Personal learning and development budget of USD 2,000 per year&lt;/li&gt;\n&lt;li&gt;Annual compensation review&lt;/li&gt;\n&lt;li&gt;Recognition rewards&lt;/li&gt;\n&lt;li&gt;Annual holiday leave&lt;/li&gt;\n&lt;li&gt;Maternity and paternity leave&lt;/li&gt;\n&lt;li&gt;Employee Assistance Programme&lt;/li&gt;\n&lt;li&gt;Opportunity to travel to new locations to meet colleagues from your team and others&lt;/li&gt;\n&lt;li&gt;Priority Pass for travel and travel upgrades for long haul company events&lt;/li&gt;\n&lt;/ul&gt;\n&lt;h3&gt;About Canonical&lt;/h3&gt;\n&lt;p&gt;Canonical is a pioneering tech firm that is at the forefront of the global move to open source. As the company that publishes Ubuntu, one of the most important open source projects and the platform for AI, IoT and the cloud, we are changing the world on a daily basis. We recruit on a global basis and set a very high standard for people joining the company. We expect excellence - in order to succeed, we need to be the best at what we do.&lt;/p&gt;\n&lt;p&gt;Canonical has been a remote-first company since its inception in 2004.​ Work at Canonical is a step into the future, and will challenge you to think differently, work smarter, learn new skills, and raise your game. Canonical provides a unique window into the world of 21st-century digital business.&lt;/p&gt;\n&lt;h3&gt;Canonical is an equal opportunity employer&lt;/h3&gt;\n&lt;p&gt;We are proud to foster a workplace free from discrimination. Diversity of experience, perspectives, and background create a better work environment and better products. &lt;a href=&quot;https://canonical.com/careers/diversity/identity&quot;&gt;Whatever your identity, we will give your application fair consideration.&lt;/a&gt;&lt;/p&gt;\n&lt;p&gt;&amp;nbsp;&lt;/p&gt;\n&lt;p&gt;#LI-Remote&lt;/p&gt;\n&lt;p&gt;&amp;nbsp;&lt;/p&gt;",
+   "departments": [
+    {
+     "id": 82563,
+     "name": "Field Engineering",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 44282,
+     "name": "Home Based - Worldwide",
+     "location": null,
+     "child_ids": [],
+     "parent_id": 73277
+    }
+   ],
+   "ai_disclaimer": null,
+   "include_ai_disclaimer": null,
+   "ai_opt_out_request_url": null
+  },
+  {
+   "absolute_url": "https://job-boards.greenhouse.io/canonical/jobs/5569916",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "education": "education_optional",
+   "internal_job_id": 2108576,
+   "location": {
+    "name": "Home based - EMEA"
+   },
+   "metadata": [
+    {
+     "id": 186225,
+     "name": "People management responsibilities?",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 149021,
+     "name": "Employment Length",
+     "value": "Full-time",
+     "value_type": "single_select"
+    },
+    {
+     "id": 675557,
+     "name": "Core skills",
+     "value": [
+      "Analysers",
+      "Conscience",
+      "Fixer",
+      "Organiser",
+      "Planner",
+      "Problem Solver",
+      "Stalwart",
+      "Tester"
+     ],
+     "value_type": "multi_select"
+    },
+    {
+     "id": 2739136,
+     "name": "External Departments (website)",
+     "value": [
+      "Finance"
+     ],
+     "value_type": "multi_select"
+    },
+    {
+     "id": 2739137,
+     "name": "One line job description",
+     "value": "Join our global accounting team ensuring financial rigour worldwide",
+     "value_type": "long_text"
+    },
+    {
+     "id": 3209541,
+     "name": "Canonical site",
+     "value": [],
+     "value_type": "multi_select"
+    },
+    {
+     "id": 3587161,
+     "name": "LinkedIn Posting Level",
+     "value": "Associate",
+     "value_type": "single_select"
+    },
+    {
+     "id": 11961371,
+     "name": "Featured job (Talent Team to complete)",
+     "value": true,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 54742858,
+     "name": "Business Unit Type",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 54743567,
+     "name": "Req Category",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 56835606,
+     "name": "Discipline/Track",
+     "value": null,
+     "value_type": "single_select"
+    }
+   ],
+   "id": 5569916,
+   "updated_at": "2026-08-05T18:23:33-04:00",
+   "requisition_id": "831",
+   "title": "Accountant",
+   "company_name": "Canonical",
+   "first_published": "2024-01-22T18:02:51-05:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;h3&gt;&lt;strong&gt;&lt;/strong&gt;&lt;/h3&gt;\n&lt;p&gt;Canonical is a leading provider of open source software and operating systems to the global enterprise and technology markets. Our platform, Ubuntu, is very widely used in breakthrough enterprise initiatives such as public cloud, data science, AI, engineering innovation, and IoT. Our customers include the world&#39;s leading public cloud and silicon providers, and industry leaders in many sectors. The company is a pioneer of global distributed collaboration, with 1200+ colleagues in 75+ countries and very few office-based roles. Teams meet two to four times yearly in person, in interesting locations around the world, to align on strategy and execution.&lt;/p&gt;\n&lt;p&gt;The company is founder-led, profitable, and growing.&lt;/p&gt;\n&lt;h3&gt;&lt;strong&gt;&lt;/strong&gt;&lt;/h3&gt;\n&lt;h3&gt;&lt;strong&gt;The role of an Accountant at Canonical:&lt;/strong&gt;&lt;/h3&gt;\n&lt;p&gt;If you are passionate about the technology industry and want to work for a company that aligns with your interests, we might be the place for you! Canonical, and our world class Ubuntu product, attracts some of the leading talent from around the world. Come and work with exceptional people and advance your career in Finance!&amp;nbsp;&lt;/p&gt;\n&lt;p&gt;Our Finance team is growing and it&#39;s a really exciting time to join the team. We are looking for bright, motivated people who have a passion for making a difference. You will be seeking an opportunity to drive process improvements and change, input your ideas and truly contribute to a highly productive team.&amp;nbsp;&lt;/p&gt;\n&lt;p&gt;We are looking for an exceptional Accountant with IFRS experience to help us ready the business for public market scrutiny through our planned IPO.&amp;nbsp; The right candidate will have domain expertise and a passion for IFRS.&amp;nbsp;&amp;nbsp;&lt;/p&gt;\n&lt;p&gt;&lt;strong&gt;Location:&amp;nbsp;&lt;/strong&gt;This role may be office based in London, or Remote in EMEA Time Zones.&amp;nbsp;&lt;/p&gt;\n&lt;h3&gt;What your day will look like&lt;/h3&gt;\n&lt;ul&gt;\n&lt;li&gt;Assist in the month end reporting process to deliver timely and accurate information&lt;/li&gt;\n&lt;li&gt;Have full responsibility for a part of the ledger processes relevant to your strengths&lt;/li&gt;\n&lt;li&gt;Assist with the year end audit process and statutory reporting&lt;/li&gt;\n&lt;li&gt;Support the finance team&#39;s wider plans to prepare for an IPO&lt;/li&gt;\n&lt;li&gt;Improve the efficiency of financial processes and procedures and monitor compliance&lt;/li&gt;\n&lt;li&gt;Share knowledge between team members to ensure cover is available when needed&lt;/li&gt;\n&lt;li&gt;Actively develop your own skills to ensure current knowledge of applicable standards and regulations&lt;/li&gt;\n&lt;li&gt;Establish strong relationships with key colleagues outside the wider finance team&lt;/li&gt;\n&lt;/ul&gt;\n&lt;h3&gt;What we are looking for in you&lt;/h3&gt;\n&lt;ul&gt;\n&lt;li&gt;Exceptional academic track record and subsequent career performance&lt;/li&gt;\n&lt;li&gt;Bachelor&#39;s degree in Accounting or equivalent&lt;/li&gt;\n&lt;li&gt;Qualified accountant (ACCA, ACA, ACMA, CPA, etc.)&lt;/li&gt;\n&lt;li&gt;Experience at a large public accounting firm, or public multinational corporate accounting department preferred&lt;/li&gt;\n&lt;li&gt;NetSuite or similar enterprise grade systems experience&lt;/li&gt;\n&lt;li&gt;Willingness to travel up to four times per year&lt;/li&gt;\n&lt;/ul&gt;\n&lt;h3&gt;&lt;/h3&gt;\n&lt;h3&gt;&lt;strong&gt;What we offer colleagues&lt;/strong&gt;&lt;/h3&gt;\n&lt;p&gt;We consider geographical location, experience, and performance in shaping compensation worldwide. We revisit compensation annually (and more often for graduates and associates) to ensure we recognize outstanding performance. In addition to base pay, we offer a performance-driven annual bonus or commission. We provide all team members with additional benefits which reflect our values and ideals. We balance our programs to meet local needs and ensure fairness globally.&lt;/p&gt;\n&lt;ul&gt;\n&lt;li&gt;Distributed work environment with twice-yearly team sprints in person&lt;/li&gt;\n&lt;li&gt;Personal learning and development budget of USD 2,000 per year&lt;/li&gt;\n&lt;li&gt;Annual compensation review&lt;/li&gt;\n&lt;li&gt;Recognition rewards&lt;/li&gt;\n&lt;li&gt;Annual holiday leave&lt;/li&gt;\n&lt;li&gt;Maternity and paternity leave&lt;/li&gt;\n&lt;li&gt;Team Member Assistance Program &amp;amp; Wellness Platform&lt;/li&gt;\n&lt;li&gt;Opportunity to travel to new locations to meet colleagues&lt;/li&gt;\n&lt;li&gt;Priority Pass and travel upgrades for long-haul company events&lt;/li&gt;\n&lt;/ul&gt;\n&lt;h3&gt;&lt;/h3&gt;\n&lt;h3&gt;&lt;strong&gt;About Canonical&lt;/strong&gt;&lt;/h3&gt;\n&lt;p&gt;Canonical is a pioneering tech firm at the forefront of the global move to open source. As the company that publishes Ubuntu, one of the most important open-source projects and the platform for AI, IoT, and the cloud, we are changing the world of software. We recruit on a global basis and set a very high standard for people joining the company. We expect excellence; in order to succeed, we need to be the best at what we do. Most colleagues at Canonical have worked from home since our inception in 2004.​ Working here is a step into the future and will challenge you to think differently, work smarter, learn new skills, and raise your game.&lt;/p&gt;\n&lt;p&gt;&lt;strong&gt;Canonical is an equal opportunity employer&lt;/strong&gt;&lt;/p&gt;\n&lt;p&gt;We are proud to foster a workplace free from discrimination. Diversity of experience, perspectives, and background create a better work environment and better products.&lt;a href=&quot;https://canonical.com/careers/diversity/identity&quot;&gt;&amp;nbsp;Whatever your identity, we will give your application fair consideration.&lt;/a&gt;&lt;/p&gt;\n&lt;p&gt;#LI-remote&lt;/p&gt;\n&lt;h3&gt;&lt;/h3&gt;",
+   "departments": [
+    {
+     "id": 82566,
+     "name": "Operations",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 44278,
+     "name": "Home Based - EMEA",
+     "location": null,
+     "child_ids": [],
+     "parent_id": 73277
+    }
+   ],
+   "ai_disclaimer": null,
+   "include_ai_disclaimer": null,
+   "ai_opt_out_request_url": null
+  }
+ ],
+ "meta": {
+  "total": 309
+ }
+}

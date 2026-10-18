@@ -1,0 +1,42 @@
+From: LinkedIn Job Alerts <jobs-noreply@linkedin.com>
+To: owner@example.com
+Subject: "software engineer" in Bangladesh: 3 new jobs
+Date: Sat, 17 Oct 2026 05:30:00 +0000
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="b1"
+
+--b1
+Content-Type: text/plain; charset=utf-8
+
+Your job alert: 3 new jobs. View them on LinkedIn.
+
+--b1
+Content-Type: text/html; charset=utf-8
+
+<html><body>
+<!-- SYNTHETIC fixture: the shape of a LinkedIn job-alert email, with made-up
+     jobs. Replace with a redacted real alert email when one is available. -->
+<table>
+  <tr><td>
+    <a href="https://www.linkedin.com/comm/jobs/view/4100000001/?trackingId=abc&amp;refId=x">
+      <img src="https://media.example/logo1.png" alt="Example Tech Ltd">
+    </a>
+    <a href="https://www.linkedin.com/comm/jobs/view/4100000001/?trackingId=abc&amp;refId=x">Junior Software Engineer</a>
+    <p>Example Tech Ltd</p>
+    <p>Dhaka, Bangladesh</p>
+  </td></tr>
+  <tr><td>
+    <a href="https://www.linkedin.com/comm/jobs/view/4100000002/?trackingId=def">SQA Engineer</a>
+    <p>Sample Soft</p>
+    <p>Chattogram, Bangladesh (On-site)</p>
+  </td></tr>
+  <tr><td>
+    <a href="https://www.linkedin.com/comm/jobs/view/4100000003/">Machine Learning Engineer</a>
+    <p>Demo AI</p>
+  </td></tr>
+  <tr><td><a href="https://www.linkedin.com/comm/jobs/view/4100000001/">Junior Software Engineer</a></td></tr>
+  <tr><td><a href="https://www.linkedin.com/comm/jobs/alerts?midToken=z">Manage alerts</a></td></tr>
+</table>
+</body></html>
+
+--b1--

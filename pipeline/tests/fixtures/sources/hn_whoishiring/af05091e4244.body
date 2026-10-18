@@ -1,0 +1,348 @@
+{
+ "exhaustive": {
+  "nbHits": true,
+  "typo": true
+ },
+ "exhaustiveNbHits": true,
+ "exhaustiveTypo": true,
+ "hits": [
+  {
+   "_highlightResult": {
+    "author": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "kscan1992"
+    },
+    "comment_text": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "NeuralFrame | Senior Backend Engineer, Medical Data Pipeline (Python + Rust) | REMOTE (US only, US time zones; no visa sponsorship) | Full-time | $170k–$210k + 0.1%–0.25% equity<p>We build software that hospitals, cancer registries and researchers use. You'd own the pipeline that pulls data from hospital systems and transforms it for analytics and research.<p>Where Rust fits: part of our hospital data acquisition layer, the code that talks to hospital systems, is written in Rust. You'd work on both sides: Rust where performance and correctness matter most, async Python for the rest of the pipeline. Rust experience is a strong plus. Whether you learned it at work or on your own, we want to hear what you built with it.<p>Stack: Rust, async Python (mypy, pytest, ruff, uv), PostgreSQL and MongoDB, Dagster, Terraform/OpenTofu, AWS (ECS/Fargate, RDS, Lambda, S3), GitHub Actions.<p>You'll need 5+ years building backend services or data pipelines in production (retries, idempotency, schema design and migrations, well-tested and typed code) and strong Python and SQL. No healthcare background needed.<p>Apply: <a href=\"https://wellfound.com/jobs/4829721-senior-backend-software-engineer-medical-data-pipeline\" rel=\"nofollow\">https://wellfound.com/jobs/4829721-senior-backend-software-e...</a>. In your note, tell us in a few sentences about one pipeline failure you traced (what broke, how you found it, what you changed) and, if you've written Rust, what you built with it."
+    },
+    "story_title": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Ask HN: Who is hiring? (October 2026)"
+    }
+   },
+   "_tags": [
+    "comment",
+    "author_kscan1992",
+    "story_49922569"
+   ],
+   "author": "kscan1992",
+   "comment_text": "NeuralFrame | Senior Backend Engineer, Medical Data Pipeline (Python + Rust) | REMOTE (US only, US time zones; no visa sponsorship) | Full-time | $170k–$210k + 0.1%–0.25% equity<p>We build software that hospitals, cancer registries and researchers use. You&#x27;d own the pipeline that pulls data from hospital systems and transforms it for analytics and research.<p>Where Rust fits: part of our hospital data acquisition layer, the code that talks to hospital systems, is written in Rust. You&#x27;d work on both sides: Rust where performance and correctness matter most, async Python for the rest of the pipeline. Rust experience is a strong plus. Whether you learned it at work or on your own, we want to hear what you built with it.<p>Stack: Rust, async Python (mypy, pytest, ruff, uv), PostgreSQL and MongoDB, Dagster, Terraform&#x2F;OpenTofu, AWS (ECS&#x2F;Fargate, RDS, Lambda, S3), GitHub Actions.<p>You&#x27;ll need 5+ years building backend services or data pipelines in production (retries, idempotency, schema design and migrations, well-tested and typed code) and strong Python and SQL. No healthcare background needed.<p>Apply: <a href=\"https:&#x2F;&#x2F;wellfound.com&#x2F;jobs&#x2F;4829721-senior-backend-software-engineer-medical-data-pipeline\" rel=\"nofollow\">https:&#x2F;&#x2F;wellfound.com&#x2F;jobs&#x2F;4829721-senior-backend-software-e...</a>. In your note, tell us in a few sentences about one pipeline failure you traced (what broke, how you found it, what you changed) and, if you&#x27;ve written Rust, what you built with it.",
+   "created_at": "2026-10-14T21:53:28Z",
+   "created_at_i": 1792014808,
+   "objectID": "50095921",
+   "parent_id": 49922569,
+   "story_id": 49922569,
+   "story_title": "Ask HN: Who is hiring? (October 2026)",
+   "updated_at": "2026-10-15T13:11:46Z"
+  },
+  {
+   "_highlightResult": {
+    "author": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "bram2w"
+    },
+    "comment_text": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Baserow (<a href=\"https://baserow.io\" rel=\"nofollow\">https://baserow.io</a>) | Product Specialist | REMOTE (Europe) | Full-time | German-speaking<p>We're building an open-source no-code platform for databases, applications, and automations.<p>We're looking for a technical, customer-facing Product Specialist to help customers build solutions with Baserow. Ideal experience includes Airtable, n8n, APIs, databases, and automation. Fluent German and English required.<p>Remote-first, flexible hours, competitive salary + stock options.<p>Details &amp; apply: <a href=\"https://baserow.io/jobs/product-specialist-baserow\" rel=\"nofollow\">https://baserow.io/jobs/product-specialist-baserow</a>"
+    },
+    "story_title": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Ask HN: Who is hiring? (October 2026)"
+    }
+   },
+   "_tags": [
+    "comment",
+    "author_bram2w",
+    "story_49922569"
+   ],
+   "author": "bram2w",
+   "children": [
+    50077638
+   ],
+   "comment_text": "Baserow (<a href=\"https:&#x2F;&#x2F;baserow.io\" rel=\"nofollow\">https:&#x2F;&#x2F;baserow.io</a>) | Product Specialist | REMOTE (Europe) | Full-time | German-speaking<p>We&#x27;re building an open-source no-code platform for databases, applications, and automations.<p>We&#x27;re looking for a technical, customer-facing Product Specialist to help customers build solutions with Baserow. Ideal experience includes Airtable, n8n, APIs, databases, and automation. Fluent German and English required.<p>Remote-first, flexible hours, competitive salary + stock options.<p>Details &amp; apply: <a href=\"https:&#x2F;&#x2F;baserow.io&#x2F;jobs&#x2F;product-specialist-baserow\" rel=\"nofollow\">https:&#x2F;&#x2F;baserow.io&#x2F;jobs&#x2F;product-specialist-baserow</a>",
+   "created_at": "2026-10-13T17:11:22Z",
+   "created_at_i": 1791911482,
+   "objectID": "50075162",
+   "parent_id": 49922569,
+   "story_id": 49922569,
+   "story_title": "Ask HN: Who is hiring? (October 2026)",
+   "updated_at": "2026-10-13T19:52:26Z"
+  },
+  {
+   "_highlightResult": {
+    "author": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "adi_singh_21"
+    },
+    "comment_text": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Irash Tech | Business Development Manager (Freelance, Commission-only) | REMOTE (Worldwide) | Contract<p>Irash Tech is a small AI-focused development agency based in Hyderabad, India. We build web apps (Next.js, React, Node), mobile apps (React Native/Expo) and AI automation (LLM integrations, RAG, document processing, n8n/Python workflows) for startups and small businesses.<p>I'm the founder, an engineer with 7+ years in full-stack and AI, and I handle scoping and delivery. I'm looking for people anywhere in the world who can find and close clients in their own market.<p>- 15% of project value on every client you close, paid within 14 days of client payment\n- 12 months of commission on repeat work from clients you bring\n- Commission-only, no base salary. Non-exclusive, so it works alongside your other work\n- You own the client relationship and negotiation; final quotes are approved by us<p>Good fit: you know founders, SMBs or agencies that need software built, and you've sold software, dev or digital services before.<p>Apply: <a href=\"https://www.irashtech.com/careers/business-development-manager\" rel=\"nofollow\">https://www.irashtech.com/careers/business-development-manag...</a>\nOr email [email] with a short note on one deal you've closed."
+    },
+    "story_title": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Ask HN: Who is hiring? (October 2026)"
+    }
+   },
+   "_tags": [
+    "comment",
+    "author_adi_singh_21",
+    "story_49922569"
+   ],
+   "author": "adi_singh_21",
+   "comment_text": "Irash Tech | Business Development Manager (Freelance, Commission-only) | REMOTE (Worldwide) | Contract<p>Irash Tech is a small AI-focused development agency based in Hyderabad, India. We build web apps (Next.js, React, Node), mobile apps (React Native&#x2F;Expo) and AI automation (LLM integrations, RAG, document processing, n8n&#x2F;Python workflows) for startups and small businesses.<p>I&#x27;m the founder, an engineer with 7+ years in full-stack and AI, and I handle scoping and delivery. I&#x27;m looking for people anywhere in the world who can find and close clients in their own market.<p>- 15% of project value on every client you close, paid within 14 days of client payment\n- 12 months of commission on repeat work from clients you bring\n- Commission-only, no base salary. Non-exclusive, so it works alongside your other work\n- You own the client relationship and negotiation; final quotes are approved by us<p>Good fit: you know founders, SMBs or agencies that need software built, and you&#x27;ve sold software, dev or digital services before.<p>Apply: <a href=\"https:&#x2F;&#x2F;www.irashtech.com&#x2F;careers&#x2F;business-development-manager\" rel=\"nofollow\">https:&#x2F;&#x2F;www.irashtech.com&#x2F;careers&#x2F;business-development-manag...</a>\nOr email [email] with a short note on one deal you&#x27;ve closed.",
+   "created_at": "2026-10-13T09:31:19Z",
+   "created_at_i": 1791883879,
+   "objectID": "50068986",
+   "parent_id": 49922569,
+   "story_id": 49922569,
+   "story_title": "Ask HN: Who is hiring? (October 2026)",
+   "updated_at": "2026-10-15T15:53:17Z"
+  },
+  {
+   "_highlightResult": {
+    "author": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "fiiico"
+    },
+    "comment_text": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Matcha.fm | REMOTE (Worldwide: US / Canada / Europe / UK / LATAM) | Full-time | <a href=\"https://matcha.fm\" rel=\"nofollow\">https://matcha.fm</a><p>I'm a Canadian repeat founder working on agents that cut the noise in large dataset search.<p>Looking for a great builder (founding software engineer) and a great marketer both with a track record of virality and driving product distribution.<p>Fully remote anywhere in the world, with some US / EU timezone overlap.<p>The same salary regardless of where you live<p>No micromanagement, no unnecessary calls<p>Calm, low-distraction culture to do your best work<p>Founding Software Engineer : <a href=\"https://matcha.fm/apply/fse\" rel=\"nofollow\">https://matcha.fm/apply/fse</a><p>Founding Marketer : <a href=\"https://matcha.fm/apply/marketing\" rel=\"nofollow\">https://matcha.fm/apply/marketing</a>"
+    },
+    "story_title": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Ask HN: Who is hiring? (October 2026)"
+    }
+   },
+   "_tags": [
+    "comment",
+    "author_fiiico",
+    "story_49922569"
+   ],
+   "author": "fiiico",
+   "children": [
+    50071113,
+    50076568
+   ],
+   "comment_text": "Matcha.fm | REMOTE (Worldwide: US &#x2F; Canada &#x2F; Europe &#x2F; UK &#x2F; LATAM) | Full-time | <a href=\"https:&#x2F;&#x2F;matcha.fm\" rel=\"nofollow\">https:&#x2F;&#x2F;matcha.fm</a><p>I&#x27;m a Canadian repeat founder working on agents that cut the noise in large dataset search.<p>Looking for a great builder (founding software engineer) and a great marketer both with a track record of virality and driving product distribution.<p>Fully remote anywhere in the world, with some US &#x2F; EU timezone overlap.<p>The same salary regardless of where you live<p>No micromanagement, no unnecessary calls<p>Calm, low-distraction culture to do your best work<p>Founding Software Engineer : <a href=\"https:&#x2F;&#x2F;matcha.fm&#x2F;apply&#x2F;fse\" rel=\"nofollow\">https:&#x2F;&#x2F;matcha.fm&#x2F;apply&#x2F;fse</a><p>Founding Marketer : <a href=\"https:&#x2F;&#x2F;matcha.fm&#x2F;apply&#x2F;marketing\" rel=\"nofollow\">https:&#x2F;&#x2F;matcha.fm&#x2F;apply&#x2F;marketing</a>",
+   "created_at": "2026-10-12T14:05:33Z",
+   "created_at_i": 1791813933,
+   "objectID": "50056667",
+   "parent_id": 49922569,
+   "story_id": 49922569,
+   "story_title": "Ask HN: Who is hiring? (October 2026)",
+   "updated_at": "2026-10-13T18:41:55Z"
+  },
+  {
+   "_highlightResult": {
+    "author": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "chrisworsey55"
+    },
+    "comment_text": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "General Intelligence Holdings | <a href=\"https://www.generalintelligenceholdings.com\" rel=\"nofollow\">https://www.generalintelligenceholdings.com</a> | Founding CTO | REMOTE (UK working-hour overlap preferred) | Fundraising | Salary/equity to be agreed<p>I'm Chris, founder of GIH. We're building an AI operating platform for established service businesses, starting with UK accountancy. Our model is to acquire businesses and deploy the software into their daily workflows, measuring its effect on time, quality and cost.<p>We've built version 1 of Helix, connecting accounting workflows, AI assistance, source evidence and review controls. It covers work including reconciliation, payroll, VAT and debtors. The next challenge is deployment in an operating practice, including production integrations, security and independent validation.<p>I'm looking for a hands-on CTO to own architecture and engineering delivery, write code, work with accountants and build the technical team. You should have shipped and operated customer-facing software, be comfortable with APIs and data systems, and have practical experience evaluating LLM/agent workflows. Previous CTO experience isn't essential; evidence of building and owning a product is.<p>We're currently fundraising and expect the round to close at the end of November 2026. You can join when the round closes or start earlier, depending on your availability and preference. Salary, equity and any arrangements before the round closes will be agreed directly. This is intended as a full-time technical leadership role.<p>Email [email] with “HN CTO” in the subject, your CV/LinkedIn, something you built, your location and preferred start date."
+    },
+    "story_title": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Ask HN: Who is hiring? (October 2026)"
+    }
+   },
+   "_tags": [
+    "comment",
+    "author_chrisworsey55",
+    "story_49922569"
+   ],
+   "author": "chrisworsey55",
+   "comment_text": "General Intelligence Holdings | <a href=\"https:&#x2F;&#x2F;www.generalintelligenceholdings.com\" rel=\"nofollow\">https:&#x2F;&#x2F;www.generalintelligenceholdings.com</a> | Founding CTO | REMOTE (UK working-hour overlap preferred) | Fundraising | Salary&#x2F;equity to be agreed<p>I&#x27;m Chris, founder of GIH. We&#x27;re building an AI operating platform for established service businesses, starting with UK accountancy. Our model is to acquire businesses and deploy the software into their daily workflows, measuring its effect on time, quality and cost.<p>We&#x27;ve built version 1 of Helix, connecting accounting workflows, AI assistance, source evidence and review controls. It covers work including reconciliation, payroll, VAT and debtors. The next challenge is deployment in an operating practice, including production integrations, security and independent validation.<p>I&#x27;m looking for a hands-on CTO to own architecture and engineering delivery, write code, work with accountants and build the technical team. You should have shipped and operated customer-facing software, be comfortable with APIs and data systems, and have practical experience evaluating LLM&#x2F;agent workflows. Previous CTO experience isn&#x27;t essential; evidence of building and owning a product is.<p>We&#x27;re currently fundraising and expect the round to close at the end of November 2026. You can join when the round closes or start earlier, depending on your availability and preference. Salary, equity and any arrangements before the round closes will be agreed directly. This is intended as a full-time technical leadership role.<p>Email [email] with “HN CTO” in the subject, your CV&#x2F;LinkedIn, something you built, your location and preferred start date.",
+   "created_at": "2026-10-12T11:51:09Z",
+   "created_at_i": 1791805869,
+   "objectID": "50055019",
+   "parent_id": 49922569,
+   "story_id": 49922569,
+   "story_title": "Ask HN: Who is hiring? (October 2026)",
+   "updated_at": "2026-10-12T11:54:22Z"
+  },
+  {
+   "_highlightResult": {
+    "author": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "jamescryan"
+    },
+    "comment_text": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Willow Education | Product Manager (design-led) | REMOTE (US) | Full-time | $80k–$130k + equity | <a href=\"https://willowed.org/careers/product-manager\" rel=\"nofollow\">https://willowed.org/careers/product-manager</a><p>We build a career and postsecondary readiness platform for schools and community organizations. Five-person team, public benefit corporation. You'd own problems from user research through shipped product, do the design work yourself, and use AI daily, including building coded prototypes. Time in or around American public schools is a big plus.<p>Priority deadline: Sunday, Oct 18. Questions: [email]"
+    },
+    "story_title": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Ask HN: Who is hiring? (October 2026)"
+    }
+   },
+   "_tags": [
+    "comment",
+    "author_jamescryan",
+    "story_49922569"
+   ],
+   "author": "jamescryan",
+   "children": [
+    50045679
+   ],
+   "comment_text": "Willow Education | Product Manager (design-led) | REMOTE (US) | Full-time | $80k–$130k + equity | <a href=\"https:&#x2F;&#x2F;willowed.org&#x2F;careers&#x2F;product-manager\" rel=\"nofollow\">https:&#x2F;&#x2F;willowed.org&#x2F;careers&#x2F;product-manager</a><p>We build a career and postsecondary readiness platform for schools and community organizations. Five-person team, public benefit corporation. You&#x27;d own problems from user research through shipped product, do the design work yourself, and use AI daily, including building coded prototypes. Time in or around American public schools is a big plus.<p>Priority deadline: Sunday, Oct 18. Questions: [email]",
+   "created_at": "2026-10-09T14:53:37Z",
+   "created_at_i": 1791557617,
+   "objectID": "50021373",
+   "parent_id": 49922569,
+   "story_id": 49922569,
+   "story_title": "Ask HN: Who is hiring? (October 2026)",
+   "updated_at": "2026-10-11T17:37:04Z"
+  },
+  {
+   "_highlightResult": {
+    "author": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "ridsvazi"
+    },
+    "comment_text": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Would you be open for a full stack engineer on fully remote? I'm actively seeking for an opportunity and would be pleasure to help you for development needs at competitive rates."
+    },
+    "story_title": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Ask HN: Who is hiring? (October 2026)"
+    }
+   },
+   "_tags": [
+    "comment",
+    "author_ridsvazi",
+    "story_49922569"
+   ],
+   "author": "ridsvazi",
+   "comment_text": "Would you be open for a full stack engineer on fully remote? I&#x27;m actively seeking for an opportunity and would be pleasure to help you for development needs at competitive rates.",
+   "created_at": "2026-10-16T09:29:03Z",
+   "created_at_i": 1792142943,
+   "objectID": "50116161",
+   "parent_id": 50104234,
+   "story_id": 49922569,
+   "story_title": "Ask HN: Who is hiring? (October 2026)",
+   "updated_at": "2026-10-16T09:32:49Z"
+  },
+  {
+   "_highlightResult": {
+    "author": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "scottfahl"
+    },
+    "comment_text": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Happy to announce that this role has been filled. Thanks to all that applied."
+    },
+    "story_title": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Ask HN: Who is hiring? (October 2026)"
+    }
+   },
+   "_tags": [
+    "comment",
+    "author_scottfahl",
+    "story_49922569"
+   ],
+   "author": "scottfahl",
+   "comment_text": "Happy to announce that this role has been filled. Thanks to all that applied.",
+   "created_at": "2026-10-14T20:12:02Z",
+   "created_at_i": 1792008722,
+   "objectID": "50094395",
+   "parent_id": 49939260,
+   "story_id": 49922569,
+   "story_title": "Ask HN: Who is hiring? (October 2026)",
+   "updated_at": "2026-10-14T20:16:46Z"
+  },
+  {
+   "_highlightResult": {
+    "author": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "onnimonni"
+    },
+    "comment_text": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Treat Health | Full-stack Engineer (Elixir, Phoenix LiveView, React) | Helsinki, Finland | ONSITE | Full-time | Compensation in the link below<p>Treat Health is building healthcare where the right care takes minutes, not days. You describe your concern in your own words, our smart intake asks the follow-up questions a doctor would ask, and a licensed doctor reviews the whole picture and decides on the care. Prescriptions and records go straight to Kanta, Finland's national health archive.<p>Right now, agentic frontend engineering and agentic mobile app development matter most to us. We expect you to work across the whole stack, with our assistance and tooling.<p>Stack: Elixir, Phoenix LiveView, React, TypeScript, Tailwind, GCP, Cloudflare and Rust, with Swift and Kotlin for our native mobile apps. Claude is part of everyday work, from planning and coding to review. We care about how well you direct coding agents, not how fast you type.<p>Small team, high trust: you own problems end to end, with real influence on what we build. Health data stays in the EU, every sign-in uses strong identification, and patient data never ends up in logs.<p>For now, working on site in Helsinki is a must, and we can't offer relocation or visa support, so you need to already be able to work in Finland. We may hire remotely in the future, so check back later.<p>Compensation, details and how to apply: <a href=\"https://treat.health/en/careers/full-stack-engineer/\" rel=\"nofollow\">https://treat.health/en/careers/full-stack-engineer/</a>"
+    },
+    "story_title": {
+     "matchLevel": "none",
+     "matchedWords": [],
+     "value": "Ask HN: Who is hiring? (October 2026)"
+    }
+   },
+   "_tags": [
+    "comment",
+    "author_onnimonni",
+    "story_49922569"
+   ],
+   "author": "onnimonni",
+   "children": [
+    50116161
+   ],
+   "comment_text": "Treat Health | Full-stack Engineer (Elixir, Phoenix LiveView, React) | Helsinki, Finland | ONSITE | Full-time | Compensation in the link below<p>Treat Health is building healthcare where the right care takes minutes, not days. You describe your concern in your own words, our smart intake asks the follow-up questions a doctor would ask, and a licensed doctor reviews the whole picture and decides on the care. Prescriptions and records go straight to Kanta, Finland&#x27;s national health archive.<p>Right now, agentic frontend engineering and agentic mobile app development matter most to us. We expect you to work across the whole stack, with our assistance and tooling.<p>Stack: Elixir, Phoenix LiveView, React, TypeScript, Tailwind, GCP, Cloudflare and Rust, with Swift and Kotlin for our native mobile apps. Claude is part of everyday work, from planning and coding to review. We care about how well you direct coding agents, not how fast you type.<p>Small team, high trust: you own problems end to end, with real influence on what we build. Health data stays in the EU, every sign-in uses strong identification, and patient data never ends up in logs.<p>For now, working on site in Helsinki is a must, and we can&#x27;t offer relocation or visa support, so you need to already be able to work in Finland. We may hire remotely in the future, so check back later.<p>Compensation, details and how to apply: <a href=\"https:&#x2F;&#x2F;treat.health&#x2F;en&#x2F;careers&#x2F;full-stack-engineer&#x2F;\" rel=\"nofollow\">https:&#x2F;&#x2F;treat.health&#x2F;en&#x2F;careers&#x2F;full-stack-engineer&#x2F;</a>",
+   "created_at": "2026-10-15T14:30:58Z",
+   "created_at_i": 1792074658,
+   "objectID": "50104234",
+   "parent_id": 49922569,
+   "story_id": 49922569,
+   "story_title": "Ask HN: Who is hiring? (October 2026)",
+   "updated_at": "2026-10-16T09:30:03Z"
+  }
+ ],
+ "hitsPerPage": 1000,
+ "nbHits": 394,
+ "nbPages": 1,
+ "page": 0,
+ "params": "tags=comment%2Cstory_49922569&hitsPerPage=1000&advancedSyntax=true&analyticsTags=backend",
+ "processingTimeMS": 3,
+ "processingTimingsMS": {
+  "_request": {
+   "roundTrip": 20
+  },
+  "afterFetch": {
+   "format": {
+    "highlighting": 18,
+    "total": 22
+   },
+   "merge": {
+    "mergeLoop": {
+     "prepareNextHit": 1,
+     "total": 2
+    },
+    "total": 2
+   },
+   "total": 2
+  },
+  "total": 3
+ },
+ "query": "",
+ "serverTimeMS": 26
+}
