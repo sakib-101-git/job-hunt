@@ -1,0 +1,8 @@
+name = "jobhunt-bot"
+main = "src/index.ts"
+# Must not be newer than the workerd release bundled with the pinned wrangler.
+compatibility_date = "2026-10-12"
+
+# Secret values are set with `wrangler secret put <NAME>`; only names live here.
+[secrets]
+required = ["TELEGRAM_WEBHOOK_SECRET"]
