@@ -148,3 +148,69 @@ def test_fetch_replays_and_reports(
     assert "themuse: no such source" in captured.err
 
     assert main(["fetch", "jobicy", "--record", str(tmp_path / "rec")]) == 0
+
+
+def _replaying_fetcher(names: list[str]) -> object:
+    from jobhunt.sources.recording import ReplayTransport
+
+    fixtures = Path(__file__).parent / "fixtures" / "sources"
+
+    class Multi(httpx.AsyncBaseTransport):
+        async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+            for name in names:
+                try:
+                    return await ReplayTransport(fixtures / name).handle_async_request(request)
+                except httpx.ConnectError:
+                    continue
+            raise httpx.ConnectError("unrecorded", request=request)
+
+    async def no_sleep(_: float) -> None:
+        return None
+
+    def factory(settings: object, client: object = None) -> Fetcher:
+        return Fetcher(settings, httpx.AsyncClient(transport=Multi()), no_sleep)  # type: ignore[arg-type]
+
+    return factory
+
+
+def test_collect_stores_jobs(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    from jobhunt import cli
+
+    monkeypatch.setattr(cli, "Fetcher", _replaying_fetcher(["jobicy", "workingnomads"]))
+    monkeypatch.setenv("JOBHUNT_SQLITE_PATH", str(tmp_path / "jobs.db"))
+    for name in ("CLOUDFLARE_ACCOUNT_ID", "D1_DATABASE_ID", "CLOUDFLARE_API_TOKEN"):
+        monkeypatch.delenv(name, raising=False)
+    args = ["collect", "--source", "jobicy", "--source", "workingnomads", "--source", "remoteok"]
+    assert main(args) == 0
+    out = capsys.readouterr().out
+    assert "jobicy           ok                 5 listings    5 new" in out
+    assert "remoteok         failed" in out
+
+    assert main([*args, "--force"]) == 0
+    assert "5 listings    0 new" in capsys.readouterr().out
+
+
+def test_collect_without_database(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    for name in (
+        "JOBHUNT_SQLITE_PATH",
+        "CLOUDFLARE_ACCOUNT_ID",
+        "D1_DATABASE_ID",
+        "CLOUDFLARE_API_TOKEN",
+    ):
+        monkeypatch.delenv(name, raising=False)
+    assert main(["collect"]) == 1
+    assert "no database configured" in capsys.readouterr().err
+
+
+def test_collect_fails_when_every_source_fails(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    from jobhunt import cli
+
+    monkeypatch.setattr(cli, "Fetcher", _replaying_fetcher([]))
+    monkeypatch.setenv("JOBHUNT_SQLITE_PATH", str(tmp_path / "jobs.db"))
+    assert main(["collect", "--source", "jobicy"]) == 1
