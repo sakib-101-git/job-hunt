@@ -30,17 +30,25 @@ YEARS = re.compile(
     r"(?<![\d.])(\d{1,2})\s*\+?\s*(?:(?:-|to)\s*(\d{1,2})\s*)?(?:years?|yrs?)\b", re.IGNORECASE
 )
 # Years with "experience" next to them, before or after: what the rules-only
-# extractor trusts ("in business for 25 years" is not a requirement).
+# extractor trusts ("in business for 25 years" is not a requirement). The gap
+# after "experience" may cross line breaks, as in BDJobs' "Experience\n\n• At
+# least 4 years"; an age range ("Age 25 to 30 years") never counts.
 _SPAN = r"(?<![\d.])(\d{1,2})\s*\+?\s*(?:(?:-|to)\s*(\d{1,2})\s*)?(?:years?|yrs?)\b"
 _EXPERIENCE_YEARS = (
-    re.compile(rf"experience[^.\n\d]{{0,40}}?{_SPAN}", re.IGNORECASE),
+    re.compile(rf"experience[^.\d]{{0,40}}?{_SPAN}", re.IGNORECASE),
     re.compile(rf"{_SPAN}[^.\n\d]{{0,25}}?experience", re.IGNORECASE),
 )
+_AGE = re.compile(r"\bage[sd]?\b[^\d]{0,12}$", re.IGNORECASE)
 
 
 def experience_years(text: str) -> tuple[int, int | None, str] | None:
     """(min years, max years, the quote) from the first experience requirement."""
-    hits = [m for pattern in _EXPERIENCE_YEARS if (m := pattern.search(text))]
+    hits = [
+        m
+        for pattern in _EXPERIENCE_YEARS
+        for m in pattern.finditer(text)
+        if not _AGE.search(text[max(0, m.start(1) - 20) : m.start(1)])
+    ]
     if not hits:
         return None
     first = min(hits, key=lambda m: m.start())
@@ -73,9 +81,13 @@ class Grounder:
         for skill in skills.all_skills:
             for spelling in skill.spellings:
                 self._ids[normalize(spelling)] = skill.id
-        self._finder = PhraseFinder(s for skill in skills.all_skills for s in skill.spellings)
+        exact = [s for skill in skills.all_skills for s in skill.exact]
+        self._finder = PhraseFinder(
+            (s for skill in skills.all_skills for s in skill.spellings), exact
+        )
         self._clear = PhraseFinder(
-            s for skill in skills.all_skills if not skill.ambiguous for s in skill.spellings
+            (s for skill in skills.all_skills if not skill.ambiguous for s in skill.spellings),
+            exact,
         )
 
     def canonical(self, skill: str) -> str | None:

@@ -13,6 +13,11 @@ so entries are judged one by one and any passing entry passes the job.
   `accept_region_lists_containing_bd` is on.
 - Remote with no stated eligibility needs the description: `needs_facts`
   (or a pass, if `accept_unspecified_remote` is on).
+- A worldwide entry is not taken at its word when the description states who
+  may apply ("authorized to work in the US"), or, on boards listed in
+  `mixed_tags_need_facts`, when another entry names a country or region (We
+  Work Remotely tags some region-locked jobs "Anywhere in the World" too): the
+  job `needs_facts`, so the description decides.
 - Time-zone requirements never reject; they come back as warnings.
 Every pass carries the quote it was decided on.
 """
@@ -49,6 +54,7 @@ class LocationGate:
             n for r in geo.regions if not r.includes_bangladesh for n in [r.name, *r.aliases]
         )
         self._worldwide = PhraseFinder(geo.worldwide_phrases)
+        self._restricting = PhraseFinder(geo.restriction_phrases)
         self._remote = PhraseFinder(geo.remote_words)
         self._timezones = PhraseFinder(geo.timezone_markers)
         self._filler = {word.casefold() for word in geo.filler_words}
@@ -65,14 +71,19 @@ class LocationGate:
             return self._bangladesh_board(listing, entries, warnings)
 
         judged = [self._entry(entry) for entry in entries]
-        for wanted, reason in (("bangladesh", "bangladesh"), ("worldwide", "worldwide")):
-            if hit := next((e for e in judged if e.status == wanted), None):
-                return GateResult(GATE, "pass", reason, hit.evidence, warnings)
+        if hit := next((e for e in judged if e.status == "bangladesh"), None):
+            return GateResult(GATE, "pass", "bangladesh", hit.evidence, warnings)
+        if hit := next((e for e in judged if e.status == "worldwide"), None):
+            if doubt := self._doubt(listing, judged):
+                return GateResult(GATE, "needs_facts", "worldwide_in_doubt", doubt, warnings)
+            return GateResult(GATE, "pass", "worldwide", hit.evidence, warnings)
         if self._policy.accept_region_lists_containing_bd and (
             hit := next((e for e in judged if e.status == "region_with_bd"), None)
         ):
             return GateResult(GATE, "pass", "region_with_bangladesh", hit.evidence, warnings)
         if not entries and listing.extra.get("location_policy") == "worldwide":
+            if doubt := self._doubt(listing, judged):
+                return GateResult(GATE, "needs_facts", "worldwide_in_doubt", doubt, warnings)
             evidence = f"{listing.source}: no location restriction listed"
             return GateResult(GATE, "pass", "worldwide", evidence, warnings)
 
@@ -108,6 +119,14 @@ class LocationGate:
         return GateResult(GATE, "fail", "not_bangladesh", facts.country, warnings)
 
     # --- helpers --------------------------------------------------------------
+
+    def _doubt(self, listing: RawListing, judged: list[_Entry]) -> str | None:
+        """Why a worldwide tag can't be trusted on its own, or None."""
+        if listing.source in self._policy.mixed_tags_need_facts:
+            places = {"restricted", "region_with_bd"}
+            if hit := next((e for e in judged if e.status in places), None):
+                return hit.evidence
+        return self._restricting.find(listing.description)
 
     def _bangladesh_board(
         self, listing: RawListing, entries: list[str], warnings: tuple[str, ...]

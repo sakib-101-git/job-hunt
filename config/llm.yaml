@@ -64,3 +64,27 @@ cv:
   # Less text than this means a scanned (image-only) PDF: nothing to read.
   min_chars: 200
   max_summary_chars: 300
+
+# The independent auditor (brief §8.4, `jobhunt audit`, weekly in audit.yml).
+# It re-scores a sample of recent matches from the posting and the user's
+# settings (tracks, level, years, skills, locations; never a name or id), so it
+# must run on a provider with trains_on_inputs: false. AUDITOR_PROVIDER and
+# AUDITOR_MODEL (and AUDITOR_API_KEY, which replaces the provider's key)
+# override the model below; the default is the largest free model from a
+# provider other than the extractor's first choice.
+audit:
+  prompt: prompts/audit.v1.md
+  prompt_version: audit.v1
+  provider: groq
+  model: openai/gpt-oss-120b
+  days: 7
+  # Every match scoring at least this is audited, plus this share of the rest.
+  audit_all_from: 8.0
+  sample_rest: 0.10
+  max_per_run: 40
+  # The auditor agrees when its score is within this of the system's.
+  agree_within: 1.5
+  # Weekly calibration watch over the same days' matches.
+  max_strong_share: 0.25
+  min_score_stdev: 0.75
+  worst_shown: 5

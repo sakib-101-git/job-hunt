@@ -138,6 +138,14 @@ noise_words:
   - winter
   - night shift
   - day shift
+  # Gender markers in European postings: "(m/f/d)", "(m/w/d)", "(f/m/x)".
+  - m f d
+  - m w d
+  - f m d
+  - w m d
+  - m f x
+  - f m x
+  - all genders
   # Job-code prefixes, as in "REQ-20391" or "Job ID: 5512".
   - req
   - ref
@@ -146,3 +154,9 @@ noise_words:
 
 # Tokens with these suffixes keep their dot (Node.js, ASP.NET); other dots are dropped.
 dotted_suffixes: [js, net]
+
+# Words that mark a non-computing role when a title qualifies another title
+# with them ("Production Engineer - Garments"), on top of the words of the
+# non_cse_exclusions titles in job_titles.yaml. A title variant that drops one
+# of them is not matched; one that drops a team name ("- Auth") is.
+non_cse_markers: [garments, garment, apparel, knit, knitting, knitwear, dyeing, washing, spinning, weaving, sweater, denim, leather, footwear, pharma, pharmaceutical, construction, civil, mechanical, electrical, automobile, marine, mining, agro, food, hospital, nursing]

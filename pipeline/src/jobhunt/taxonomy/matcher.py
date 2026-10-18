@@ -88,6 +88,15 @@ class TitleMatcher:
         self._weight = {t: math.log((total + 1) / (df + 1)) + 1 for t, df in document_freq.items()}
         self._unknown_weight = math.log(total + 1) + 1
         self._vocabulary = sorted(set(document_freq) | self._normalizer.variant_words)
+        # Words that mark a non-computing role ("civil", "sales"): in the owner's
+        # non_cse_exclusions titles and in no taxonomy title. A variant may not
+        # drop one of them ("Site Engineer (Civil)" is not "Site Engineer").
+        excluded = {
+            token
+            for title in [*config.taxonomy.non_cse_exclusions, *config.title_rules.non_cse_markers]
+            for token in self._normalizer.normalize(title).tokens
+        }
+        self._non_cse_words = excluded - set(document_freq)
         self._token_domains: defaultdict[str, set[str]] = defaultdict(set)
         for entry in self._exact.values():
             for token in entry.tokens:
@@ -147,19 +156,27 @@ class TitleMatcher:
 
         Brackets and trailing segments often carry a stack or team, as in
         "Full-Stack Developer (MERN)" or "Software Engineer - Payments".
-        A variant counts only if every word it drops is a taxonomy word, so
-        "Site Engineer (Civil)" is never matched as plain "Site Engineer".
+        Words dropped from brackets must all be taxonomy words, so "Site
+        Engineer (Civil)" or "Production Engineer (Garments)" is never matched as
+        the shorter title. Words dropped from other segments only must not mark a
+        non-computing role, so "Software Engineer - Auth" is "Software Engineer"
+        but "Production Engineer - Garments" is nothing.
         """
-        bare = _PARENTHETICAL.sub(" ", title)
-        candidates = [self._normalizer.normalize(bare)]
-        for segment in SEGMENT_SPLIT.split(bare):
+        bare_text = _PARENTHETICAL.sub(" ", title)
+        bare = self._normalizer.normalize(bare_text)
+        tokens = Counter(self._repair(full.tokens))
+        bare_tokens = Counter(self._repair(bare.tokens))
+        if not all(token in self._weight for token in tokens - bare_tokens):
+            return [full]
+        candidates = [bare]
+        for segment in SEGMENT_SPLIT.split(bare_text):
             normalized = self._normalizer.normalize(segment)
             if len(normalized.tokens) >= 2:
                 candidates.append(normalized)
         unique = {full.key: full}
         for candidate in candidates:
-            dropped = Counter(self._repair(full.tokens)) - Counter(self._repair(candidate.tokens))
-            if candidate.tokens and all(token in self._weight for token in dropped):
+            dropped = bare_tokens - Counter(self._repair(candidate.tokens))
+            if candidate.tokens and not set(dropped) & self._non_cse_words:
                 unique.setdefault(candidate.key, candidate)
         return list(unique.values())
 

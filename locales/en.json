@@ -214,7 +214,7 @@
     "not_paused": "You're not paused.",
     "slow_down": "Too many requests. Please wait a minute.",
     "help": "<b>What I can do</b>\n/settings change your preferences\n/tracks change your career tracks\n/skills change your skills\n/cv read your skills from your CV\n/saved jobs you saved\n/applied jobs you applied to\n/why N why a job got its score\n/digest send waiting matches now\n/pause [days] pause alerts\n/resume resume alerts\n/privacy what I store and why\n/export download your data\n/delete delete your data\n/help this list",
-    "privacy": "<b>Privacy</b>\nI store your Telegram id, name and username, your settings and skills, and the jobs I matched for you with their scores, only to send you matching jobs.\n\nJob postings are read by AI services (Google Gemini, Groq) to extract their facts. Your own data is never sent to them, except a CV you choose to send: its text goes only to Groq, which doesn't keep or train on it, and is deleted once read.\n\nYour data is never sold or shared. /export downloads it and /delete removes all of it.",
+    "privacy": "<b>Privacy</b>\nI store your Telegram id, name and username, your settings and skills, and the jobs I matched for you with their scores, only to send you matching jobs.\n\nJob postings are read by AI services (Google Gemini, Groq) to extract their facts. Your own data is never sent to them, except a CV you choose to send (its text goes only to Groq, which doesn't keep or train on it, and is deleted once read) and, for a weekly check that the scores are right, your settings and skills without your name or id, also only to Groq.\n\nYour data is never sold or shared. /export downloads it and /delete removes all of it.",
     "date": "{day} {month}",
     "export_caption": "Everything I store about you.",
     "delete_confirm": "<b>Delete all your data?</b>\nYour settings, skills, matches and feedback are removed for good. You can start again any time with /start.",
@@ -333,6 +333,10 @@
   },
   "admin": {
     "source_alert": "⚠️ <b>Source alert</b>: {message}",
-    "broadcast_done": "📣 Broadcast sent to {sent} users; {failed} failed."
+    "broadcast_done": "📣 Broadcast sent to {sent} users; {failed} failed.",
+    "audit_summary": "🔎 <b>Weekly audit</b>: {count} matches re-scored by {model}; agreement {agreement}, mean difference {delta}.",
+    "audit_inflation": "⚠️ {share} of this week's matches scored 8 or more.",
+    "audit_narrow": "⚠️ This week's scores bunch together (spread {stdev}).",
+    "audit_worst": "• <a href=\"{url}\">{title}</a>: system {system}, auditor {auditor}"
   }
 }

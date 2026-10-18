@@ -21,6 +21,11 @@ worldwide_phrases:
 
 remote_words: [remote, remotely, wfh, work from home, home based, home-based, telecommute, distributed, fully remote]
 
+# A description saying one of these limits who may apply, whatever the board's
+# "Anywhere" tag says (We Work Remotely tags some US-only jobs "Anywhere in the
+# World"). Such a job waits for the LLM to read the description.
+restriction_phrases: [authorized to work in, authorised to work in, work authorization, work authorisation, right to work in, must reside in, must be located in, must be based in, you are based in, must live in, residents of, only hiring in, only open to candidates in, eligible to work in, located in the US, US-based candidates, legally able to work in]
+
 # Working-hours requirements. Never a reason to reject (brief §6.5): they are
 # shown as a warning, and an entry made only of them says nothing about where
 # the job may be done.

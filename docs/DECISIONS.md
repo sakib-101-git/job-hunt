@@ -598,3 +598,68 @@ The Telegram file id is cleared whatever the outcome.
 
 The CLI logs one JSON object per line with the Actions run id. httpx's request
 log is turned down to WARNING, because Telegram API URLs contain the bot token.
+
+## Evaluation
+
+### 2026-10-19: The evaluator runs the real pipeline
+
+`jobhunt eval` stores each golden job in an in-memory SQLite database and runs
+the production code on it: gates, enrichment (title classes and facts), gates
+again, then the scorer for every profile. Only the hard-gate oracle is
+independent: it applies the product's hard rules (CSE, location, tracks,
+seniority) to the hand-checked labels, so a wrong extraction that lets a job
+through shows up as a violation. The clock is the latest `seen_at` in the set.
+Recorded answers are keyed by a hash of the system and user messages; with
+recordings the per-minute and daily limits are lifted, live runs keep them.
+Metrics: field accuracy (the domain counts when the system's primary is any
+labelled domain), skills precision/recall/F1, grounding failure rate,
+hard-gate violations, Spearman rho between score and pair label, precision@5
+per profile and the false-positive rate at each profile's threshold, for all,
+gold and silver labels.
+
+### 2026-10-19: Defects the golden set found
+
+Fixed in the evaluation PR, each with a regression test:
+
+- `PhraseFinder` built `(?<!\w)A|B|C(?!\w)`, so the word boundaries bound to
+  the first and last phrases only: every other phrase matched inside words
+  ("ITSM" read as `TS`, "restore" as `rest`, "EUR" as the region `EU`). This
+  touched skills, tech signals, regions and red flags. On the 1,244 live jobs
+  it let 31 non-engineering titles through the tech-signal check ("HealthTech
+  Co-Founder / Head of Sales" via "tech").
+- The spelling "REST" matched the word "rest" ("the rest of the team"):
+  `skills.yaml` now has `exact` spellings matched only as written.
+- We Work Remotely tags some region-locked jobs "Anywhere in the World" next to
+  the real countries, and some US-only postings say so only in the text. A
+  worldwide tag now waits for the description when the text limits who may
+  apply (`restriction_phrases` in `geography.yaml`) or, on boards in
+  `mixed_tags_need_facts`, when the listing also names countries. Three
+  region-restricted jobs in the set were reaching users.
+- The rules-only years regex didn't cross line breaks, missing BDJobs'
+  "Experience / • At least 4 years" layout (a student was shown a 4-year job);
+  it now does, and ignores age ranges.
+- The title matcher threw away "Software Engineer" from "Software Engineer -
+  Auth" because "auth" is not a taxonomy word. Words dropped from dash or comma
+  segments now only block a match when they mark a non-computing role (the
+  owner's `non_cse_exclusions` words plus `non_cse_markers` in
+  `title_rules.yaml`); bracketed words keep the strict rule. The 390-title test
+  set stays at 95.6%.
+- Gender markers "(m/f/d)" blocked European titles; they are noise words now.
+- Reading JSONL with `str.splitlines()` broke on U+2028 inside descriptions;
+  the readers split on `\n` only.
+
+### 2026-10-19: Thresholds are regression guards
+
+The CI thresholds (`eval` in `scoring.yaml`) sit a little under the measured
+values. Until live answers are recorded they guard the rules-only baseline;
+they are raised after each recording that improves a metric
+(docs/EVAL_REPORT.md).
+
+### 2026-10-19: The auditor never sees the system's score
+
+The auditor gets the rubric, the posting and the user's settings, and answers
+with its own per-part points and quotes. The verdict is computed in code from
+the two scores (`agree_within`), so the model can't anchor on the system's
+number. Its provider must not train on inputs (validated at config load), since
+it sees user settings; quotes that aren't in the posting are noted.
+`actions/upload-artifact` v7.0.2 keeps the live evaluation's answers.

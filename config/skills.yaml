@@ -5,6 +5,8 @@
 # `ambiguous: true` marks skills whose names are ordinary words or letters ("R",
 # "Unity", "Excel"): the rules-only extractor skips them, because a word in prose
 # is not a skill; an LLM that names one, with the posting backing it, is trusted.
+# `exact` lists spellings matched only as written, because in other cases they
+# are ordinary words ("REST" the API style, not "the rest of the team").
 version: 1
 
 categories:
@@ -74,7 +76,7 @@ categories:
       - {id: rails, name: Ruby on Rails, aliases: [Rails, RoR], ambiguous: true}
       - {id: dotnet, name: .NET, aliases: [Dotnet, .NET Core, ASP.NET, ASP.NET Core]}
       - {id: graphql, name: GraphQL}
-      - {id: rest_api, name: REST API, aliases: [REST, RESTful, RESTful API, RESTful APIs, REST APIs]}
+      - {id: rest_api, name: REST API, aliases: [REST, RESTful, RESTful API, RESTful APIs, REST APIs], exact: [REST]}
       - {id: grpc, name: gRPC}
       - {id: websocket, name: WebSocket, aliases: [WebSockets]}
       - {id: microservices, name: Microservices, aliases: [Microservice architecture]}
@@ -270,7 +272,7 @@ categories:
     name: Tools and practices
     skills:
       - {id: git, name: Git, aliases: [GitHub, GitLab, Bitbucket], ambiguous: true}
-      - {id: oop, name: Object-Oriented Programming, aliases: [OOP, OOPs, Object Oriented Programming]}
+      - {id: oop, name: Object-Oriented Programming, aliases: [OOP, OOPs, Object Oriented Programming], exact: [OOPs]}
       - {id: data_structures, name: Data Structures, aliases: [DSA, Data Structures and Algorithms]}
       - {id: algorithms, name: Algorithms, ambiguous: true}
       - {id: design_patterns, name: Design Patterns}

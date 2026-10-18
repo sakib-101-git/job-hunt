@@ -149,6 +149,7 @@ class TitleRules(Strict):
     seniority: SeniorityRules
     noise_words: list[NonEmpty] = []
     dotted_suffixes: list[NonEmpty] = []
+    non_cse_markers: list[NonEmpty] = []
 
     @model_validator(mode="after")
     def _check(self) -> Self:
@@ -165,10 +166,19 @@ class Skill(Strict):
     name: NonEmpty
     aliases: list[NonEmpty] = []
     ambiguous: bool = False  # an ordinary word: the rules-only extractor skips it
+    # Spellings found in text only as written, because in other cases they are
+    # ordinary words ("REST", not "rest").
+    exact: list[NonEmpty] = []
 
     @property
     def spellings(self) -> list[str]:
         return [self.name, *self.aliases]
+
+    @model_validator(mode="after")
+    def _exact_are_spellings(self) -> Self:
+        if unknown := sorted(set(self.exact) - set(self.spellings)):
+            raise ValueError(f"{self.id}: exact spellings not in name or aliases: {unknown}")
+        return self
 
 
 class SkillCategory(Strict):
@@ -306,6 +316,7 @@ class LocationPolicy(Strict):
     bangladesh_boards: list[Ident] = []
     accept_unspecified_remote: bool
     accept_region_lists_containing_bd: bool
+    mixed_tags_need_facts: list[Ident] = []
 
 
 class SeniorityGate(Strict):
@@ -478,6 +489,7 @@ class Geography(Strict):
     version: Literal[1]
     worldwide_phrases: list[NonEmpty] = Field(min_length=1)
     remote_words: list[NonEmpty] = Field(min_length=1)
+    restriction_phrases: list[NonEmpty] = []
     timezone_markers: list[NonEmpty] = []
     filler_words: list[NonEmpty] = []
     regions: list[Region] = []
@@ -729,6 +741,21 @@ class CvSettings(Strict):
     max_summary_chars: int = Field(ge=1)
 
 
+class AuditSettings(Strict):
+    prompt: PromptPath
+    prompt_version: NonEmpty
+    provider: Ident
+    model: NonEmpty
+    days: int = Field(ge=1)
+    audit_all_from: float = Field(ge=0, le=10)
+    sample_rest: float = Field(ge=0, le=1)
+    max_per_run: int = Field(ge=1)
+    agree_within: float = Field(ge=0)
+    max_strong_share: float = Field(ge=0, le=1)
+    min_score_stdev: float = Field(ge=0)
+    worst_shown: int = Field(ge=1)
+
+
 class Llm(Strict):
     version: Literal[1]
     providers: dict[Ident, LlmProvider] = Field(min_length=1)
@@ -737,12 +764,20 @@ class Llm(Strict):
     extraction: ExtractionSettings
     title_classification: TitleClassificationSettings
     cv: CvSettings
+    audit: AuditSettings
 
     @model_validator(mode="after")
     def _check(self) -> Self:
         _require_unique("chain entries", (entry.key for entry in self.chain))
         if unknown := sorted({e.provider for e in self.chain} - set(self.providers)):
             raise ValueError(f"chain uses unknown providers: {', '.join(unknown)}")
+        auditor = self.providers.get(self.audit.provider)
+        if auditor is None:
+            raise ValueError(f"audit uses unknown provider {self.audit.provider}")
+        if auditor.trains_on_inputs:
+            raise ValueError(
+                "the auditor sees user settings: its provider must not train on inputs"
+            )
         return self
 
 
@@ -802,6 +837,23 @@ class Marks(Strict):
     full: float = Field(gt=0, le=1)
 
 
+Rate = Annotated[float, Field(ge=0, le=1)]
+EvalField = Literal[
+    "is_cse_role", "primary_domain", "min_years", "remote_eligibility", "country", "deadline"
+]
+
+
+class EvalThresholds(Strict):
+    max_hard_gate_violations: int = Field(ge=0)
+    min_accuracy: dict[EvalField, Rate]
+    min_skills_f1: Rate
+    max_grounding_failure_rate: Rate
+    min_spearman: float = Field(ge=-1, le=1)
+    precision_k: int = Field(ge=1)
+    min_precision_at_k: Rate
+    max_false_positive_rate: Rate
+
+
 class Scoring(Strict):
     version: Literal[1]
     scorer_version: NonEmpty
@@ -813,6 +865,7 @@ class Scoring(Strict):
     preference: PreferenceScoring
     labels: list[ScoreLabel] = Field(min_length=1)
     marks: Marks
+    eval: EvalThresholds
 
     @model_validator(mode="after")
     def _check(self) -> Self:

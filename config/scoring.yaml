@@ -52,3 +52,24 @@ labels:
 # Marks in the alert: a component earning at least `full` of its maximum gets ✅,
 # more than nothing gets ➖, nothing gets ❌.
 marks: {full: 0.75}
+
+# Golden-set evaluation (brief §8.3, `jobhunt eval`). CI runs it on the recorded
+# LLM answers in eval/golden/llm_answers.jsonl and fails when a metric over all
+# labels is worse than these. They sit a little under the last measured values
+# (docs/EVAL_REPORT.md): tighten them as the system improves, and never loosen
+# one to let a change through.
+eval:
+  max_hard_gate_violations: 0
+  min_accuracy:
+    is_cse_role: 0.75
+    primary_domain: 0.60
+    min_years: 0.75
+    remote_eligibility: 0.75
+    country: 0.95
+    deadline: 0.95
+  min_skills_f1: 0.75
+  max_grounding_failure_rate: 0.6
+  min_spearman: 0.55
+  precision_k: 5
+  min_precision_at_k: 0.8
+  max_false_positive_rate: 0.15

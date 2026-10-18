@@ -27,6 +27,11 @@ Nothing else: no phone numbers, no message history.
   ([Groq: your data](https://console.groq.com/docs/your-data)). CVs are never
   sent to Gemini's free tier, whose inputs may be used to improve Google's
   products ([Gemini API terms](https://ai.google.dev/terms)).
+- **Score audits:** once a week a sample of the past week's matches is
+  re-scored by an independent model on Groq to check the scores. It sees the
+  job posting and your settings (tracks, experience level and years, skills,
+  where you can work, job types, preferred cities), never your name, username
+  or Telegram id.
 - **Infrastructure:** Telegram delivers messages, Cloudflare hosts the bot and
   the database, and GitHub Actions runs the pipeline. The pipeline's logs are
   public (the repository is), so they hold counts only: no user ids, names or
