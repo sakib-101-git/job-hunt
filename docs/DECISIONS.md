@@ -663,3 +663,34 @@ the two scores (`agree_within`), so the model can't anchor on the system's
 number. Its provider must not train on inputs (validated at config load), since
 it sees user settings; quotes that aren't in the posting are noted.
 `actions/upload-artifact` v7.0.2 keeps the live evaluation's answers.
+
+### 2026-10-19: What the first live run showed about Groq's free tier
+
+The first live evaluation (Groq key only) extracted 2 jobs and fell back to
+rules for the rest:
+
+- `qwen/qwen3.8-27b` spent its 2,000 output tokens reasoning and returned
+  nothing valid; `openai/gpt-oss-20b` returned invalid JSON. Per Groq's
+  reasoning docs (checked 2026-10-19) Qwen 3.8 now runs with
+  `reasoning_effort: none` and GPT-OSS with `reasoning_effort: low` and
+  `include_reasoning: false`.
+- The budget planned every request at prompt + 2,000 output tokens (about
+  4,500), so 8,000 tokens a minute allowed one request a minute per model and
+  the 30-second wait cap sent the rest to rules. Requests are now planned at
+  `expected_output_tokens` (900) and the real count replaces the plan in the
+  per-minute window once the answer arrives; `max_output_tokens` stays the hard
+  cap sent to the provider.
+- Groq's free 200,000 tokens a day per model allow roughly 50-60 extractions per
+  model per day. A Gemini key (its free tier is far larger) is what makes full
+  coverage possible; SETUP section 9 says so.
+- The live evaluation reuses answers it recorded before and only asks for the
+  rest, so weekly runs build up full coverage within the daily limits.
+
+## Performance
+
+### 2026-10-19: Matching 1,000 users x 300 jobs
+
+`jobhunt bench` scores synthetic users against synthetic jobs. Before: 9.7 s for
+300,000 pairs, 83% of it normalizing the job title once per pair. The scorer now
+caches title keys and red-flag hits per job: 2.0 s on the development machine
+(brief target: under 5 s).

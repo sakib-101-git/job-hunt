@@ -137,8 +137,9 @@ needs doing in BotFather.
 
 - **Groq** (required for CV reading; also the fallback for job facts): sign up at
   <https://console.groq.com>, then API Keys → Create. `GROQ_API_KEY`.
-- **Gemini** (first choice for job facts): <https://aistudio.google.com/apikey> →
-  Create API key. `GEMINI_API_KEY`. Check the key's real free limits at
+- **Gemini** (first choice for job facts, and strongly recommended: Groq's free
+  tier covers only about 50-60 job extractions per model per day):
+  <https://aistudio.google.com/apikey> → Create API key. `GEMINI_API_KEY`. Check the key's real free limits at
   <https://aistudio.google.com/rate-limit> and update `config/llm.yaml` if they
   differ.
 

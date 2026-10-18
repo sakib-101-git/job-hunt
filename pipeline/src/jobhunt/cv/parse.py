@@ -179,7 +179,7 @@ class CvParser:
             "cv_facts",
             self._schema,
             CvFacts,
-            self._config.llm.request.max_output_tokens,
+            self._config.llm.extraction.expected_output_tokens,
         )
         if result is None:
             return await self._give_up(user_id, chat_id, "model_failed", now)

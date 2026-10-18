@@ -195,6 +195,20 @@ async def test_record_then_replay(tmp_path: Path) -> None:
     assert load_answers(tmp_path / "missing.jsonl") == {}
 
 
+async def test_recorder_reuses_known_answers() -> None:
+    body = {"messages": [{"role": "user", "content": "u"}]}
+    known = {request_key(body): {"key": request_key(body), "model": "m", "content": "{}"}}
+
+    def unreachable(_: httpx.Request) -> httpx.Response:
+        raise AssertionError("a known answer must not be fetched again")
+
+    recorder = RecordingLlmTransport(httpx.MockTransport(unreachable), known)
+    async with httpx.AsyncClient(transport=recorder) as client:
+        response = await client.post("https://llm.test", json=body)
+    assert response.json()["choices"][0]["message"]["content"] == "{}"
+    assert (recorder.reused, recorder.new) == (1, 0)
+
+
 async def test_recorder_passes_failures_through() -> None:
     recorder = RecordingLlmTransport(httpx.MockTransport(lambda _: httpx.Response(429)))
     async with httpx.AsyncClient(transport=recorder) as client:
@@ -309,7 +323,7 @@ async def test_live_eval_records_answers(
     await commands.evaluate(
         config, tmp_path, live=True, record=True, check=False, report_path=None, write=out.append
     )
-    assert out[0].startswith("recorded 0 answers")  # no keys: no model was called
+    assert out[0].startswith("recorded 0 new answers")  # no keys: no model was called
 
 
 # --- labelling -----------------------------------------------------------------

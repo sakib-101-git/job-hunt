@@ -81,6 +81,11 @@ class LlmBudget:
         return None
 
     async def record(self, entry: ChainEntry, tokens_in: int, tokens_out: int) -> None:
+        """Count a finished request; its real token count replaces the estimate
+        `acquire` put in the per-minute window."""
+        window = self._minute[entry.key]
+        if window:
+            window[-1] = (window[-1][0], tokens_in + tokens_out)
         requests, tokens = self._daily.get(entry.key, (0, 0))
         self._daily[entry.key] = (requests + 1, tokens + tokens_in + tokens_out)
         await self._db.execute(

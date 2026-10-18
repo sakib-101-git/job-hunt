@@ -204,7 +204,7 @@ class Auditor:
                 "audit",
                 self._schema,
                 AuditAnswer,
-                self._config.llm.request.max_output_tokens,
+                self._config.llm.extraction.expected_output_tokens,
             )
             if answer is None:
                 break  # the auditor's budget is spent; the rest wait for next week

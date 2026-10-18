@@ -1,5 +1,6 @@
 """The `jobhunt eval` and `jobhunt audit` commands."""
 
+import dataclasses
 import logging
 import os
 from collections.abc import Callable, Mapping
@@ -60,16 +61,25 @@ async def evaluate(
     check: bool,
     report_path: Path | None,
     write: Write,
+    wait_seconds: float | None = None,
 ) -> int:
     dataset = load_dataset(directory)
     answers_path = directory / FILE_NAME
     if live:
-        recorder = RecordingLlmTransport() if record else None
+        if wait_seconds is not None:
+            request = config.llm.request.model_copy(update={"max_wait_seconds": wait_seconds})
+            config = dataclasses.replace(
+                config, llm=config.llm.model_copy(update={"request": request})
+            )
+        recorder = RecordingLlmTransport(known=load_answers(answers_path)) if record else None
         transport: httpx.AsyncBaseTransport = recorder or httpx.AsyncHTTPTransport()
         run = await run_eval(config, dataset, transport, os.environ, replay=False)
         if recorder is not None:
             save_answers(answers_path, recorder.answers)
-            write(f"recorded {len(recorder.answers)} answers in {answers_path}")
+            write(
+                f"recorded {recorder.new} new answers ({recorder.reused} reused,"
+                f" {len(recorder.answers)} in all) in {answers_path}"
+            )
     else:
         replay = ReplayLlmTransport(load_answers(answers_path))
         # Every miss is a "model failed" warning per model; the count below says it once.

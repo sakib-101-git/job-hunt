@@ -24,9 +24,13 @@ providers:
 chain:
   - {provider: gemini, model: gemini-3.5-flash-lite, rpm: 10, tpm: 200000, rpd: 500, tpd: null, params: {reasoning_effort: low}}
   - {provider: gemini, model: gemini-3.8-flash, rpm: 5, tpm: 200000, rpd: 100, tpd: null, params: {reasoning_effort: low}}
-  - {provider: groq, model: openai/gpt-oss-120b, rpm: 30, tpm: 8000, rpd: 1000, tpd: 200000, params: {}}
-  - {provider: groq, model: qwen/qwen3.8-27b, rpm: 30, tpm: 8000, rpd: 1000, tpd: 200000, params: {}}
-  - {provider: groq, model: openai/gpt-oss-20b, rpm: 30, tpm: 8000, rpd: 1000, tpd: 200000, params: {}}
+  # Groq (checked 2026-10-19, console.groq.com/docs/reasoning): GPT-OSS takes
+  # reasoning_effort low|medium|high and include_reasoning; Qwen 3.8 takes
+  # reasoning_effort none to skip reasoning. Reasoning spends the output budget
+  # (Qwen ran out of it and GPT-OSS 20B returned invalid JSON without these).
+  - {provider: groq, model: openai/gpt-oss-120b, rpm: 30, tpm: 8000, rpd: 1000, tpd: 200000, params: {reasoning_effort: low, include_reasoning: false}}
+  - {provider: groq, model: qwen/qwen3.8-27b, rpm: 30, tpm: 8000, rpd: 1000, tpd: 200000, params: {reasoning_effort: none}}
+  - {provider: groq, model: openai/gpt-oss-20b, rpm: 30, tpm: 8000, rpd: 1000, tpd: 200000, params: {reasoning_effort: low, include_reasoning: false}}
 
 request:
   timeout_seconds: 90
@@ -46,6 +50,9 @@ extraction:
   min_evidence_score: 90
   # Rough tokens per character, to budget a request before sending it.
   tokens_per_char: 0.3
+  # Output tokens a request is budgeted at before it is sent (the answer's real
+  # count replaces it afterwards); max_output_tokens stays the hard cap.
+  expected_output_tokens: 900
 
 title_classification:
   prompt: prompts/title_classification.v1.md

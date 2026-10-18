@@ -408,3 +408,26 @@ def test_locale_covers_everything_the_renderer_uses(config: Config) -> None:
         "education.accepted", "education.broad", "education.other", "preference.sum",
     }  # fmt: skip
     assert rules <= set(locale.text("component").keys())
+
+
+def test_each_title_is_normalized_once_per_scorer(
+    config: Config, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from jobhunt.normalize.titles import TitleNormalizer
+    from jobhunt.score.bench import bench, synthetic
+
+    views, profiles = synthetic(config, users=20, jobs=15, seed=3)
+    scorer = Scorer(config)
+    calls: list[str] = []
+    real = TitleNormalizer.normalize
+
+    def counting(self: TitleNormalizer, title: str) -> Any:
+        calls.append(title)
+        return real(self, title)
+
+    monkeypatch.setattr(TitleNormalizer, "normalize", counting)
+    for job in views:
+        for user in profiles:
+            scorer.score(job, user)
+    assert len(calls) == len({job.title for job in views})
+    assert bench(config, users=4, jobs=5).pairs == 20

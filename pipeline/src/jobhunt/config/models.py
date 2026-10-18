@@ -724,6 +724,7 @@ class ExtractionSettings(Strict):
     max_jobs_per_run: int = Field(ge=0)
     min_evidence_score: float = Field(gt=0, le=100)
     tokens_per_char: float = Field(gt=0)
+    expected_output_tokens: int = Field(ge=1)
 
 
 class TitleClassificationSettings(Strict):

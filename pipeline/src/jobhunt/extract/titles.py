@@ -24,7 +24,7 @@ class TitleClassifier:
         self._prompt = Prompt.load(config.root / settings.prompt)
         self._slugs = sorted(config.taxonomy.selectable_slugs)
         self._schema = strict_schema(TitleLabels, [*self._slugs, NONE])
-        self._max_out = config.llm.request.max_output_tokens
+        self._max_out = config.llm.extraction.expected_output_tokens
         self._caller = caller
         self._db = db
 
