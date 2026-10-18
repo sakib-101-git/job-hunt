@@ -1,10 +1,12 @@
 from pathlib import Path
 
+import httpx
 import pytest
 
 from jobhunt import __version__, shared
 from jobhunt.cli import main, run_checks
 from jobhunt.config import find_repo_root, load_config
+from jobhunt.sources.http import Fetcher
 
 
 def test_find_repo_root_from_nested_dir(checkout: Path) -> None:
@@ -111,3 +113,38 @@ def test_command_is_required() -> None:
     with pytest.raises(SystemExit) as exc:
         main([])
     assert exc.value.code == 2
+
+
+def test_sources_lists_every_source(capsys: pytest.CaptureFixture[str]) -> None:
+    assert main(["sources"]) == 0
+    out = capsys.readouterr().out
+    assert "bdjobs" in out
+    assert "every 10 min" in out
+    assert "remotive" in out
+    assert "off: Terms forbid" in out
+
+
+def test_fetch_replays_and_reports(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    from jobhunt import cli
+    from jobhunt.sources.recording import ReplayTransport
+
+    fixtures = Path(__file__).parent / "fixtures" / "sources"
+
+    async def no_sleep(_: float) -> None:
+        return None
+
+    def replaying(settings: object, client: object = None) -> Fetcher:
+        transport = ReplayTransport(fixtures / "jobicy")
+        return Fetcher(settings, httpx.AsyncClient(transport=transport), no_sleep)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(cli, "Fetcher", replaying)
+    assert main(["fetch", "jobicy", "remotive", "themuse", "--show", "1"]) == 1
+    captured = capsys.readouterr()
+    assert "jobicy: 5 listings" in captured.out
+    assert "Atlassian Administrator" in captured.out
+    assert "remotive:" in captured.err  # not recorded: fails like a dead host
+    assert "themuse: no such source" in captured.err
+
+    assert main(["fetch", "jobicy", "--record", str(tmp_path / "rec")]) == 0
