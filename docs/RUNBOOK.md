@@ -248,6 +248,12 @@ to each model or to the rules-only fallback.
   `config/app.yaml` (`bot`), words in `locales/en.json`. Run
   `make build-shared` (or `uv run jobhunt build-shared`) so the Worker gets
   the change; CI fails when the generated file is stale.
+- **Admins:** `ADMIN_TELEGRAM_IDS` (Worker secret, comma-separated ids) may use
+  `/admin` (users, queue, today's LLM requests, last run, source health) and
+  `/broadcast <text>` (preview, then the pipeline sends it). Others get the
+  unknown-command reply.
+- **Pipeline events the bot sends:** `backfill-user`, `parse-cv`, `send-digest`
+  and `broadcast` (`repository_dispatch`, payload `user_id` or `html`).
 - **Errors** are logged as JSON lines (`update failed`, with the update id,
   never the message text): `npx wrangler tail` in `bot/`.
 
