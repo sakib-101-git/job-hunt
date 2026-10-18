@@ -2043,6 +2043,72 @@
     "save": "sv",
     "hide": "hd",
     "thumbs_up": "up",
-    "thumbs_down": "dn"
-  }
+    "thumbs_down": "dn",
+    "reason": "rs"
+  },
+  "bot": {
+    "updates_per_minute": 30,
+    "max_pause_days": 90,
+    "cv_max_bytes": 5000000,
+    "list_limit": 20,
+    "max_skills": 50,
+    "max_skill_length": 40,
+    "experience_levels": [
+      "student_intern",
+      "fresh_grad",
+      "junior",
+      "mid",
+      "senior"
+    ],
+    "locations": [
+      "bangladesh",
+      "remote"
+    ],
+    "job_types": [
+      "full_time",
+      "internship",
+      "part_time",
+      "contract"
+    ],
+    "min_score_options": [
+      5.0,
+      6.0,
+      7.0,
+      8.0
+    ],
+    "quiet_hours_options": [
+      {
+        "start": "22:00",
+        "end": "08:00"
+      },
+      {
+        "start": "23:00",
+        "end": "07:00"
+      },
+      {
+        "start": "00:00",
+        "end": "08:00"
+      }
+    ],
+    "feedback_reasons": [
+      "too_senior",
+      "wrong_location",
+      "not_my_field",
+      "skills_dont_fit",
+      "scam",
+      "other"
+    ],
+    "defaults": {
+      "min_score": 6.0,
+      "delivery_mode": "instant",
+      "max_per_cycle": 5,
+      "include_adjacent": true
+    }
+  },
+  "github": {
+    "api_base_url": "https://api.github.com",
+    "repository": "sakib-101-git/job-hunt"
+  },
+  "timezone": "Asia/Dhaka",
+  "max_age_days": 10
 }

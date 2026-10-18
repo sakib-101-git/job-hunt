@@ -22,6 +22,7 @@ from jobhunt.gates.base import GateResult
 from jobhunt.jobs.rows import listing_from_row
 from jobhunt.normalize.jobs import JobNormalizer
 from jobhunt.score.model import JobView, UserProfile
+from jobhunt.score.render import Renderer
 from jobhunt.score.scorer import Component, Scorer, ScoreResult
 
 _ELIGIBLE_JOBS = """
@@ -122,6 +123,12 @@ async def match(
     user_ids: Sequence[int] | None = None,
 ) -> tuple[list[NewMatch], Counter[str]]:
     """Score every (user, job) pair not scored yet; store the ones that pass."""
+    # A /pause with an end date ends here: the user is active again.
+    await db.execute(
+        "UPDATE users SET status = 'active', paused_until = NULL, updated_at = ?1"
+        " WHERE status = 'paused' AND paused_until IS NOT NULL AND paused_until <= ?1",
+        (timestamp(now),),
+    )
     jobs = await load_jobs(db, config, job_ids)
     users = await load_profiles(db, user_ids)
     existing = {
@@ -129,6 +136,7 @@ async def match(
         for r in await db.query("SELECT user_id, job_id FROM matches")
     }
     scorer = Scorer(config)
+    renderer = Renderer.from_config(config)
     counts: Counter[str] = Counter()
     new: list[NewMatch] = []
     for job in jobs:
@@ -144,8 +152,9 @@ async def match(
                 continue
             rows = await db.query(
                 """INSERT INTO matches (user_id, job_id, score, breakdown_json, explanation_json,
-                                        gate_results_json, scorer_version, created_at)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id""",
+                                        gate_results_json, scorer_version, why_html,
+                                        created_at)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id""",
                 (
                     user.user_id,
                     job.job_id,
@@ -154,6 +163,7 @@ async def match(
                     json.dumps(result.explanation(), ensure_ascii=False),
                     json.dumps(result.gate_results(), ensure_ascii=False),
                     result.scorer_version,
+                    renderer.why(job, result, user),
                     timestamp(now),
                 ),
             )

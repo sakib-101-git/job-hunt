@@ -42,6 +42,10 @@ def shared_data(config: Config) -> dict[str, Any]:
             for city in config.locations.preferred_city_options
         ],
         "callbacks": config.app.callbacks.model_dump(),
+        "bot": config.app.bot.model_dump(),
+        "github": config.app.github.model_dump(),
+        "timezone": config.app.timezone,
+        "max_age_days": config.app.freshness.max_age_days,
     }
 
 

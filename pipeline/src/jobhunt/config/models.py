@@ -346,11 +346,69 @@ class Callbacks(Strict):
     hide: CallbackCode
     thumbs_up: CallbackCode
     thumbs_down: CallbackCode
+    reason: CallbackCode  # a 👎 reason, "<code>:<match id>:<reason index>"
 
     @model_validator(mode="after")
     def _distinct(self) -> Self:
         _require_unique("callback codes", self.model_dump().values())
         return self
+
+
+ClockTime = Annotated[str, StringConstraints(pattern=r"^([01]\d|2[0-3]):[0-5]\d$")]
+
+
+class QuietHours(Strict):
+    start: ClockTime
+    end: ClockTime
+
+    @model_validator(mode="after")
+    def _not_empty(self) -> Self:
+        if self.start == self.end:
+            raise ValueError("quiet hours start and end must differ")
+        return self
+
+
+class BotDefaults(Strict):
+    min_score: float = Field(ge=0, le=10)
+    delivery_mode: Literal["instant", "digest"]
+    max_per_cycle: int = Field(gt=0)
+    include_adjacent: bool
+
+
+class BotSettings(Strict):
+    updates_per_minute: int = Field(gt=0)
+    max_pause_days: int = Field(gt=0)
+    cv_max_bytes: int = Field(gt=0, le=20_000_000)  # getFile downloads at most 20 MB
+    list_limit: int = Field(gt=0, le=50)
+    max_skills: int = Field(gt=0)
+    max_skill_length: int = Field(gt=0)
+    experience_levels: list[ExperienceLevel] = Field(min_length=1)
+    locations: list[Literal["bangladesh", "remote"]] = Field(min_length=1)
+    job_types: list[Literal["full_time", "internship", "part_time", "contract"]] = Field(
+        min_length=1
+    )
+    min_score_options: list[float] = Field(min_length=1)
+    quiet_hours_options: list[QuietHours]
+    feedback_reasons: list[Ident] = Field(min_length=1)
+    defaults: BotDefaults
+
+    @model_validator(mode="after")
+    def _consistent(self) -> Self:
+        _require_unique("experience levels", self.experience_levels)
+        _require_unique("locations", self.locations)
+        _require_unique("job types", self.job_types)
+        _require_unique("min score options", [str(v) for v in self.min_score_options])
+        _require_unique("feedback reasons", self.feedback_reasons)
+        if any(not 0 <= v <= 10 for v in self.min_score_options):
+            raise ValueError("min score options must be between 0 and 10")
+        if self.defaults.min_score not in self.min_score_options:
+            raise ValueError("defaults.min_score must be one of min_score_options")
+        return self
+
+
+class GitHubSettings(Strict):
+    api_base_url: Annotated[str, StringConstraints(pattern=r"^https://")]
+    repository: Annotated[str, StringConstraints(pattern=r"^[\w.-]+/[\w.-]+$")]
 
 
 class App(Strict):
@@ -366,6 +424,8 @@ class App(Strict):
     red_flags: list[NonEmpty] = []
     notifications: NotificationSettings
     callbacks: Callbacks
+    bot: BotSettings
+    github: GitHubSettings
 
     @model_validator(mode="after")
     def _known_timezone(self) -> Self:

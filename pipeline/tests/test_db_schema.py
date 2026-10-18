@@ -13,7 +13,7 @@ pytestmark = pytest.mark.anyio
 TABLES = {
     "users", "user_prefs", "user_profiles", "jobs", "job_domains", "job_facts", "matches",
     "notifications", "feedback", "source_state", "runs", "llm_usage", "audits", "kv",
-    "title_classes",
+    "title_classes", "rate_limits",
 }  # fmt: skip
 
 

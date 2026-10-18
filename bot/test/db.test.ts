@@ -31,6 +31,7 @@ describe("migrations", () => {
       "llm_usage",
       "matches",
       "notifications",
+      "rate_limits",
       "runs",
       "source_state",
       "title_classes",

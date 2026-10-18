@@ -368,3 +368,27 @@ async def test_job_filtered_after_queueing_is_skipped(db: SqliteBackend, config:
     await db.execute("UPDATE jobs SET status = 'expired'")
     counts = await send_pending(db, config, _telegram(config, FakeTelegram()), NOW)
     assert counts == {"skipped: job no longer open": 1}
+
+
+async def test_match_stores_the_why_text(db: SqliteBackend, config: Config) -> None:
+    await add_job(db, 1)
+    await add_user(db, 1)
+    await _queue(db, config)
+    row = (await db.query("SELECT score, why_html FROM matches"))[0]
+    title = f"<b>Why {row['score']!s}/10 for “Junior Machine Learning Engineer”</b>"
+    assert str(row["why_html"]).startswith(title)
+
+
+async def test_expired_pauses_end_at_the_next_run(db: SqliteBackend, config: Config) -> None:
+    await add_job(db, 1)
+    await add_user(db, 1, status="paused")
+    await add_user(db, 2, status="paused")
+    await db.execute("UPDATE users SET paused_until = '2026-10-18T05:59:59Z' WHERE id = 1")
+    await db.execute("UPDATE users SET paused_until = '2026-10-19T00:00:00Z' WHERE id = 2")
+    await _queue(db, config)
+    rows = await db.query("SELECT id, status, paused_until FROM users ORDER BY id")
+    assert [(r["status"], r["paused_until"]) for r in rows] == [
+        ("active", None),
+        ("paused", "2026-10-19T00:00:00Z"),
+    ]
+    assert await _statuses(db) == {(1, 1): "pending"}
