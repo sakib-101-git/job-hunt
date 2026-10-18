@@ -1,6 +1,6 @@
 # Developer entry points. `make check` runs everything CI runs, except gitleaks.
 .DEFAULT_GOAL := help
-.PHONY: help setup hooks lint format typecheck test config build-shared guard bot-dev check
+.PHONY: help setup hooks lint format typecheck test config build-shared migrate-local guard bot-dev check
 
 UV := uv --directory pipeline
 NPM := npm --prefix bot
@@ -38,6 +38,9 @@ config: ## Validate config/ and check the Worker's generated copy is current
 
 build-shared: ## Regenerate bot/src/generated/ from config/
 	$(UV) run jobhunt build-shared
+
+migrate-local: ## Apply migrations/ to the local D1 that `make bot-dev` uses
+	cd bot && npx wrangler d1 migrations apply jobhunt --local
 
 guard: ## Repository rules: tracked files and the last commit message
 	python3 scripts/repo_guard.py tracked-files
