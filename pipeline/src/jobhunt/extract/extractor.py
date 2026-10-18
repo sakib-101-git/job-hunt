@@ -48,9 +48,11 @@ class ModelCaller:
         name: str,
         schema: dict[str, Any],
         model: type[M],
-        max_output_tokens: int,
+        output_tokens: int,
     ) -> tuple[M, str, str] | None:
-        estimate = int((len(system) + len(user)) * self._tokens_per_char) + max_output_tokens
+        """`output_tokens` is what the answer is budgeted at before it arrives;
+        the budget then records the real count."""
+        estimate = int((len(system) + len(user)) * self._tokens_per_char) + output_tokens
         skip: set[str] = set()
         while entry := await self._budget.acquire(estimate, skip):
             message = user
@@ -79,7 +81,7 @@ class Extractor:
     def __init__(self, config: Config, caller: ModelCaller, grounder: Grounder) -> None:
         settings = config.llm.extraction
         self._settings = settings
-        self._max_out = config.llm.request.max_output_tokens
+        self._max_out = config.llm.extraction.expected_output_tokens
         self._llm_chars = config.app.normalization.jd_max_chars_llm
         self._prompt = Prompt.load(config.root / settings.prompt)
         self._slugs = sorted(config.taxonomy.selectable_slugs)

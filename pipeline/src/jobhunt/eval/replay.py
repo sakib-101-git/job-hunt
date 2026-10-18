@@ -64,14 +64,26 @@ class ReplayLlmTransport(httpx.AsyncBaseTransport):
 
 
 class RecordingLlmTransport(httpx.AsyncBaseTransport):
-    """Sends requests on and keeps every successful answer by request key."""
+    """Serves answers recorded before, sends other requests on, and keeps every
+    successful answer by request key. Free-tier daily limits allow only part of
+    the golden set per day, so each run adds to the recordings instead of
+    spending the quota on answers it already has."""
 
-    def __init__(self, inner: httpx.AsyncBaseTransport | None = None) -> None:
+    def __init__(
+        self,
+        inner: httpx.AsyncBaseTransport | None = None,
+        known: dict[str, dict[str, Any]] | None = None,
+    ) -> None:
         self._inner = inner or httpx.AsyncHTTPTransport()
-        self.answers: dict[str, dict[str, Any]] = {}
+        self.answers: dict[str, dict[str, Any]] = dict(known or {})
+        self.reused = 0
+        self.new = 0
 
     async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
         body = json.loads(request.content)
+        if (known := self.answers.get(request_key(body))) is not None:
+            self.reused += 1
+            return _completion(known["content"])
         response = await self._inner.handle_async_request(request)
         if response.status_code != httpx.codes.OK:
             return response
@@ -81,6 +93,7 @@ class RecordingLlmTransport(httpx.AsyncBaseTransport):
         except (ValueError, KeyError, IndexError, TypeError):
             content = None
         if isinstance(content, str):
+            self.new += 1
             self.answers[request_key(body)] = {
                 "key": request_key(body),
                 "model": body.get("model"),

@@ -272,6 +272,14 @@ async def test_budget_minute_window_waits_or_moves_on(config: Config, db: Sqlite
     assert clock.sleeps == [50.0]
 
 
+async def test_budget_counts_real_tokens_once_known(config: Config, db: SqliteBackend) -> None:
+    b = ChainEntry(provider="groq", model="b", rpm=None, tpm=1000, rpd=None, tpd=None)
+    budget = LlmBudget(_chain(config, b).llm, db, NOW, lambda e: True)
+    assert await budget.acquire(900) == b  # planned at 900
+    await budget.record(b, 150, 50)  # it used 200
+    assert await budget.acquire(700) == b  # 200 + 700 fits the minute
+
+
 async def test_budget_request_over_the_minute_limit_never_fits(
     config: Config, db: SqliteBackend
 ) -> None:

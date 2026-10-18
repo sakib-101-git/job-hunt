@@ -20,6 +20,7 @@ Commands are added as each pipeline stage lands:
   answers by default; `--live` calls the models); `eval label` turns silver
   labels gold; `eval draft` drafts golden jobs from a collected database.
 - `audit` has the auditor model re-score a sample of last week's matches.
+- `bench` times the scorer on synthetic users and jobs.
 """
 
 import argparse
@@ -45,6 +46,7 @@ from jobhunt.eval import commands as evaluation
 from jobhunt.eval.dataset import DatasetError
 from jobhunt.logs import configure_logging
 from jobhunt.notify.sender import SendPlan
+from jobhunt.score.bench import bench
 from jobhunt.sources import FetchContext, build_source
 from jobhunt.sources.http import Fetcher, FetchError
 from jobhunt.sources.recording import RecordingTransport
@@ -277,6 +279,7 @@ def _eval(args: argparse.Namespace) -> int:
                 check=args.check,
                 report_path=args.report,
                 write=_write,
+                wait_seconds=args.wait,
             )
         )
     except (DatasetError, ValueError, DatabaseError) as exc:
@@ -289,6 +292,18 @@ def _audit() -> int:
         return asyncio.run(evaluation.audit(config, os.environ, _write))
     except (ConfigError, DatabaseError, ValueError) as exc:
         return _fail(str(exc))
+
+
+def _bench(users: int, jobs: int) -> int:
+    try:
+        config = load_config()
+    except ConfigError as exc:
+        return _fail(str(exc))
+    result = bench(config, users, jobs)
+    _write(
+        f"{result.pairs} pairs scored in {result.seconds:.2f} s ({result.passed} passed the gates)"
+    )
+    return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -328,6 +343,9 @@ def build_parser() -> argparse.ArgumentParser:
     ev.add_argument("--record", action="store_true", help="with --live: save the answers")
     ev.add_argument("--check", action="store_true", help="fail when a threshold is not met")
     ev.add_argument("--report", type=Path, metavar="FILE", help="also write the report here")
+    ev.add_argument(
+        "--wait", type=float, metavar="SECONDS", help="with --live: wait this long for model room"
+    )
     ev_commands = ev.add_subparsers(dest="eval_command")
     lab = ev_commands.add_parser("label", help="confirm or fix silver labels (makes them gold)")
     lab.add_argument("--pairs", action="store_true", help="label pairs instead of jobs")
@@ -335,6 +353,9 @@ def build_parser() -> argparse.ArgumentParser:
     dr.add_argument("--db", type=Path, required=True, metavar="SQLITE")
     dr.add_argument("--count", type=int, default=160)
     commands.add_parser("audit", help="re-score recent matches with the auditor model")
+    bench_cmd = commands.add_parser("bench", help="time the scorer on synthetic users and jobs")
+    bench_cmd.add_argument("--users", type=int, default=1000)
+    bench_cmd.add_argument("--jobs", type=int, default=300)
     return parser
 
 
@@ -373,6 +394,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _eval(args)
     if args.command == "audit":
         return _audit()
+    if args.command == "bench":
+        return _bench(args.users, args.jobs)
     raise AssertionError(f"unhandled command {args.command!r}")  # argparse rejects unknown ones
 
 

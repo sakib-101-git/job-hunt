@@ -86,6 +86,10 @@ class Scorer:
             for track in config.tracks.tracks
         }
         self._red_flags = PhraseFinder(config.app.red_flags)
+        # Title keys and red-flag hits depend on the job alone; matching scores
+        # each job against every user, so they are computed once per job.
+        self._title_keys: dict[str, str] = {}
+        self._flag_hits: dict[tuple[str, ...], str | None] = {}
 
     def score(self, job: JobView, user: UserProfile) -> ScoreResult:
         role = self._role(job, user)
@@ -135,15 +139,24 @@ class Scorer:
         return GateResult("job_type", "fail", "user_wants_other_job_types", kind)
 
     def _red_flag_gate(self, job: JobView) -> GateResult:
-        if flag := self._red_flags.find(" | ".join(job.facts.red_flags)):
+        flags = tuple(job.facts.red_flags)
+        if flags not in self._flag_hits:
+            self._flag_hits[flags] = self._red_flags.find(" | ".join(flags))
+        if flag := self._flag_hits[flags]:
             return GateResult("red_flags", "fail", "scam_marker", flag)
         return GateResult("red_flags", "pass", "none")
+
+    def _title_key(self, title: str) -> str:
+        key = self._title_keys.get(title)
+        if key is None:
+            key = self._title_keys[title] = self._titles.normalize(title).key
+        return key
 
     # --- components -----------------------------------------------------------
 
     def _role(self, job: JobView, user: UserProfile) -> tuple[Component, GateResult]:
         cap = d(self._s.weights.role)
-        title_key = self._titles.normalize(job.title).key
+        title_key = self._title_key(job.title)
         best: tuple[Decimal, str, str] | None = None
         for track_id in user.tracks:
             track = self._tracks.get(track_id)

@@ -55,8 +55,9 @@ jobs:
   eval-live:
     name: Golden set on live models
     runs-on: ubuntu-latest
-    # Free-tier per-minute token limits make ~170 extractions slow.
-    timeout-minutes: 120
+    # Free-tier per-minute token limits make ~170 extractions slow; daily
+    # limits stop a run early, and the next run carries on from its recordings.
+    timeout-minutes: 240
     defaults:
       run:
         working-directory: pipeline
@@ -78,7 +79,9 @@ jobs:
             echo "No LLM key is set; nothing to evaluate live."
             exit 0
           fi
-          uv run --no-sync jobhunt eval --live --record --report "$RUNNER_TEMP/eval-report.md"
+          # Answers already in eval/golden/llm_answers.jsonl are reused; wait for
+          # per-minute room rather than falling back to rules-only facts.
+          uv run --no-sync jobhunt eval --live --record --wait 75 --report "$RUNNER_TEMP/eval-report.md"
       - uses: actions/upload-artifact@v7
         with:
           name: golden-set-live
