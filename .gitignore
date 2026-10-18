@@ -25,7 +25,6 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .pytest_cache/
-.hypothesis/
 .coverage
 .coverage.*
 coverage.xml
@@ -34,7 +33,6 @@ htmlcov/
 # Node and Cloudflare
 node_modules/
 .wrangler/
-bot/coverage/
 
 # Editors and OS
 .idea/

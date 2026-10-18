@@ -41,7 +41,7 @@ uses 2026-10-12.
 
 ### 2026-10-18: GitHub Action versions
 
-checkout v7, setup-python v7, setup-node v7, gitleaks-action v3. setup-uv no
+checkout v7, setup-node v7, gitleaks-action v3. setup-uv no
 longer publishes a floating major tag, so it is pinned to v10.3.0; bump it by hand.
 
 ### 2026-10-18: gitleaks-action without a licence key
