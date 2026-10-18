@@ -9,3 +9,4 @@
 # Generated files: collapse in GitHub diffs.
 pipeline/uv.lock       linguist-generated=true
 bot/package-lock.json  linguist-generated=true
+bot/src/generated/**   linguist-generated=true
