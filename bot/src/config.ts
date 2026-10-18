@@ -77,6 +77,7 @@ const SharedConfig = z.strictObject({
   }),
   timezone: z.string(),
   max_age_days: z.number().int().positive(),
+  notifications: z.strictObject({ max_attempts: z.number().int().positive() }),
 });
 
 export type SharedConfig = z.infer<typeof SharedConfig>;

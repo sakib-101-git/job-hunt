@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { type BotContext, createBot } from "./bot";
 import { CONFIG } from "./config";
+import { parseAdminIds } from "./context";
 import { githubDispatcher } from "./dispatch";
 import { EN } from "./locale";
 import { isValidWebhookSecret, SECRET_HEADER } from "./webhook";
@@ -31,6 +32,7 @@ function botFor(env: Env): Bot<BotContext> {
       locale: EN,
       dispatch: githubDispatcher(CONFIG.github, env.GITHUB_DISPATCH_TOKEN),
       now: () => new Date(),
+      adminIds: parseAdminIds(env.ADMIN_TELEGRAM_IDS),
     });
     cached = { token: env.TELEGRAM_BOT_TOKEN, bot };
   }
