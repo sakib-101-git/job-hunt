@@ -449,3 +449,49 @@ the client stays under both (25/s, 1.1 s). A 429 waits Telegram's `retry_after`,
 nothing more. Messages use HTML with link previews off. Inline buttons send
 `<code>:<match id>` (codes in `config/app.yaml`, shared with the Worker through
 build-shared), well under Telegram's 64-byte `callback_data` limit.
+
+## Bot
+
+### 2026-10-18: grammY on the Worker, webhook only
+
+grammY 1.46.0 (the Workers build, chosen by wrangler's bundler conditions) and
+zod 4.6.5 (the newest release more than two weeks old). The Worker checks the
+webhook secret in constant time, ignores anything but private chats, and always
+answers 200 once the secret is right: a retried update would repeat whatever
+part of it already ran, so errors are logged instead. One `Bot` per isolate;
+`getMe` runs once, on the first update that needs it.
+
+### 2026-10-18: Onboarding is a stored draft
+
+Onboarding and /settings edit a draft in `users.onboarding_state`, so a
+half-finished setup survives restarts and isolates. Every button carries a
+short action (`o:t:3` toggles the fourth track) that is valid on one step only;
+a press on an older menu gets "out of date" and changes nothing. The state
+machine (`onboarding/draft.ts`) and the menus (`onboarding/view.ts`) are pure
+and tested on their own. Saving writes `user_prefs` and `user_profiles` in the
+shape the pipeline reads, and ends the draft, in one batch. Option lists,
+defaults and limits are in `config/app.yaml` (`bot`); every word is in
+`locales/en.json`.
+
+### 2026-10-18: "Why this score?" is rendered by the pipeline
+
+`matches.why_html` (migration 0006) holds the pipeline's rendering of the
+explanation, made when the match is stored. The Worker shows that text as is,
+so its numbers are exactly the stored breakdown (brief §7.3) and the renderer
+exists once, in Python.
+
+### 2026-10-18: Per-user limit in D1
+
+`rate_limits` keeps one fixed one-minute window per user (one upsert per
+update). Over the limit, a button gets a "slow down" popup and a message gets
+one "slow down" reply per window; the rest are dropped. An in-isolate counter
+would cost nothing but resets whenever Cloudflare moves the user to another
+isolate.
+
+### 2026-10-18: The bot asks the pipeline through repository_dispatch
+
+Backfill after onboarding (and, later, CV parsing and /digest) runs in the
+pipeline. The Worker sends a `repository_dispatch` event with a fine-grained
+PAT limited to this repository; GitHub requires Contents read and write for
+that endpoint. Without the token the bot still works and says the first
+matches come with the next scheduled run.

@@ -238,6 +238,19 @@ to each model or to the rules-only fallback.
   `notifications.max_attempts` in `config/app.yaml`. To resend one, set its
   `status` back to `pending` and `attempts` to 0.
 
+## Bot
+
+- **A user is stuck in setup:** `users.onboarding_state` holds their draft;
+  `/start` shows the current step again. Setting it to NULL restarts setup.
+- **"Too many requests":** `bot.updates_per_minute` in `config/app.yaml`; the
+  window is in `rate_limits`.
+- **Changing options or words:** option lists and defaults are in
+  `config/app.yaml` (`bot`), words in `locales/en.json`. Run
+  `make build-shared` (or `uv run jobhunt build-shared`) so the Worker gets
+  the change; CI fails when the generated file is stale.
+- **Errors** are logged as JSON lines (`update failed`, with the update id,
+  never the message text): `npx wrangler tail` in `bot/`.
+
 ## Database migrations
 
 Migrations live in `migrations/` and are shared: wrangler applies them to D1 and
