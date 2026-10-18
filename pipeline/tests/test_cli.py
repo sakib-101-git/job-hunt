@@ -187,6 +187,7 @@ def test_collect_stores_jobs(
     out = capsys.readouterr().out
     assert "jobicy           ok                 5 listings    5 new" in out
     assert "remoteok         failed" in out
+    assert "gates:" in out
 
     assert main([*args, "--force"]) == 0
     assert "5 listings    0 new" in capsys.readouterr().out

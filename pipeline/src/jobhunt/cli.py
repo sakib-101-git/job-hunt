@@ -7,7 +7,7 @@ Commands are added as each pipeline stage lands:
 - `build-shared` writes the Worker's generated config (`--check` only compares).
 - `sources` lists the configured sources; `fetch` runs some live, without a
   database, and can record their responses as test fixtures.
-- `collect` runs the due sources and stores what they return in the database.
+- `collect` runs the due sources, stores what they return and gates new jobs.
 """
 
 import argparse
@@ -25,6 +25,7 @@ import httpx
 from jobhunt import __version__, shared
 from jobhunt.config import ConfigError, find_repo_root, load_config
 from jobhunt.db import DatabaseError, SqliteBackend, apply_migrations, open_database
+from jobhunt.jobs.gating import GateItem, JobGates, apply_gates
 from jobhunt.jobs.store import store_jobs
 from jobhunt.normalize.jobs import JobNormalizer
 from jobhunt.sources import FetchContext, build_source
@@ -182,8 +183,16 @@ async def _collect(only: Sequence[str] | None, force: bool) -> int:
             await apply_migrations(db, root / "migrations")  # local databases only
         report = await run_sources(config.sources, db, fetcher, now, os.environ, only, force)
         normalizer = JobNormalizer(config)
-        records = [normalizer.record(listing) for listing in report.listings]
-        stored = await store_jobs(db, records, now, config.app.normalization.store_batch_size)
+        listings = report.listings
+        batch = config.app.normalization.store_batch_size
+        stored = await store_jobs(db, [normalizer.record(x) for x in listings], now, batch)
+        bootstrap = {run.source for run in report.runs if run.bootstrap}
+        items = [
+            GateItem(job.id, listing, now, listing.source in bootstrap)
+            for job, listing in zip(stored, listings, strict=True)
+            if job.is_new
+        ]
+        gated = await apply_gates(db, JobGates(config), items, now, batch)
     finally:
         await fetcher.aclose()
         await db.aclose()
@@ -195,6 +204,8 @@ async def _collect(only: Sequence[str] | None, force: bool) -> int:
         _write(f"{run.source:16} {run.status:15} {detail}")
         for warning in run.warnings:
             _write(f"{'':16} warning: {warning}")
+    for outcome, count in sorted(gated.items()):
+        _write(f"gates: {count:5} {outcome}")
     for alert in report.alerts:
         _write(f"ALERT [{alert.kind}] {alert.message}")
     failed = [run for run in report.runs if run.status == "failed"]
