@@ -9,6 +9,7 @@ from pydantic import BaseModel, ValidationError
 
 from jobhunt.config.models import (
     App,
+    Geography,
     Locations,
     Skills,
     Sources,
@@ -33,6 +34,7 @@ class Config:
     skills: Skills
     locations: Locations
     sources: Sources
+    geography: Geography
 
 
 def find_repo_root(start: Path) -> Path | None:
@@ -86,18 +88,31 @@ def check_tracks(tracks: Tracks, taxonomy: Taxonomy) -> list[str]:
     return problems
 
 
+def check_policies(app: App, sources: Sources) -> list[str]:
+    return [
+        f"location_policy.bangladesh_boards: unknown source {name!r}"
+        for name in app.location_policy.bangladesh_boards
+        if name not in sources.sources
+    ]
+
+
 def load_config(config_dir: Path | None = None) -> Config:
     directory = config_dir or default_config_dir()
     taxonomy = _load(directory / "taxonomy" / "job_titles.yaml", Taxonomy)
     tracks = _load(directory / "taxonomy" / "tracks.yaml", Tracks)
     if problems := check_tracks(tracks, taxonomy):
         raise ConfigError(f"{directory / 'taxonomy' / 'tracks.yaml'}: " + "; ".join(problems))
+    app = _load(directory / "app.yaml", App)
+    sources = _load(directory / "sources.yaml", Sources)
+    if problems := check_policies(app, sources):
+        raise ConfigError(f"{directory / 'app.yaml'}: " + "; ".join(problems))
     return Config(
-        app=_load(directory / "app.yaml", App),
+        app=app,
         taxonomy=taxonomy,
         tracks=tracks,
         title_rules=_load(directory / "taxonomy" / "title_rules.yaml", TitleRules),
         skills=_load(directory / "skills.yaml", Skills),
         locations=_load(directory / "locations.yaml", Locations),
-        sources=_load(directory / "sources.yaml", Sources),
+        sources=sources,
+        geography=_load(directory / "geography.yaml", Geography),
     )

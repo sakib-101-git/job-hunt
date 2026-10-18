@@ -1,0 +1,319 @@
+# Location gate cases (brief §6.5 asks for at least 60): listing fields as a
+# source publishes them, and the expected "<status> <reason>".
+- case: bdjobs Dhaka
+  listing:
+    source: bdjobs
+    location: Dhaka
+  expect: pass bangladesh
+- case: bdjobs area
+  listing:
+    source: bdjobs
+    location: Dhaka (Banani)
+  expect: pass bangladesh
+- case: bdjobs district
+  listing:
+    source: bdjobs
+    location: Narayanganj (Rupganj)
+  expect: pass bangladesh
+- case: bdjobs anywhere in BD
+  listing:
+    source: bdjobs
+    location: Anywhere in Bangladesh
+  expect: pass bangladesh
+- case: bdjobs unknown local place
+  listing:
+    source: bdjobs
+    location: Ashulia
+  expect: pass bangladesh
+- case: bdjobs no location
+  listing:
+    source: bdjobs
+  expect: pass bangladesh
+- case: bdjobs Dubai
+  listing:
+    source: bdjobs
+    location: Dubai
+  expect: fail overseas
+- case: bdjobs Saudi
+  listing:
+    source: bdjobs
+    location: Riyadh, Saudi Arabia
+  expect: fail overseas
+- case: bdjobs Malaysia
+  listing:
+    source: bdjobs
+    location: Kuala Lumpur
+  expect: fail overseas
+- case: bdjobs Qatar
+  listing:
+    source: bdjobs
+    location: Doha
+  expect: fail overseas
+- case: bdjobs UAE caps
+  listing:
+    source: bdjobs
+    location: UAE
+  expect: fail overseas
+- case: bdjobs Japan
+  listing:
+    source: bdjobs
+    location: Tokyo, Japan
+  expect: fail overseas
+- case: bdjobs overseas note
+  listing:
+    source: bdjobs
+    location: Dhaka
+    extra:
+      overseas_note: Job in Oman
+  expect: fail overseas
+- case: bdjobs remote home
+  listing:
+    source: bdjobs
+    location: Anywhere in Bangladesh
+    work_mode: Home
+  expect: pass bangladesh
+- case: BD city
+  listing:
+    location: Dhaka, Bangladesh
+  expect: pass bangladesh
+- case: CTG spelling
+  listing:
+    location: Chittagong
+  expect: pass bangladesh
+- case: Chattogram
+  listing:
+    location: Chattogram, Bangladesh (On-site)
+  expect: pass bangladesh
+- case: remote BD
+  listing:
+    location_restrictions:
+    - 'Remote: Bangladesh'
+  expect: pass bangladesh
+- case: BD in country list
+  listing:
+    location_restrictions:
+    - India
+    - Bangladesh
+    - Pakistan
+  expect: pass bangladesh
+- case: BD in one entry list
+  listing:
+    location_restrictions:
+    - Bangladesh, Brazil, India, South Africa
+  expect: pass bangladesh
+- case: BD caps code
+  listing:
+    location: Remote (BD)
+  expect: pass bangladesh
+- case: Sylhet
+  listing:
+    location: Sylhet
+  expect: pass bangladesh
+- case: Gazipur area
+  listing:
+    location: Tongi, Gazipur
+  expect: pass bangladesh
+- case: BD beats other entry
+  listing:
+    location_restrictions:
+    - Home based - EMEA
+    - Dhaka, Bangladesh
+  expect: pass bangladesh
+- case: worldwide
+  listing:
+    location_restrictions:
+    - Worldwide
+  expect: pass worldwide
+- case: anywhere
+  listing:
+    location_restrictions:
+    - Anywhere
+  expect: pass worldwide
+- case: anywhere in the world
+  listing:
+    location_restrictions:
+    - Anywhere in the World
+  expect: pass worldwide
+- case: remote global
+  listing:
+    location_restrictions:
+    - Remote, Global
+  expect: pass worldwide
+- case: home based worldwide
+  listing:
+    location_restrictions:
+    - Home based - Worldwide
+  expect: pass worldwide
+- case: worldwide among options
+  listing:
+    location_restrictions:
+    - Home Based - Americas
+    - Home based - EMEA
+    - Home based - Worldwide
+  expect: pass worldwide
+- case: work from anywhere
+  listing:
+    location: Work from anywhere
+  expect: pass worldwide
+- case: REMOTE (Worldwide)
+  listing:
+    location_restrictions:
+    - REMOTE (Worldwide)
+  expect: pass worldwide
+- case: anywhere with time zone
+  listing:
+    location_restrictions:
+    - REMOTE (anywhere, EST hours)
+  expect: pass worldwide
+- case: global caps
+  listing:
+    location_restrictions:
+    - GLOBAL
+  expect: pass worldwide
+- case: himalayas empty list
+  listing:
+    source: himalayas
+    extra:
+      location_policy: worldwide
+  expect: pass worldwide
+- case: US only
+  listing:
+    location_restrictions:
+    - USA Only
+  expect: fail region_restricted
+- case: Remote - US
+  listing:
+    location_restrictions:
+    - Remote - US
+  expect: fail region_restricted
+- case: UK
+  listing:
+    location_restrictions:
+    - United Kingdom
+  expect: fail region_restricted
+- case: Brazil
+  listing:
+    location_restrictions:
+    - Brazil
+  expect: fail region_restricted
+- case: Copenhagen
+  listing:
+    location_restrictions:
+    - Copenhagen
+  expect: fail region_restricted
+- case: Europe
+  listing:
+    location_restrictions:
+    - Remote, Europe
+  expect: fail region_restricted
+- case: EMEA
+  listing:
+    location_restrictions:
+    - Home based - EMEA
+  expect: fail region_restricted
+- case: LATAM
+  listing:
+    location_restrictions:
+    - LATAM
+  expect: fail region_restricted
+- case: EU caps
+  listing:
+    location_restrictions:
+    - Remote (EU)
+  expect: fail region_restricted
+- case: worldwide but listed
+  listing:
+    location_restrictions:
+    - 'REMOTE (Worldwide: US / Canada / Europe / UK / LATAM)'
+  expect: fail region_restricted
+- case: anywhere in Europe
+  listing:
+    location_restrictions:
+    - Anywhere in Europe
+  expect: fail region_restricted
+- case: country list without BD
+  listing:
+    location_restrictions:
+    - USA, Canada, Ireland or UK only
+  expect: fail region_restricted
+- case: many other countries
+  listing:
+    location_restrictions:
+    - US, UK, Canada, Australia + 35 other countries
+  expect: fail region_restricted
+- case: near New York
+  listing:
+    location_restrictions:
+    - New York / Remote within 3 time zones of New York
+  expect: fail region_restricted
+- case: India city
+  listing:
+    location: Bengaluru
+  expect: fail region_restricted
+- case: Pakistan
+  listing:
+    location_restrictions:
+    - Remote (Pakistan)
+  expect: fail region_restricted
+- case: Middle East
+  listing:
+    location_restrictions:
+    - GCC
+  expect: fail region_restricted
+- case: APAC
+  listing:
+    location_restrictions:
+    - Home Based - APAC
+  expect: fail region_list_without_bangladesh
+- case: Asia
+  listing:
+    location_restrictions:
+    - Remote - Asia
+  expect: fail region_list_without_bangladesh
+- case: Asia Pacific
+  listing:
+    location_restrictions:
+    - Asia Pacific
+  expect: fail region_list_without_bangladesh
+- case: US town
+  listing:
+    location_restrictions:
+    - Menlo Park
+  expect: fail not_bangladesh
+- case: US state
+  listing:
+    location_restrictions:
+    - Sterling Heights, Michigan
+  expect: fail not_bangladesh
+- case: remote only
+  listing:
+    location_restrictions:
+    - Remote
+  expect: needs_facts unspecified_remote
+- case: no location remote
+  listing:
+    work_mode: remote
+  expect: needs_facts unspecified_remote
+- case: time zone only
+  listing:
+    location_restrictions:
+    - 'Time zone: CET (+/- 3 hours)'
+  expect: needs_facts unspecified_remote
+- case: remote with CET
+  listing:
+    location_restrictions:
+    - REMOTE (CET ±2h)
+  expect: needs_facts unspecified_remote
+- case: fully remote
+  listing:
+    location: Fully Remote
+  expect: needs_facts unspecified_remote
+- case: no location at all
+  listing:
+    work_mode: null
+  expect: needs_facts no_location
+- case: '''join us'' is not the US'
+  listing:
+    location_restrictions:
+    - Remote - join us
+  expect: fail not_bangladesh

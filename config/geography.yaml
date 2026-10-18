@@ -1,0 +1,132 @@
+# Words and places the location gate reads. Matching is whole-word and
+# case-insensitive, except aliases of up to three capital letters ("US", "EU",
+# "NA"), which match only in capitals so "join us" is not the United States.
+# Bangladesh's own places are in locations.yaml.
+version: 1
+
+# A remote job counts as open to Bangladesh when an eligibility entry says one
+# of these and names no other country or region.
+worldwide_phrases:
+  - worldwide
+  - world wide
+  - anywhere
+  - anywhere in the world
+  - work from anywhere
+  - global
+  - globally
+  - any country
+  - any location
+  - all countries
+  - international
+
+remote_words: [remote, remotely, wfh, work from home, home based, home-based, telecommute, distributed, fully remote]
+
+# Working-hours requirements. Never a reason to reject (brief §6.5): they are
+# shown as a warning, and an entry made only of them says nothing about where
+# the job may be done.
+timezone_markers: [time zone, timezone, timezones, hours overlap, overlap, CET, CEST, EST, EDT, PST, PDT, CST, MST, GMT, UTC, BST, IST, ET, PT, US hours, EST hours]
+
+# Words that carry no place in an eligibility entry ("REMOTE (CET ±2h, overlap
+# preferred)"). Digits and punctuation are ignored as well.
+filler_words: [hours, hour, h, only, preferred, required, within, plus, minus, or, and, of, with, in, the, a, an, to, from, flexible]
+
+# Region names. `includes_bangladesh` regions pass only when the policy
+# accept_region_lists_containing_bd is on; the others never include it.
+regions:
+  - {name: APAC, aliases: [Asia Pacific, Asia-Pacific], includes_bangladesh: true}
+  - {name: Asia, aliases: [South Asia], includes_bangladesh: true}
+  - {name: SAARC, includes_bangladesh: true}
+  - {name: EMEA, includes_bangladesh: false}
+  - {name: Europe, aliases: [EU, European Union, Eurozone, Western Europe, Eastern Europe], includes_bangladesh: false}
+  - {name: Americas, aliases: [North America, South America, Latin America, LATAM, Central America, AMER, NA], includes_bangladesh: false}
+  - {name: Middle East, aliases: [MENA, GCC, Gulf], includes_bangladesh: false}
+  - {name: Africa, includes_bangladesh: false}
+  - {name: Oceania, aliases: [ANZ], includes_bangladesh: false}
+
+# Other countries, with the spellings and major cities that show up in listings
+# (Gulf and East Asian cities matter most: BDJobs lists jobs there too).
+countries:
+  - {name: United States, aliases: [USA, US, U.S., U.S.A., United States of America, America], cities: [New York, San Francisco, Seattle, Austin, Boston, Chicago, Los Angeles, NYC, Bay Area]}
+  - {name: Canada, cities: [Toronto, Vancouver, Montreal]}
+  - {name: Mexico}
+  - {name: Brazil}
+  - {name: Argentina}
+  - {name: Colombia}
+  - {name: Chile}
+  - {name: Peru}
+  - {name: Guatemala}
+  - {name: Nicaragua}
+  - {name: Costa Rica}
+  - {name: United Kingdom, aliases: [UK, U.K., Great Britain, Britain, England, Scotland, Wales], cities: [London, Manchester, Edinburgh]}
+  - {name: Ireland, cities: [Dublin]}
+  - {name: Germany, cities: [Berlin, Munich, Hamburg, Frankfurt]}
+  - {name: France, cities: [Paris]}
+  - {name: Netherlands, aliases: [Holland], cities: [Amsterdam]}
+  - {name: Belgium}
+  - {name: Spain, cities: [Madrid, Barcelona]}
+  - {name: Portugal, cities: [Lisbon]}
+  - {name: Italy}
+  - {name: Switzerland, cities: [Zurich, Geneva]}
+  - {name: Austria}
+  - {name: Denmark, cities: [Copenhagen]}
+  - {name: Sweden, cities: [Stockholm]}
+  - {name: Norway, cities: [Oslo]}
+  - {name: Finland, cities: [Helsinki]}
+  - {name: Poland, cities: [Warsaw, Krakow]}
+  - {name: Czech Republic, aliases: [Czechia], cities: [Prague]}
+  - {name: Romania}
+  - {name: Hungary}
+  - {name: Greece}
+  - {name: Ukraine}
+  - {name: Turkey, aliases: [Türkiye], cities: [Istanbul]}
+  - {name: Israel, cities: [Tel Aviv]}
+  - {name: Estonia}
+  - {name: Lithuania}
+  - {name: Latvia}
+  - {name: Serbia}
+  - {name: Croatia}
+  - {name: Bulgaria}
+  - {name: Cyprus}
+  - {name: Malta}
+  - {name: Luxembourg}
+  - {name: Iceland}
+  - {name: Russia}
+  - {name: United Arab Emirates, aliases: [UAE, U.A.E.], cities: [Dubai, Abu Dhabi, Sharjah, Ajman]}
+  - {name: Saudi Arabia, aliases: [KSA], cities: [Riyadh, Jeddah, Dammam, Mecca, Makkah, Medina]}
+  - {name: Qatar, cities: [Doha]}
+  - {name: Kuwait}
+  - {name: Oman, cities: [Muscat]}
+  - {name: Bahrain, cities: [Manama]}
+  - {name: Jordan, cities: [Amman]}
+  - {name: Lebanon}
+  - {name: Iraq}
+  - {name: Egypt, cities: [Cairo]}
+  - {name: Morocco}
+  - {name: Nigeria, cities: [Lagos]}
+  - {name: Kenya, cities: [Nairobi]}
+  - {name: South Africa, cities: [Cape Town, Johannesburg]}
+  - {name: Ghana}
+  - {name: Ethiopia}
+  - {name: India, cities: [Bangalore, Bengaluru, Mumbai, Delhi, New Delhi, Hyderabad, Chennai, Pune, Kolkata, Gurgaon, Noida]}
+  - {name: Pakistan, cities: [Karachi, Lahore, Islamabad]}
+  - {name: Sri Lanka, cities: [Colombo]}
+  - {name: Nepal, cities: [Kathmandu]}
+  - {name: Bhutan}
+  - {name: Maldives}
+  - {name: Afghanistan}
+  - {name: China, cities: [Beijing, Shanghai, Shenzhen, Guangzhou]}
+  - {name: Hong Kong}
+  - {name: Taiwan, cities: [Taipei]}
+  - {name: Japan, cities: [Tokyo, Osaka]}
+  - {name: South Korea, aliases: [Korea], cities: [Seoul]}
+  - {name: Singapore}
+  - {name: Malaysia, cities: [Kuala Lumpur, Penang, Johor]}
+  - {name: Indonesia, cities: [Jakarta, Bali]}
+  - {name: Thailand, cities: [Bangkok]}
+  - {name: Vietnam, cities: [Hanoi, Ho Chi Minh City]}
+  - {name: Philippines, cities: [Manila]}
+  - {name: Myanmar, cities: [Yangon]}
+  - {name: Cambodia}
+  - {name: Brunei}
+  - {name: Australia, cities: [Sydney, Melbourne, Brisbane, Perth]}
+  - {name: New Zealand, cities: [Auckland, Wellington]}

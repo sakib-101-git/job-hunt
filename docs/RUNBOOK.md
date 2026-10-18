@@ -174,6 +174,27 @@ All of these are YAML edits; no code changes. After any edit run `make config`
    `title_matching` in `config/app.yaml`. If you change thresholds, redo the
    calibration table in `docs/DECISIONS.md`.
 
+## Gates: why a job was filtered
+
+`jobs.filter_reason` names the first gate that failed (`location:region_restricted`),
+and `jobs.gates_json` holds every gate's status, reason and the text it was decided
+on. To look:
+
+```bash
+sqlite3 /tmp/jobhunt.db "SELECT title, filter_reason, json_extract(gates_json, '$.location')
+                          FROM jobs WHERE filter_reason LIKE 'location:%' LIMIT 20"
+```
+
+Tuning is data, not code:
+
+- A place spelled a new way: `config/locations.yaml` (Bangladesh) or
+  `config/geography.yaml` (elsewhere). Add a test row to
+  `pipeline/tests/data/location_cases.yaml`.
+- A tech title the CSE gate rejects as `no_tech_signal`: add the word to
+  `cse_gate.tech_signals` in `config/app.yaml`, or the title to the taxonomy.
+- Policies: `location_policy` in `config/app.yaml` (accept unspecified remote jobs,
+  accept "APAC"-style regions); `freshness.max_age_days`; `seniority_gate`.
+
 ## Database migrations
 
 Migrations live in `migrations/` and are shared: wrangler applies them to D1 and
