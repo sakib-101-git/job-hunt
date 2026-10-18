@@ -55,6 +55,7 @@ jobs:
           IMAP_HOST: ${{ secrets.IMAP_HOST }}
           IMAP_EMAIL: ${{ secrets.IMAP_EMAIL }}
           IMAP_APP_PASSWORD: ${{ secrets.IMAP_APP_PASSWORD }}
+          PROFILE_YAML: ${{ secrets.PROFILE_YAML }}
           LOG_LEVEL: INFO
         run: python -m src.main
 

@@ -52,8 +52,17 @@ def load_config() -> AppConfig:
     with open(cfg_path) as f:
         cfg = yaml.safe_load(f)
 
-    with open(profile_path) as f:
-        profile = yaml.safe_load(f)
+    # profile.yaml holds personal data, so it is git-ignored. Locally it is read
+    # from disk; in CI it comes from the PROFILE_YAML secret.
+    if profile_path.exists():
+        with open(profile_path, encoding="utf-8") as f:
+            profile = yaml.safe_load(f)
+    elif os.getenv("PROFILE_YAML"):
+        profile = yaml.safe_load(os.environ["PROFILE_YAML"])
+    else:
+        print("ERROR: No profile found.", file=sys.stderr)
+        print("Put profile.yaml in the repo root (it is git-ignored) or set PROFILE_YAML.", file=sys.stderr)
+        sys.exit(1)
 
     search = cfg.get("search", {})
     scraping = cfg.get("scraping", {})
