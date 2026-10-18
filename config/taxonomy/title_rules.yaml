@@ -1,0 +1,148 @@
+# How job titles are normalized before they are matched against job_titles.yaml.
+# The same rules run on taxonomy titles and on listing titles, so both sides meet
+# in one canonical form. All matching is whole-word.
+version: 1
+
+# Whole-word replacements, applied after lowercasing and punctuation cleanup.
+# Multi-word keys join split spellings; single-word keys expand abbreviations.
+phrases:
+  "front end": frontend
+  "back end": backend
+  "full stack": fullstack
+  "dev ops": devops
+  "dev sec ops": devsecops
+  "cyber security": cybersecurity
+  "data base": database
+  "pre sales": presales
+  "web site": website
+  "work from home": remote
+  "machine learning ops": mlops
+  "ml ops": mlops
+  "computer science and engineering": cse
+  "computer science": cse
+  # Framework spellings, folded to the form job_titles.yaml uses.
+  "react js": react
+  "reactjs": react
+  "react.js": react
+  "node js": node.js
+  "nodejs": node.js
+  "vue js": vue.js
+  "vuejs": vue.js
+  "next js": next.js
+  "nextjs": next.js
+  "angular js": angularjs
+  "dot net": .net
+  "dotnet": .net
+  "pl sql": plsql
+
+abbreviations:
+  swe: software engineer
+  sde: software development engineer
+  sdet: software development engineer in test
+  sqa: software quality assurance
+  qa: quality assurance
+  ml: machine learning
+  ai: artificial intelligence
+  nlp: natural language processing
+  sre: site reliability engineer
+  dba: database administrator
+  bi: business intelligence
+  fe: frontend
+  be: backend
+  engr: engineer
+  eng: engineer
+  dev: developer
+  devs: developer
+  mgr: manager
+  asst: assistant
+  exec: executive
+  sr: senior
+  jr: junior
+  infosec: information security
+  pentester: penetration tester
+  grc: governance risk compliance
+  appsec: application security
+  ict: information and communication technology
+
+# Words treated as the same word ("Software Engineer" = "Software Developer").
+equivalents:
+  developer: [engineer, programmer]
+  administrator: [admin]
+  executive: [officer]
+  # Plurals that turn up in titles ("Systems Administrator").
+  system: [systems]
+  solution: [solutions]
+  application: [applications]
+  service: [services]
+  operation: [operations]
+
+# Dropped from the match key; they carry no meaning on their own.
+stopwords: ["a", "an", "and", "at", "for", "in", "of", "on", "the", "to", "with", "dept", "department"]
+
+# Seniority words. They are removed from the start or end of a title and kept as
+# a separate seniority signal, so "Sr. Software Engineer" matches "Software Engineer".
+# Levels follow the extraction schema: intern, entry, junior, mid, senior, lead_plus.
+seniority:
+  prefix_or_suffix:
+    intern: intern
+    internship: intern
+    trainee: entry
+    apprentice: entry
+    fresher: entry
+    graduate: entry
+    entry level: entry
+    junior: junior
+    associate: junior
+    mid level: mid
+    senior: senior
+    staff: lead_plus
+    principal: lead_plus
+    distinguished: lead_plus
+    lead: lead_plus
+  prefix_only:
+    assistant: junior
+    head: lead_plus
+    chief: lead_plus
+  suffix_only:
+    i: junior
+    ii: mid
+    iii: senior
+    iv: lead_plus
+  # "Level 2", "L3": these words followed by a number.
+  level_words: [level, l]
+  level_map: {1: junior, 2: mid, 3: senior, 4: lead_plus}
+
+# Title segments ("Software Engineer - Dhaka", "Engineer (Remote, Full-time)") made
+# only of these words, place names from locations.yaml, or job codes are dropped.
+noise_words:
+  - remote
+  - onsite
+  - on site
+  - hybrid
+  - wfh
+  - full time
+  - fulltime
+  - part time
+  - contract
+  - contractual
+  - permanent
+  - temporary
+  - urgent
+  - hiring
+  - immediate joining
+  - worldwide
+  - anywhere
+  - bangladesh
+  - global
+  - summer
+  - winter
+  - night shift
+  - day shift
+  # Job-code prefixes, as in "REQ-20391" or "Job ID: 5512".
+  - req
+  - ref
+  - job id
+  - job code
+
+# Tokens with these suffixes keep their dot (Node.js, ASP.NET); other dots are dropped.
+dotted_suffixes: [js, net]
