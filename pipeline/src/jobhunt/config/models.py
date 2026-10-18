@@ -1,11 +1,19 @@
 """Schemas for the files in config/. Every model rejects unknown keys, so a typo
 in a YAML file fails loudly instead of being ignored."""
 
+import re
 from collections import Counter
 from collections.abc import Iterable
 from typing import Annotated, Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    model_validator,
+)
 
 NonEmpty = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 Slug = Annotated[str, StringConstraints(pattern=r"^[a-z0-9]+(-[a-z0-9]+)*$")]
@@ -292,11 +300,16 @@ class HealthSettings(Strict):
     empty_runs_before_alert: int = Field(ge=1)
 
 
+EnvName = Annotated[str, StringConstraints(pattern=r"^[A-Z][A-Z0-9_]*$")]
+
+
 class SourceBase(Strict):
     enabled: bool
     disabled_reason: NonEmpty | None = None
     min_interval_minutes: int = Field(ge=1)
     attribution: NonEmpty
+    # The source is skipped, not failed, until all of these are set.
+    required_env: list[EnvName] = []
 
     @model_validator(mode="after")
     def _reason_when_disabled(self) -> Self:
@@ -343,12 +356,69 @@ class RemotiveSource(UrlSource):
 class HimalayasSource(UrlSource):
     kind: Literal["himalayas"]
     max_pages: int = Field(ge=1)
-    api_key_env: Annotated[str, StringConstraints(pattern=r"^[A-Z][A-Z0-9_]*$")] | None = None
+    api_key_env: EnvName | None = None
 
 
 class RssSource(SourceBase):
     kind: Literal["rss"]
     feeds: list[HttpsUrl] = Field(min_length=1)
+
+
+AtsName = Literal["greenhouse", "lever", "ashby", "workable", "smartrecruiters"]
+TokenUrl = Annotated[str, StringConstraints(pattern=r"^https://\S*\{token\}\S*$")]
+
+
+class AtsCompany(Strict):
+    name: NonEmpty
+    ats: AtsName
+    token: Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9._-]+$")]
+    verified: NonEmpty  # what was checked before adding the company
+
+
+class AtsSource(SourceBase):
+    kind: Literal["ats"]
+    boards: dict[AtsName, TokenUrl]
+    details: dict[AtsName, TokenUrl] = {}
+    job_pages: dict[AtsName, TokenUrl] = {}
+    companies: list[AtsCompany] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _check(self) -> Self:
+        _require_unique("companies", (f"{c.ats}:{c.token}" for c in self.companies))
+        for company in self.companies:
+            if company.ats not in self.boards:
+                raise ValueError(f"no board URL for {company.ats} ({company.name})")
+        return self
+
+
+def _valid_regex(pattern: str) -> str:
+    try:
+        re.compile(pattern)
+    except re.error as exc:
+        raise ValueError(f"invalid regex {pattern!r}: {exc}") from exc
+    return pattern
+
+
+Regex = Annotated[str, StringConstraints(min_length=1), AfterValidator(_valid_regex)]
+
+
+class HnSource(SourceBase):
+    kind: Literal["hn"]
+    search_url: HttpsUrl
+    comments_url: HttpsUrl
+    item_url: Annotated[str, StringConstraints(pattern=r"^https://\S*\{id\}\S*$")]
+    thread_author: NonEmpty
+    thread_title_prefix: NonEmpty
+    require: list[Regex] = []
+    require_any: list[Regex] = []
+    not_a_title: list[Regex] = []
+
+
+class ImapSource(SourceBase):
+    kind: Literal["imap"]
+    sender: NonEmpty
+    lookback_days: int = Field(ge=1)
+    job_url: Annotated[str, StringConstraints(pattern=r"^https://\S*\{id\}\S*$")]
 
 
 class DisabledSource(SourceBase):
@@ -371,6 +441,9 @@ SourceSettings = Annotated[
     | RemotiveSource
     | HimalayasSource
     | RssSource
+    | AtsSource
+    | HnSource
+    | ImapSource
     | DisabledSource,
     Field(discriminator="kind"),
 ]

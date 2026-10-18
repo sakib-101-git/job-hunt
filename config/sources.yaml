@@ -135,3 +135,63 @@ sources:
       it lists almost no software roles.
     min_interval_minutes: 360
     attribution: Shomvob
+
+  company_boards:
+    kind: ats
+    enabled: true
+    min_interval_minutes: 60
+    # Jobs are credited to the company; Apply opens the company's own job page.
+    attribution: company career page
+    boards:
+      greenhouse: "https://boards-api.greenhouse.io/v1/boards/{token}/jobs?content=true"
+      lever: "https://api.lever.co/v0/postings/{token}?mode=json"
+      ashby: "https://api.ashbyhq.com/posting-api/job-board/{token}"
+      # Workable's public widget API: every job with its description, one GET.
+      workable: "https://apply.workable.com/api/v1/widget/accounts/{token}?details=true"
+      smartrecruiters: "https://api.smartrecruiters.com/v1/companies/{token}/postings?limit=100"
+    # SmartRecruiters lists jobs without a description; it comes from a per-job
+    # request, made only for jobs not stored yet.
+    details:
+      smartrecruiters: "https://api.smartrecruiters.com/v1/companies/{token}/postings/{id}"
+    job_pages:
+      smartrecruiters: "https://jobs.smartrecruiters.com/{token}/{id}"
+    # Add a company only after checking that its board answers 200 and that it
+    # hires in Bangladesh or remote-worldwide (docs/RUNBOOK.md). Checked 2026-10-18.
+    companies:
+      - {name: Populate, ats: greenhouse, token: applytopopulate, verified: "Dhaka office; remote roles open to Bangladesh"}
+      - {name: Canonical, ats: greenhouse, token: canonical, verified: "about 90 'Home based - Worldwide' roles"}
+      - {name: Supabase, ats: ashby, token: supabase, verified: "about 30 'Remote, Global' roles"}
+      - {name: Toptal, ats: lever, token: toptal, verified: "roles open 'Anywhere'"}
+      - {name: Polygon Technology, ats: smartrecruiters, token: PolygonTechnology, verified: "Dhaka office"}
+      - {name: SELISE, ats: workable, token: selise, verified: "Dhaka office (selise.ch); board empty on 2026-10-18"}
+      - {name: Brain Station 23, ats: workable, token: brainstation-23, verified: "Dhaka office; board empty on 2026-10-18"}
+
+  hn_whoishiring:
+    kind: hn
+    enabled: true
+    min_interval_minutes: 180
+    attribution: Hacker News
+    search_url: https://hn.algolia.com/api/v1/search_by_date
+    comments_url: https://hn.algolia.com/api/v1/search
+    item_url: "https://news.ycombinator.com/item?id={id}"
+    # The monthly thread is posted by this account with this title.
+    thread_author: whoishiring
+    thread_title_prefix: "Ask HN: Who is hiring?"
+    # Keep a top-level comment only if it matches `require` and one of
+    # `require_any` (case-sensitive REMOTE, as posters write it).
+    require: ['\bREMOTE\b']
+    require_any: ['(?i)\bworld\s*wide\b', '(?i)\banywhere\b', '(?i)\bglobal(ly)?\b']
+    # First-line segments that are never the role: links, contract types, pay.
+    not_a_title: ['https?://', '(?i)^(full|part)[\s-]*time\b', '(?i)^(contract|freelance|intern(ship)?)\b', '[$€£]']
+
+  linkedin_alerts:
+    kind: imap
+    enabled: true
+    min_interval_minutes: 30
+    attribution: LinkedIn
+    # The owner's own LinkedIn job-alert emails, over IMAP with an app password.
+    # Skipped until these variables are set.
+    required_env: [IMAP_HOST, IMAP_EMAIL, IMAP_APP_PASSWORD]
+    sender: jobs-noreply@linkedin.com
+    lookback_days: 2
+    job_url: "https://www.linkedin.com/jobs/view/{id}/"

@@ -25,7 +25,7 @@ from jobhunt.sources.state import (
 
 log = logging.getLogger(__name__)
 
-RunStatus = Literal["ok", "unchanged", "failed", "skipped"]
+RunStatus = Literal["ok", "unchanged", "failed", "skipped", "not_configured"]
 
 
 @dataclass
@@ -36,6 +36,7 @@ class SourceRun:
     listings: list[RawListing] = field(default_factory=list)
     error: str | None = None
     seconds: float = 0.0
+    warnings: tuple[str, ...] = ()
 
 
 @dataclass
@@ -59,16 +60,20 @@ async def run_sources(
 ) -> RunReport:
     """Fetch every enabled source that is due (all of `only`, if given)."""
     jobs = []
+    runs_not_configured: list[SourceRun] = []
     for name, settings in sources.sources.items():
         if only is not None and name not in only:
             continue
         source = build_source(name, settings)
         if source is None or not settings.enabled:
             continue
+        if missing := [env for env in settings.required_env if not environ.get(env)]:
+            runs_not_configured.append(SourceRun(name, "not_configured", error=", ".join(missing)))
+            continue
         interval = timedelta(minutes=settings.min_interval_minutes)
         jobs.append(_run_one(source, interval, sources, db, fetcher, now, environ, force))
     results = await asyncio.gather(*jobs)
-    runs = [run for run, _ in results]
+    runs = [run for run, _ in results] + runs_not_configured
     alerts = [alert for _, run_alerts in results for alert in run_alerts]
     return RunReport(runs, alerts)
 
@@ -108,9 +113,18 @@ async def _run_one(
     await save_state(db, st, now)
     status: RunStatus = "unchanged" if result.unchanged else "ok"
     log.info("source %s: %s, %d listings", source.name, status, len(result.listings))
-    return SourceRun(
-        source.name, status, ctx.bootstrap, result.listings, None, _since(started)
-    ), alerts
+    for warning in result.warnings:
+        log.warning("source %s: %s", source.name, warning)
+    run = SourceRun(
+        source.name,
+        status,
+        ctx.bootstrap,
+        result.listings,
+        None,
+        _since(started),
+        result.warnings,
+    )
+    return run, alerts
 
 
 def _since(started: float) -> float:
