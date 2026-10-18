@@ -33,6 +33,7 @@ describe("migrations", () => {
       "notifications",
       "runs",
       "source_state",
+      "title_classes",
       "user_prefs",
       "user_profiles",
       "users",

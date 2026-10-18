@@ -21,6 +21,7 @@ import re
 from dataclasses import dataclass
 
 from jobhunt.config import Config
+from jobhunt.extract.schema import JobFacts
 from jobhunt.gates.base import GateResult, PhraseFinder
 from jobhunt.sources.models import RawListing
 
@@ -84,6 +85,27 @@ class LocationGate:
             else ("region_restricted")
         )
         return GateResult(GATE, "fail", reason, first.evidence, warnings)
+
+    def with_facts(self, listing: RawListing, facts: JobFacts) -> GateResult:
+        """The listing's own verdict if it decided; otherwise the extracted
+        (grounded) eligibility. An unstated eligibility now fails: the
+        description was read and says nothing."""
+        listing_result = self(listing)
+        if listing_result.status != "needs_facts":
+            return listing_result
+        warnings = listing_result.warnings
+        evidence = facts.remote_eligibility_evidence
+        if facts.country == "BD" or facts.remote_eligibility == "bangladesh_included":
+            return GateResult(GATE, "pass", "bangladesh", evidence or "country: BD", warnings)
+        if facts.remote_eligibility == "worldwide" and evidence:
+            return GateResult(GATE, "pass", "worldwide", evidence, warnings)
+        if facts.remote_eligibility == "region_restricted":
+            return GateResult(GATE, "fail", "region_restricted", evidence, warnings)
+        if facts.remote_eligibility == "unspecified":
+            if self._policy.accept_unspecified_remote:
+                return GateResult(GATE, "pass", "unspecified_remote_accepted", evidence, warnings)
+            return GateResult(GATE, "fail", "unspecified_remote", evidence, warnings)
+        return GateResult(GATE, "fail", "not_bangladesh", facts.country, warnings)
 
     # --- helpers --------------------------------------------------------------
 

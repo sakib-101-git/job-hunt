@@ -31,7 +31,8 @@ from jobhunt.config import Config
 from jobhunt.config.models import Seniority, TitleMatching
 from jobhunt.normalize.titles import SEGMENT_SPLIT, NormalizedTitle, TitleNormalizer
 
-Method = Literal["exact", "alias", "fuzzy", "none"]
+# "llm": set by the batched title classifier for titles the taxonomy doesn't know.
+Method = Literal["exact", "alias", "fuzzy", "llm", "none"]
 
 _PARENTHETICAL = re.compile(r"\([^)]*\)|\[[^\]]*\]")
 _QUALIFIER = re.compile(r"\s[—–]\s.*$")  # noqa: RUF001 (en dash is intended)
