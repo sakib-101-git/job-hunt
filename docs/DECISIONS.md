@@ -381,3 +381,45 @@ domain slug or "none" (`prompts/title_classification.v1.md`), cached per
 normalized title in `title_classes` (migration 0005). "none" filters the job
 without spending an extraction call; a slug becomes a `job_domains` row with
 method `llm`.
+
+## Scoring
+
+### 2026-10-18: The rubric is code and config, never the LLM
+
+`config/scoring.yaml` holds every weight; `score/scorer.py` applies them to
+grounded facts and the user's profile. Components are rounded to 2 decimals and
+the total to 1 decimal with `Decimal` ROUND_HALF_UP, so the parts in a message
+add up to the score shown. The config is checked at load time: weights sum to
+10, each component's top value equals its weight, labels run down to 0.
+`scorer_version` is stored on every match.
+
+- Role: primary domain of a chosen track 3.0; a secondary domain or the track's
+  `include_titles` 2.25 (the owner's example: the AI track gets Python and R
+  developer roles); an adjacent domain 1.5 if the user keeps adjacent domains;
+  otherwise a hard gate (a security-only user never gets a frontend job).
+- Skills: (2 × must matched + nice matched) / (2 × must + nice) × 3; 1.5 when the
+  posting lists none. Skills compare as skills.yaml ids.
+- Experience: met 2.0; 1 year short 1.0; 2 years short 0.5; unknown 1.5; a job
+  seniority that doesn't fit the user's level costs 0.5.
+- Education: CSE/CS/IT/software or no degree required 1.0; any engineering or
+  science 0.75; another specific field 0.
+- Preferences (capped at 1): preferred city 0.5, work mode 0.3, salary shown 0.2.
+
+Per-user hard gates: chosen tracks, the user's location choice (a worldwide
+remote job needs "remote"; an on-site Bangladesh job needs "Bangladesh"; a remote
+job open to Bangladesh suits either), job type, the seniority gate and scam
+markers (`red_flags` in app.yaml). A pair failing a gate is counted in the run
+summary, not stored.
+
+Property tests (Hypothesis): adding a matching skill never lowers the score;
+asking for more years never raises the experience points; the components always
+add up to the score.
+
+### 2026-10-18: Messages
+
+`score/render.py` renders brief §7.3's alert and the "Why this score?" view as
+Telegram HTML from `locales/en.json`: every word is in the locale, every number
+comes from the stored breakdown, values are escaped (`& < >`) exactly once, and
+each alert credits its source ("via Jobicy"), as the sources' terms require.
+Jobs scored on rules-only facts say "Quick match: AI review pending". A test
+checks the locale covers every label, enum value and rule the renderer can hit.
