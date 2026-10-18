@@ -118,3 +118,59 @@ The brief suggested `scripts/build_shared`. It is `jobhunt build-shared` instead
 so it reuses the config loader and its validation. It writes
 `bot/src/generated/config.json` (domains, tracks, skills, preferred cities), and CI
 fails if the committed file is stale.
+
+## Database
+
+### 2026-10-18: Cloudflare D1 facts (Workers Free plan)
+
+Checked in the D1 docs and in wrangler 4.151.1's source:
+
+- REST endpoint `POST /accounts/{account}/d1/database/{database}/query`, body
+  `{sql, params}` or `{batch: [{sql, params}, ...]}`; one `sql` string may also
+  hold several `;`-separated statements. Batched statements run as one SQL
+  transaction.
+- Limits: 500 MB per database, 5 GB per account, 5 million rows read and 100,000
+  rows written per day (reset 00:00 UTC; queries fail until then), 50 queries per
+  Worker invocation, 100 bound parameters per query, 100 KB per statement, 2 MB per
+  row. The brief's "5 GB" is the account total, not one database.
+- The Cloudflare API allows 1,200 requests per five minutes per user and answers
+  429 with Retry-After. `D1HttpBackend` retries 429, 5xx and network errors with
+  backoff and honours Retry-After.
+- Foreign keys are always enforced and can't be turned off by queries (a
+  migration may use `PRAGMA defer_foreign_keys = on`). The SQLite backend
+  switches them on to match.
+- `d1_migrations(id, name UNIQUE, applied_at)`; wrangler runs each file together
+  with the INSERT that records it, from `migrations_dir` (files `NNNN_name.sql`).
+  `jobhunt.db.apply_migrations` copies this exactly.
+- `database_id` is optional in `wrangler.toml`, so the id stays out of the repo.
+
+To verify against a live database in the automation phase: the REST docs type
+`params` as strings, while the backend sends JSON numbers and nulls.
+
+### 2026-10-18: Schema conventions
+
+STRICT tables (column types enforced in both D1 and SQLite), ISO 8601 UTC text
+timestamps, CHECK constraints on enums and `json_valid` on JSON columns.
+Product defaults (minimum score, delivery mode, caps) are not schema defaults:
+the application writes them from config.
+
+Additions to the brief's data model:
+
+- `notifications.fingerprint` with `UNIQUE (user_id, fingerprint)`, so a job seen
+  on two boards reaches a user once, even across overlapping runs.
+- `job_domains.is_primary` with a partial unique index: one primary per job.
+- `jobs.remote_eligibility_evidence` for the location gate's quote.
+- `user_prefs.include_adjacent` (the per-user adjacent-domains toggle) and
+  `preferred_cities_json` (the soft city preference, apart from the location gate).
+- Deleting a user cascades to prefs, profile, matches, notifications, feedback and
+  audits, which is what `/delete` needs.
+
+### 2026-10-18: One async database interface
+
+`jobhunt.db.Database` has `query`, `execute`, `batch` (atomic) and
+`execute_script`. `D1HttpBackend` (httpx 0.28.1) serves production;
+`SqliteBackend` serves development and tests. `open_database` picks D1 when
+`CLOUDFLARE_ACCOUNT_ID`, `D1_DATABASE_ID` and `CLOUDFLARE_API_TOKEN` are all set,
+else `JOBHUNT_SQLITE_PATH`. Constraint violations raise `ConstraintError` on both.
+The Worker uses the D1 binding directly through `bot/src/db/` with prepared
+statements; its tests apply the same migrations with `applyD1Migrations`.

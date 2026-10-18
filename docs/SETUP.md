@@ -60,7 +60,16 @@ cp .env.example .env
 `make setup` points `core.hooksPath` at `.githooks/`, whose `commit-msg` hook
 rejects AI attribution in commit messages.
 
-## 5. Check everything works
+## 5. Local database
+
+```bash
+make migrate-local   # local D1 for `make bot-dev`
+```
+
+The pipeline uses the SQLite file in `JOBHUNT_SQLITE_PATH` (from `.env`) when the
+Cloudflare values are empty.
+
+## 6. Check everything works
 
 ```bash
 make check     # lint, typecheck, tests and repository rules

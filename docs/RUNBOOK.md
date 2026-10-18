@@ -96,3 +96,19 @@ All of these are YAML edits; no code changes. After any edit run `make config`
 3. Prefer a data fix (a title addition or a rule in `title_rules.yaml`) over changing
    `title_matching` in `config/app.yaml`. If you change thresholds, redo the
    calibration table in `docs/DECISIONS.md`.
+
+## Database migrations
+
+Migrations live in `migrations/` and are shared: wrangler applies them to D1 and
+`jobhunt.db.apply_migrations` applies them to local SQLite in tests.
+
+- **Add one:** create the next file, `migrations/0002_<what>.sql` (numbers have no
+  gaps). Never edit a file that has been applied anywhere.
+- **Keep it backward compatible.** The pipeline and the Worker deploy separately, so
+  a migration must work with the code already running: add first (expand), switch
+  the code over, and drop old columns or tables in a later migration (contract).
+- **Test it:** `make test` applies every migration to fresh SQLite and to the
+  Worker's test D1. `make migrate-local` applies them to the local D1 used by
+  `make bot-dev`.
+- If a migration must violate foreign keys temporarily, start it with
+  `PRAGMA defer_foreign_keys = on;`.
