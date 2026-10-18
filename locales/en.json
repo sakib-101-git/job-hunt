@@ -1,0 +1,118 @@
+{
+  "months": [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+  ],
+  "levels": {
+    "student_intern": "a student",
+    "fresh_grad": "a fresh grad",
+    "junior": "a junior (1-3 yrs)",
+    "mid": "mid-level (3-5 yrs)",
+    "senior": "senior (5+ yrs)"
+  },
+  "work_mode": {
+    "onsite": "On-site",
+    "hybrid": "Hybrid",
+    "remote": "Remote",
+    "unknown": ""
+  },
+  "employment": {
+    "full_time": "Full-time",
+    "part_time": "Part-time",
+    "contract": "Contract",
+    "internship": "Internship",
+    "unknown": ""
+  },
+  "labels": {
+    "strong": "Strong match",
+    "good": "Good match",
+    "partial": "Partial match",
+    "weak": "Weak"
+  },
+  "marks": {
+    "full": "✅",
+    "partial": "➖",
+    "none": "❌"
+  },
+  "alert": {
+    "title": "🎯 <b>{title}</b>",
+    "company": "🏢 {company}",
+    "location": "📍 {location}",
+    "location_with_mode": "📍 {location} ({mode})",
+    "employment": "🕒 {employment}",
+    "separator": " · ",
+    "posted": "📅 Posted {age}",
+    "age_today": "today",
+    "age_yesterday": "yesterday",
+    "age_days": "{days} days ago",
+    "deadline": "⏳ Apply by {date}",
+    "score": "⭐ <b>{score}/10 · {label}</b> for you",
+    "points": "({points}/{max})",
+    "warning": "⚠️ {text}",
+    "timezone": "Working hours: {text}",
+    "summary": "💬 {text}",
+    "via": "🔗 via {source}",
+    "quick": "⚡ Quick match: AI review pending"
+  },
+  "component": {
+    "role.primary": "Role: {domain}, in your {track} track",
+    "role.secondary_or_include": "Role: {domain}, related to your {track} track",
+    "role.adjacent": "Role: {domain}, next to your {track} track",
+    "skills.coverage": "Skills: {matched}",
+    "skills.matched_mark": "{skills} ✓",
+    "skills.missing": "missing: {skills}",
+    "skills.none_matched": "none of yours listed",
+    "skills.none_listed": "Skills: the posting lists none",
+    "experience.met": "Experience: asks {asks}; you're {level}",
+    "experience.gap": "Experience: asks {asks}; you're {level}",
+    "experience.unknown": "Experience: not stated",
+    "experience.years_exact": "{years} yr",
+    "experience.years_range": "{low}–{high} yrs",
+    "experience.years_min": "{years}+ yrs",
+    "education.accepted": "Education: {fields} ✓",
+    "education.broad": "Education: {fields}",
+    "education.other": "Education: asks {fields}",
+    "education.not_required": "no degree required",
+    "preference.sum": "Preferences: {details}",
+    "preference.city": "{city} ✓",
+    "preference.other_city": "{city} (you prefer {preferred})",
+    "preference.work_mode": "{mode} ✓",
+    "preference.salary": "salary shown",
+    "preference.none": "none matched"
+  },
+  "why": {
+    "title": "<b>Why {score}/10 for “{title}”</b>",
+    "intro": "Every point below comes from a rule and, where it can, a quote from the posting.",
+    "component": "<b>{name}</b> {points}/{max}: {line}",
+    "quote": "    “{text}”",
+    "gates": "<b>Checks passed</b>: {gates}",
+    "location": "Location: {text}",
+    "version": "Scored by {version}.",
+    "names": {
+      "role": "Role",
+      "skills": "Skills",
+      "experience": "Experience",
+      "education": "Education",
+      "preference": "Preferences"
+    }
+  },
+  "buttons": {
+    "apply": "🔗 Apply",
+    "why": "❓ Why this score?",
+    "applied": "✅ Applied",
+    "save": "💾 Save",
+    "hide": "🙈 Hide",
+    "thumbs_up": "👍",
+    "thumbs_down": "👎"
+  }
+}
