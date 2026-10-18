@@ -1,0 +1,17 @@
+# Pipeline tunables. Sections are added as each pipeline stage lands.
+version: 1
+
+title_matching:
+  # Weighted token similarity (0-1) a fuzzy match needs to count.
+  min_similarity: 0.7
+  # Listing words the candidate lacks but that appear in the candidate's domains (the
+  # "Laravel" in "PHP Laravel Developer") count at this fraction of their weight.
+  # Other words, including ones the taxonomy has never seen ("Civil"), count in full.
+  known_extra_weight: 0.3
+  # Other domains within this similarity of the best match become secondary domains.
+  secondary_margin: 0.05
+  max_secondary_domains: 3
+  # Typo repair: a listing token this similar (0-100) to a taxonomy word is
+  # replaced by that word. Shorter tokens are never repaired.
+  spelling_min_ratio: 85
+  spelling_min_length: 5

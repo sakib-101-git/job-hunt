@@ -14,9 +14,9 @@ profile.yaml
 *.db-shm
 *.sqlite
 *.sqlite3
-data/
-logs/
-output/
+/data/
+/logs/
+/output/
 
 # Python
 __pycache__/
@@ -25,6 +25,7 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .pytest_cache/
+.hypothesis/
 .coverage
 .coverage.*
 coverage.xml

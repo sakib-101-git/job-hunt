@@ -33,6 +33,8 @@ jobs:
       - run: uv run ruff format --check ..
       - run: uv run mypy
       - run: uv run pytest --cov
+      - run: uv run jobhunt validate-config
+      - run: uv run jobhunt build-shared --check
 
   bot:
     name: Bot (Worker)

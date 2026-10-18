@@ -1,0 +1,157 @@
+# User-facing career tracks shown in the Telegram onboarding.
+# A user picks one or more tracks; a job is eligible for that user only if the
+# job's domain(s) intersect the domains of the chosen tracks, or its normalized
+# title matches one of the track's include_titles.
+#
+# - domains:        domain slugs from job_titles.yaml (all titles in those domains count)
+# - include_titles: extra titles pulled from OTHER domains (e.g. language-specialist roles)
+# - role_fit:       "primary" domains give full role-fit points; "adjacent" give partial
+# This file is DATA. Code must load it; never copy tracks/titles into source code.
+version: 1
+tracks:
+  - id: ai_ml
+    label: "🤖 AI & Machine Learning"
+    description: "ML/AI engineering, deep learning, LLMs/GenAI, RAG, agents, computer vision, NLP, speech, AI research"
+    domains:
+      primary: [ai-ml, emerging-ai, computer-vision, nlp-speech, search-recsys]
+      adjacent: [data-science-analytics, robotics]
+    include_titles:
+      # Python family (owner's explicit example: AI users must also get Python roles)
+      - "Python Developer"
+      - "Python Software Engineer"
+      - "Python Backend Engineer"
+      - "Python API Engineer"
+      - "Python Automation Engineer"
+      - "Python Data Engineer"
+      - "Python AI Engineer"
+      - "Python Scientific Software Engineer"
+      - "Django Developer"
+      - "Flask Developer"
+      - "FastAPI Developer"
+      # R / scientific languages (owner's explicit example: R developer)
+      - "R Developer"
+      - "R Programmer"
+      - "Julia Developer"
+      - "MATLAB Software Developer"
+      - "Statistical Programmer"
+      - "Full-Stack AI Engineer"
+
+  - id: data_science
+    label: "📊 Data Science & Analytics"
+    description: "Data scientist/analyst, BI, statistics, experimentation, quantitative analysis"
+    domains:
+      primary: [data-science-analytics]
+      adjacent: [data-engineering, ai-ml, search-recsys]
+    include_titles: ["R Developer", "R Programmer", "SQL Developer", "Python Data Engineer", "Power BI Developer"]
+
+  - id: data_engineering
+    label: "🛢️ Data Engineering & Databases"
+    description: "Data pipelines, big data, streaming, warehouses, databases, DBA, storage, search infrastructure"
+    domains:
+      primary: [data-engineering, distributed-db-storage]
+      adjacent: [cloud, data-science-analytics]
+    include_titles: ["SQL Developer", "Python Data Engineer", "Scala Developer"]
+
+  - id: cybersecurity
+    label: "🔐 Cybersecurity"
+    description: "AppSec, pentesting/offensive, SOC/defensive, cloud & network security, GRC (technical)"
+    domains:
+      primary: [cybersecurity]
+      adjacent: [networking, devops-sre-infra, it-infrastructure]
+    include_titles: ["Android Security Engineer", "Cloud Security Engineer", "Bash/Shell Automation Engineer"]
+
+  - id: software_web
+    label: "🌐 Software & Web Development"
+    description: "Backend, frontend, full-stack, web, enterprise apps, language/framework specialists"
+    domains:
+      primary: [software-engineering, language-specialists]
+      adjacent: [tech-product-ux, developer-tools, enterprise-identity-integration, fintech]
+    include_titles: []
+
+  - id: mobile_desktop
+    label: "📱 Mobile & Desktop Apps"
+    description: "Android, iOS, Flutter, React Native, cross-platform, desktop applications"
+    domains:
+      primary: [mobile-desktop]
+      adjacent: [software-engineering]
+    include_titles: ["Kotlin Developer", "Swift Developer", "Dart Developer", "Flutter Developer", "React Native Developer"]
+
+  - id: cloud_devops
+    label: "☁️ Cloud, DevOps & SRE"
+    description: "Cloud engineering, Kubernetes, platform engineering, CI/CD, SRE, infrastructure automation"
+    domains:
+      primary: [cloud, devops-sre-infra]
+      adjacent: [developer-tools, it-infrastructure, networking]
+    include_titles: ["Go Developer", "Golang Engineer", "Golang Developer", "Bash/Shell Automation Engineer", "PowerShell Developer"]
+
+  - id: qa_testing
+    label: "🧪 QA, SQA & Testing"
+    description: "Manual/automation QA, SDET, performance testing, verification"
+    domains:
+      primary: [qa-testing]
+      adjacent: [software-engineering, developer-tools]
+    include_titles: ["Software Development Engineer in Test (SDET)"]
+
+  - id: networking_it
+    label: "🖧 Networking & IT Infrastructure"
+    description: "Network engineering, system administration, IT officer/executive roles, enterprise IT"
+    domains:
+      primary: [networking, it-infrastructure]
+      adjacent: [cloud, devops-sre-infra, cybersecurity, support-solutions]
+    include_titles: ["Systems Administrator", "Linux Systems Administrator", "Windows Systems Administrator", "NOC Engineer — Network Operations"]
+
+  - id: systems_embedded
+    label: "⚙️ Systems, Embedded, IoT & Robotics"
+    description: "Systems programming, OS/kernel, compilers, embedded/firmware, IoT, robotics software"
+    domains:
+      primary: [systems-low-level, embedded-iot, robotics]
+      adjacent: [quantum, games-graphics-xr]
+    include_titles: ["C Developer", "C++ Developer", "Rust Developer", "Modern C++ Engineer", "Systems Programmer"]
+
+  - id: games_graphics
+    label: "🎮 Games, Graphics & XR"
+    description: "Game development, graphics/rendering, simulation, AR/VR/XR"
+    domains:
+      primary: [games-graphics-xr]
+      adjacent: [mobile-desktop, systems-low-level]
+    include_titles: ["C++ Graphics Engineer", "C# Developer"]
+
+  - id: blockchain
+    label: "⛓️ Blockchain & Web3"
+    description: "Smart contracts, protocols, decentralized systems"
+    domains:
+      primary: [web3-blockchain]
+      adjacent: [fintech, cybersecurity]
+    include_titles: []
+
+  - id: research_academia
+    label: "🔬 Research & Academia"
+    description: "Research assistant/engineer/scientist, lecturer/TA, quantum, bioinformatics, scientific computing"
+    domains:
+      primary: [research-academic, quantum, bioinformatics-health]
+      adjacent: [ai-ml, data-science-analytics]
+    include_titles: ["Python Scientific Software Engineer", "Julia Developer", "R Developer"]
+
+  - id: industry_software
+    label: "🏦 Fintech, Telecom & Enterprise Software"
+    description: "Banking/payments/core banking, telecom/media, ERP/CRM, identity & integration, geospatial"
+    domains:
+      primary: [fintech, telecom-media, enterprise-identity-integration, geospatial]
+      adjacent: [software-engineering]
+    include_titles: ["SAP ABAP Developer", "Salesforce Developer", "Odoo Developer", "ERP Developer", "CRM Developer"]
+
+  - id: devtools_platform
+    label: "🛠️ Developer Tools & Platforms"
+    description: "Developer productivity, build systems, tooling, internal platforms"
+    domains:
+      primary: [developer-tools]
+      adjacent: [devops-sre-infra, systems-low-level]
+    include_titles: []
+
+  - id: support_product
+    label: "🤝 Tech Support, Solutions & Product"
+    description: "Application/technical support, solutions/pre-sales engineering, technical product, UX engineering, localization, edtech, docs, open source"
+    domains:
+      primary: [support-solutions, tech-product-ux, localization-accessibility, edtech-open-source]
+      adjacent: [it-infrastructure, software-engineering]
+    include_titles: []

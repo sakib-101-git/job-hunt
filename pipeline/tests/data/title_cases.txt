@@ -1,0 +1,431 @@
+# Real-world listing titles and the taxonomy domains a correct match may pick as
+# primary. Format: <title> || <acceptable domain slugs, space-separated>
+# Spellings, punctuation and seniority are kept as boards publish them.
+
+# --- Owner's examples ---------------------------------------------------------
+Executive - IT (Software) || it-infrastructure software-engineering
+Sr. Officer, MIS || it-infrastructure
+Jr. SQA Engr. || qa-testing
+
+# --- Software, backend, frontend, full stack ----------------------------------
+Software Engineer || software-engineering
+Software Engineer (Backend) || software-engineering
+Sr. Software Engineer || software-engineering
+Senior Software Engineer - Dhaka || software-engineering
+Junior Software Engineer || software-engineering
+Trainee Software Engineer || software-engineering
+Software Engineer Intern || software-engineering
+Software Engineering Intern (Summer 2026) || software-engineering
+Associate Software Engineer || software-engineering
+Software Developer || software-engineering
+Software Developer (Remote) || software-engineering
+Programmer || software-engineering
+Assistant Programmer || software-engineering
+Junior Programmer || software-engineering
+Senior Programmer || software-engineering
+Computer Programmer || software-engineering
+Application Developer || software-engineering
+Backend Developer || software-engineering
+Back-end Developer || software-engineering
+Back End Engineer || software-engineering
+Senior Backend Engineer || software-engineering
+Backend Engineer (Node.js) || software-engineering language-specialists
+Frontend Developer || software-engineering language-specialists
+Front-End Developer || software-engineering language-specialists
+Front End Web Developer || software-engineering language-specialists
+Junior Frontend Developer || software-engineering language-specialists
+Sr. Frontend Engineer (React) || software-engineering language-specialists
+Full Stack Developer || software-engineering
+Full-Stack Developer || software-engineering
+Fullstack Engineer || software-engineering
+Full Stack Software Engineer || software-engineering
+Full Stack Developer (MERN) || software-engineering
+MERN Stack Developer || software-engineering
+Jr. MERN Stack Developer || software-engineering
+MEAN Stack Developer || software-engineering
+Web Developer || software-engineering language-specialists
+Junior Web Developer || software-engineering language-specialists
+Web Application Developer || software-engineering language-specialists
+Web Designer || software-engineering tech-product-ux
+Web Designer & Developer || software-engineering tech-product-ux
+WordPress Developer || software-engineering language-specialists
+Shopify Developer || software-engineering language-specialists
+API Developer || software-engineering
+API Engineer || software-engineering
+Integration Engineer || software-engineering enterprise-identity-integration
+Microservices Engineer || software-engineering distributed-db-storage
+Software Implementation Engineer || software-engineering support-solutions
+Graduate Software Engineer || software-engineering
+Software Engineer I || software-engineering
+Software Engineer II || software-engineering
+Software Engineer III || software-engineering
+Staff Software Engineer || software-engineering seniority-ladder
+Principal Software Engineer || software-engineering seniority-ladder
+Lead Software Engineer || software-engineering seniority-ladder
+Software Engineer - Payments || fintech software-engineering
+Software Engineer, Platform || software-engineering developer-tools cloud devops-sre-infra
+Software Developer - Level 2 || software-engineering
+Software Engineer L3 || software-engineering
+Engineer - Software Development || software-engineering
+Officer - Software Development || software-engineering
+Sofware Engineer || software-engineering
+Softwere Developer || software-engineering
+Senior Software Engineer, Backend (Remote - Worldwide) || software-engineering
+Software Engineer [Full-time] || software-engineering
+Software Engineer | Remote || software-engineering
+Product Engineer || software-engineering tech-product-ux
+
+# --- Language and framework specialists ---------------------------------------
+Python Developer || language-specialists
+Junior Python Developer || language-specialists
+Python Engineer || language-specialists
+Senior Python Developer (Django) || language-specialists
+Django Developer || language-specialists
+Flask Developer || language-specialists
+FastAPI Developer || language-specialists
+Java Developer || language-specialists
+Sr. Java Developer || language-specialists
+Java Software Engineer || language-specialists
+Spring Boot Developer || language-specialists
+JavaScript Developer || language-specialists
+TypeScript Developer || language-specialists
+Node.js Developer || language-specialists
+NodeJS Developer || language-specialists
+Node Js Developer || language-specialists
+React Developer || language-specialists software-engineering
+React.js Developer || language-specialists software-engineering
+ReactJS Developer || language-specialists software-engineering
+Next.js Developer || language-specialists software-engineering
+Angular Developer || language-specialists software-engineering
+Vue.js Developer || language-specialists software-engineering
+Svelte Developer || language-specialists software-engineering
+PHP Developer || language-specialists
+Laravel Developer || language-specialists
+Junior Laravel Developer || language-specialists
+Sr. PHP Laravel Developer || language-specialists
+CodeIgniter Developer || language-specialists
+.NET Developer || language-specialists
+ASP.NET Developer || language-specialists
+.Net Core Developer || language-specialists
+C# Developer || language-specialists games-graphics-xr
+C++ Developer || language-specialists systems-low-level
+C Developer || language-specialists systems-low-level
+Golang Developer || language-specialists
+Go Developer || language-specialists
+Rust Developer || language-specialists systems-low-level
+Ruby on Rails Developer || language-specialists
+Ruby Developer || language-specialists
+Scala Developer || language-specialists data-engineering
+Kotlin Developer || language-specialists mobile-desktop
+R Developer || language-specialists data-science-analytics
+R Programmer || language-specialists data-science-analytics
+SQL Developer || language-specialists distributed-db-storage data-engineering
+Perl Developer || language-specialists
+
+# --- Mobile and desktop -------------------------------------------------------
+Android Developer || mobile-desktop
+Junior Android Developer || mobile-desktop
+Android Engineer || mobile-desktop
+Sr. Android Developer (Kotlin) || mobile-desktop language-specialists
+iOS Developer || mobile-desktop
+iOS Engineer || mobile-desktop
+Senior iOS Developer (Swift) || mobile-desktop
+Flutter Developer || mobile-desktop language-specialists
+Junior Flutter Developer || mobile-desktop language-specialists
+Flutter App Developer || mobile-desktop language-specialists
+React Native Developer || mobile-desktop language-specialists
+Mobile App Developer || mobile-desktop
+Mobile Application Developer || mobile-desktop
+Mobile Developer || mobile-desktop
+Mobile Software Engineer || mobile-desktop
+Desktop Application Developer || mobile-desktop
+Cross-Platform Mobile Developer || mobile-desktop
+Swift Developer || mobile-desktop language-specialists
+Xamarin Developer || mobile-desktop language-specialists
+
+# --- QA and testing -----------------------------------------------------------
+SQA Engineer || qa-testing
+Junior SQA Engineer || qa-testing
+SQA Executive || qa-testing
+Sr. SQA Engineer || qa-testing
+SQA Engineer (Manual) || qa-testing
+SQA Engineer (Automation) || qa-testing
+QA Engineer || qa-testing
+QA Engineer - Automation || qa-testing
+Manual QA Engineer || qa-testing
+Automation QA Engineer || qa-testing
+QA Intern || qa-testing
+QA Analyst || qa-testing
+Quality Assurance Engineer || qa-testing
+Software Quality Assurance Engineer || qa-testing
+Software Tester || qa-testing
+Test Engineer || qa-testing
+Automation Test Engineer || qa-testing
+Test Automation Engineer || qa-testing
+Software Test Engineer || qa-testing
+SDET || qa-testing software-engineering
+Software Development Engineer in Test || qa-testing software-engineering
+Performance Test Engineer || qa-testing
+Junior Software Tester || qa-testing
+QA Lead || qa-testing seniority-ladder
+
+# --- Cybersecurity ------------------------------------------------------------
+SOC Analyst || cybersecurity
+SOC Analyst L1 || cybersecurity
+SOC Analyst - Level 2 || cybersecurity
+Security Analyst || cybersecurity
+Cyber Security Analyst || cybersecurity
+Cybersecurity Analyst || cybersecurity
+Information Security Officer || cybersecurity
+Information Security Analyst || cybersecurity
+Information Security Engineer || cybersecurity
+Cybersecurity Intern || cybersecurity
+Cyber Security Engineer || cybersecurity
+Security Engineer || cybersecurity
+Application Security Engineer || cybersecurity
+AppSec Engineer || cybersecurity
+Penetration Tester || cybersecurity
+Pentester || cybersecurity
+Ethical Hacker || cybersecurity
+Network Security Engineer || cybersecurity networking
+Cloud Security Engineer || cybersecurity cloud
+Security Operations Center Analyst || cybersecurity
+Incident Response Analyst || cybersecurity
+Threat Intelligence Analyst || cybersecurity
+Malware Analyst || cybersecurity
+Vulnerability Assessment Engineer || cybersecurity
+DevSecOps Engineer || cybersecurity devops-sre-infra
+IT Security Officer || cybersecurity it-infrastructure
+Security Researcher || cybersecurity
+GRC Analyst || cybersecurity
+Junior Security Engineer || cybersecurity
+Sr. Executive - Information Security || cybersecurity
+
+# --- AI, ML, emerging AI ------------------------------------------------------
+Machine Learning Engineer || ai-ml
+ML Engineer || ai-ml
+Junior Machine Learning Engineer || ai-ml
+Senior ML Engineer || ai-ml
+ML Intern || ai-ml
+Machine Learning Intern || ai-ml
+AI Engineer || ai-ml emerging-ai
+AI/ML Engineer || ai-ml
+Artificial Intelligence Engineer || ai-ml
+AI Developer || ai-ml emerging-ai
+AI Research Intern || ai-ml research-academic
+AI Research Scientist || ai-ml research-academic
+Machine Learning Scientist || ai-ml
+Applied Scientist || ai-ml research-academic
+Deep Learning Engineer || ai-ml
+MLOps Engineer || ai-ml devops-sre-infra
+Prompt Engineer || ai-ml emerging-ai
+LLM Engineer || ai-ml emerging-ai nlp-speech
+Generative AI Engineer || ai-ml emerging-ai
+GenAI Engineer || ai-ml emerging-ai
+AI Agent Developer || ai-ml emerging-ai
+RAG Engineer || ai-ml emerging-ai nlp-speech
+Algorithm Engineer || ai-ml
+Computer Vision Engineer || computer-vision
+Junior Computer Vision Engineer || computer-vision
+Image Processing Engineer || computer-vision
+NLP Engineer || nlp-speech
+Natural Language Processing Engineer || nlp-speech
+Speech Recognition Engineer || nlp-speech
+Conversational AI Engineer || nlp-speech emerging-ai ai-ml
+Recommendation Systems Engineer || search-recsys ai-ml
+Search Engineer || search-recsys
+Machine Learning Engineer - Recommendations || search-recsys ai-ml
+
+# --- Data science and analytics -----------------------------------------------
+Data Scientist || data-science-analytics
+Junior Data Scientist || data-science-analytics
+Senior Data Scientist || data-science-analytics
+Data Science Intern || data-science-analytics
+Data Analyst || data-science-analytics
+Junior Data Analyst || data-science-analytics
+Data Analyst Intern || data-science-analytics
+Business Intelligence Analyst || data-science-analytics
+BI Analyst || data-science-analytics
+BI Developer || data-science-analytics data-engineering
+Power BI Developer || data-science-analytics
+Statistical Programmer || data-science-analytics
+Statistician || data-science-analytics
+Quantitative Analyst || data-science-analytics fintech
+Analytics Engineer || data-science-analytics data-engineering
+Product Data Analyst || data-science-analytics
+Marketing Data Analyst || data-science-analytics
+MIS Analyst || data-science-analytics it-infrastructure
+
+# --- Data engineering and databases -------------------------------------------
+Data Engineer || data-engineering
+Junior Data Engineer || data-engineering
+Senior Data Engineer || data-engineering
+Big Data Engineer || data-engineering
+ETL Developer || data-engineering
+Data Platform Engineer || data-engineering
+Data Warehouse Developer || data-engineering
+Database Administrator || distributed-db-storage
+DBA || distributed-db-storage
+Oracle DBA || distributed-db-storage
+Database Developer || distributed-db-storage
+Database Engineer || distributed-db-storage
+Oracle Developer || distributed-db-storage
+Oracle APEX Developer || distributed-db-storage
+Oracle Forms Developer || distributed-db-storage
+PL/SQL Developer || distributed-db-storage language-specialists
+Distributed Systems Engineer || distributed-db-storage
+
+# --- Cloud, DevOps, SRE -------------------------------------------------------
+DevOps Engineer || devops-sre-infra
+Junior DevOps Engineer || devops-sre-infra
+DevOps Intern || devops-sre-infra
+Sr. DevOps Engineer || devops-sre-infra
+DevOps Engineer (AWS) || devops-sre-infra cloud
+Site Reliability Engineer || devops-sre-infra
+SRE || devops-sre-infra
+Platform Engineer || devops-sre-infra cloud developer-tools
+Infrastructure Engineer || devops-sre-infra it-infrastructure cloud
+Release Engineer || devops-sre-infra developer-tools
+Build Engineer || devops-sre-infra developer-tools
+CI/CD Engineer || devops-sre-infra developer-tools
+Cloud Engineer || cloud
+Junior Cloud Engineer || cloud
+AWS Cloud Engineer || cloud
+Azure Cloud Engineer || cloud
+Cloud Architect || cloud
+Cloud Solutions Architect || cloud
+Kubernetes Engineer || cloud devops-sre-infra
+Cloud Platform Developer || software-engineering cloud
+Cloud Support Engineer || cloud support-solutions
+
+# --- Networking and IT infrastructure -----------------------------------------
+Network Engineer || networking
+Junior Network Engineer || networking it-infrastructure
+Network Administrator || it-infrastructure networking
+Network Support Engineer || networking it-infrastructure support-solutions
+NOC Engineer || networking devops-sre-infra
+Sr. Network Engineer || networking
+System Administrator || it-infrastructure
+Systems Administrator || it-infrastructure
+Linux System Administrator || it-infrastructure devops-sre-infra
+Linux Administrator || it-infrastructure
+Windows System Administrator || it-infrastructure
+IT Officer || it-infrastructure
+IT Executive || it-infrastructure
+Executive - IT || it-infrastructure
+Officer - IT || it-infrastructure
+Junior Officer - IT || it-infrastructure
+Sr. Executive, IT || it-infrastructure
+Assistant Officer - IT || it-infrastructure
+Management Trainee Officer - IT || it-infrastructure
+MIS Executive || it-infrastructure
+MIS Officer || it-infrastructure
+Executive - MIS || it-infrastructure
+ICT Officer || it-infrastructure
+IT Support Executive || it-infrastructure support-solutions
+IT Support Engineer || it-infrastructure support-solutions
+IT Support Specialist || it-infrastructure support-solutions
+Desktop Support Engineer || it-infrastructure support-solutions
+Hardware and Networking Engineer || it-infrastructure networking
+Hardware & Networking Engineer || it-infrastructure networking
+Support Engineer || it-infrastructure support-solutions
+Help Desk Technician || it-infrastructure support-solutions
+IT Administrator || it-infrastructure
+Officer - IT Support || it-infrastructure
+
+# --- Systems, embedded, IoT, robotics -----------------------------------------
+Embedded Software Engineer || embedded-iot
+Embedded Systems Engineer || embedded-iot
+Firmware Engineer || embedded-iot
+Junior Embedded Engineer || embedded-iot
+IoT Engineer || embedded-iot
+IoT Developer || embedded-iot
+Embedded C Developer || embedded-iot language-specialists
+Robotics Engineer || robotics
+Robotics Software Engineer || robotics
+ROS Developer || robotics
+Systems Programmer || systems-low-level
+Linux Kernel Engineer || systems-low-level
+Compiler Engineer || systems-low-level
+Operating Systems Engineer || systems-low-level
+
+# --- Games, graphics, XR ------------------------------------------------------
+Game Developer || games-graphics-xr
+Unity Developer || games-graphics-xr
+Unity Game Developer || games-graphics-xr
+Junior Unity Developer || games-graphics-xr
+Unreal Engine Developer || games-graphics-xr
+Game Programmer || games-graphics-xr
+Graphics Programmer || games-graphics-xr
+AR/VR Developer || games-graphics-xr
+3D Graphics Engineer || games-graphics-xr
+
+# --- Blockchain ---------------------------------------------------------------
+Blockchain Developer || web3-blockchain
+Smart Contract Developer || web3-blockchain
+Solidity Developer || web3-blockchain language-specialists
+Web3 Developer || web3-blockchain
+Blockchain Engineer || web3-blockchain
+
+# --- Fintech, telecom, enterprise ---------------------------------------------
+Core Banking Developer || fintech
+Temenos T24 Developer || fintech
+Payments Engineer || fintech
+Fintech Software Engineer || fintech
+ERP Developer || enterprise-identity-integration software-engineering
+ERPNext Developer || enterprise-identity-integration
+Odoo Developer || enterprise-identity-integration software-engineering
+SAP ABAP Developer || enterprise-identity-integration software-engineering
+Salesforce Developer || enterprise-identity-integration software-engineering
+CRM Developer || enterprise-identity-integration software-engineering
+IT Business Analyst || enterprise-identity-integration
+Identity and Access Management Engineer || enterprise-identity-integration cybersecurity
+Telecom Software Engineer || telecom-media
+VoIP Engineer || telecom-media networking
+GIS Developer || geospatial
+GIS Analyst || geospatial
+
+# --- Support, solutions, product, UX ------------------------------------------
+Solution Engineer || support-solutions
+Solutions Engineer || support-solutions
+Pre-Sales Engineer || support-solutions
+Presales Engineer || support-solutions
+Technical Support Engineer || support-solutions it-infrastructure
+Application Support Engineer || support-solutions
+Customer Success Engineer || support-solutions
+Implementation Engineer || support-solutions software-engineering
+Technical Account Manager || support-solutions
+UI/UX Designer || tech-product-ux
+UX Designer || tech-product-ux
+UI Designer || tech-product-ux
+Product Designer || tech-product-ux
+UX Engineer || tech-product-ux
+Technical Product Manager || tech-product-ux
+Technical Writer || edtech-open-source support-solutions
+Developer Advocate || edtech-open-source developer-tools support-solutions
+Accessibility Engineer || localization-accessibility tech-product-ux
+
+# --- Developer tools ----------------------------------------------------------
+Developer Tools Engineer || developer-tools
+Developer Productivity Engineer || developer-tools
+
+# --- Research and academia ----------------------------------------------------
+Research Assistant || research-academic
+Graduate Research Assistant || research-academic
+Research Engineer || research-academic
+Research Scientist || research-academic
+Lecturer - Computer Science and Engineering || research-academic
+Lecturer in CSE || research-academic
+Lecturer, Department of CSE || research-academic
+Lecturer (CSE) || research-academic
+Teaching Assistant - CSE || research-academic
+Instructor - Computer Technology || research-academic
+Research Associate (Machine Learning) || research-academic ai-ml
+
+# --- Quantum, bioinformatics, health ------------------------------------------
+Quantum Software Engineer || quantum
+Quantum Computing Researcher || quantum research-academic
+Bioinformatician || bioinformatics-health
+Bioinformatics Engineer || bioinformatics-health
+Health Informatics Engineer || bioinformatics-health
+Computational Biologist || bioinformatics-health

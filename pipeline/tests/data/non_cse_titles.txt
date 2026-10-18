@@ -1,0 +1,67 @@
+# Real-world listing titles that are not CSE roles. The matcher must not assign
+# them a taxonomy domain. (The CSE gate also rejects them through
+# non_cse_exclusions; this list checks the matcher on its own.)
+Civil Engineer
+Site Engineer (Civil)
+Mechanical Engineer
+Electrical Engineer
+Sub-Assistant Engineer (Electrical)
+Textile Engineer
+Chemical Engineer
+Industrial Engineer
+Marine Engineer
+Structural Engineer
+Production Engineer (Garments)
+Maintenance Engineer - Boiler
+Sales Executive
+Senior Sales Executive
+IT Sales Executive
+Area Sales Manager
+Territory Officer
+Digital Marketing Executive
+Digital Marketing Specialist
+SEO Executive
+Social Media Executive
+Content Writer
+Copywriter
+Graphic Designer
+Junior Graphic Designer
+Motion Graphics Designer
+Video Editor
+Data Entry Operator
+Computer Operator
+Office Assistant
+Call Center Executive
+Customer Service Executive
+Customer Support Representative
+Accounts Executive
+Accounts Officer
+Accountant
+Junior Accountant
+Audit Officer
+Finance Manager
+HR Executive
+HR Officer
+Admin Officer
+Executive - Admin
+Executive - HR & Admin
+Medical Technologist
+Medical Officer
+Staff Nurse
+Pharmacist
+Merchandiser
+Senior Merchandiser
+Store Keeper
+Driver
+Security Guard
+Receptionist
+Front Desk Officer
+Teacher (English)
+Lecturer - English
+Lecturer, Department of Economics
+Relationship Manager
+Brand Manager
+Procurement Officer
+Supply Chain Executive
+Quality Control Officer (Garments)
+Legal Advisor

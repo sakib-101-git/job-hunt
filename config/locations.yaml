@@ -1,0 +1,149 @@
+# Places in Bangladesh: 8 divisions and their 64 districts, with common spellings.
+# Matching is case-insensitive and whole-word. Add spellings to `aliases`, and
+# well-known neighbourhoods to `areas`, as they turn up in listings.
+version: 1
+
+country:
+  code: BD
+  name: Bangladesh
+  aliases: [BD, BGD, Bangla Desh]
+
+divisions:
+  - id: barishal
+    name: Barishal
+    aliases: [Barisal]
+    districts:
+      - {id: barguna, name: Barguna}
+      - {id: barishal, name: Barishal, aliases: [Barisal]}
+      - {id: bhola, name: Bhola}
+      - {id: jhalokati, name: Jhalokati, aliases: [Jhalakathi, Jhalokathi]}
+      - {id: patuakhali, name: Patuakhali}
+      - {id: pirojpur, name: Pirojpur}
+
+  - id: chattogram
+    name: Chattogram
+    aliases: [Chittagong]
+    districts:
+      - {id: bandarban, name: Bandarban}
+      - {id: brahmanbaria, name: Brahmanbaria, aliases: [B. Baria]}
+      - {id: chandpur, name: Chandpur}
+      - id: chattogram
+        name: Chattogram
+        aliases: [Chittagong, CTG]
+        areas: [Agrabad, GEC, Halishahar, Nasirabad, Patenga, Pahartali, Kalurghat, Chawkbazar]
+      - {id: coxs_bazar, name: "Cox's Bazar", aliases: [Coxs Bazar, Cox Bazar]}
+      - {id: cumilla, name: Cumilla, aliases: [Comilla]}
+      - {id: feni, name: Feni}
+      - {id: khagrachhari, name: Khagrachhari, aliases: [Khagrachari]}
+      - {id: lakshmipur, name: Lakshmipur, aliases: [Laxmipur]}
+      - {id: noakhali, name: Noakhali}
+      - {id: rangamati, name: Rangamati}
+
+  - id: dhaka
+    name: Dhaka
+    aliases: [Dacca]
+    districts:
+      - id: dhaka
+        name: Dhaka
+        aliases: [Dacca]
+        areas:
+          - Gulshan
+          - Banani
+          - Baridhara
+          - Bashundhara
+          - Uttara
+          - Mirpur
+          - Mohakhali
+          - Tejgaon
+          - Dhanmondi
+          - Motijheel
+          - Badda
+          - Rampura
+          - Farmgate
+          - Panthapath
+          - Karwan Bazar
+          - Kawran Bazar
+          - Mohammadpur
+          - Shyamoli
+          - Khilkhet
+          - Niketan
+      - {id: faridpur, name: Faridpur}
+      - {id: gazipur, name: Gazipur, areas: [Tongi]}
+      - {id: gopalganj, name: Gopalganj}
+      - {id: kishoreganj, name: Kishoreganj}
+      - {id: madaripur, name: Madaripur}
+      - {id: manikganj, name: Manikganj}
+      - {id: munshiganj, name: Munshiganj}
+      - {id: narayanganj, name: Narayanganj}
+      - {id: narsingdi, name: Narsingdi, aliases: [Narshingdi, Narsinghdi]}
+      - {id: rajbari, name: Rajbari}
+      - {id: shariatpur, name: Shariatpur}
+      - {id: tangail, name: Tangail}
+
+  - id: khulna
+    name: Khulna
+    districts:
+      - {id: bagerhat, name: Bagerhat}
+      - {id: chuadanga, name: Chuadanga}
+      - {id: jashore, name: Jashore, aliases: [Jessore]}
+      - {id: jhenaidah, name: Jhenaidah, aliases: [Jhenidah]}
+      - {id: khulna, name: Khulna}
+      - {id: kushtia, name: Kushtia}
+      - {id: magura, name: Magura}
+      - {id: meherpur, name: Meherpur}
+      - {id: narail, name: Narail}
+      - {id: satkhira, name: Satkhira}
+
+  - id: mymensingh
+    name: Mymensingh
+    districts:
+      - {id: jamalpur, name: Jamalpur}
+      - {id: mymensingh, name: Mymensingh}
+      - {id: netrokona, name: Netrokona, aliases: [Netrakona]}
+      - {id: sherpur, name: Sherpur}
+
+  - id: rajshahi
+    name: Rajshahi
+    districts:
+      - {id: bogura, name: Bogura, aliases: [Bogra]}
+      - {id: chapai_nawabganj, name: Chapai Nawabganj, aliases: [Chapainawabganj]}
+      - {id: joypurhat, name: Joypurhat, aliases: [Jaipurhat]}
+      - {id: naogaon, name: Naogaon}
+      - {id: natore, name: Natore}
+      - {id: pabna, name: Pabna}
+      - {id: rajshahi, name: Rajshahi}
+      - {id: sirajganj, name: Sirajganj, aliases: [Serajganj]}
+
+  - id: rangpur
+    name: Rangpur
+    districts:
+      - {id: dinajpur, name: Dinajpur}
+      - {id: gaibandha, name: Gaibandha}
+      - {id: kurigram, name: Kurigram}
+      - {id: lalmonirhat, name: Lalmonirhat}
+      - {id: nilphamari, name: Nilphamari}
+      - {id: panchagarh, name: Panchagarh}
+      - {id: rangpur, name: Rangpur}
+      - {id: thakurgaon, name: Thakurgaon}
+
+  - id: sylhet
+    name: Sylhet
+    districts:
+      - {id: habiganj, name: Habiganj, aliases: [Hobiganj]}
+      - {id: moulvibazar, name: Moulvibazar, aliases: [Maulvibazar, Moulvi Bazar]}
+      - {id: sunamganj, name: Sunamganj}
+      - {id: sylhet, name: Sylhet}
+
+# District ids offered as "preferred city" choices in the bot, in display order.
+preferred_city_options:
+  - dhaka
+  - chattogram
+  - gazipur
+  - narayanganj
+  - sylhet
+  - rajshahi
+  - khulna
+  - cumilla
+  - barishal
+  - rangpur
+  - mymensingh
