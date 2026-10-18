@@ -471,3 +471,56 @@ async def test_expired_pauses_end_at_the_next_run(db: SqliteBackend, config: Con
         ("paused", "2026-10-19T00:00:00Z"),
     ]
     assert await _statuses(db) == {(1, 1): "pending"}
+
+
+async def test_matching_scores_only_what_changed(db: SqliteBackend, config: Config) -> None:
+    before = (NOW - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    await add_job(db, 1)
+    await add_user(db, 1)
+    await add_user(db, 2)
+    await db.execute("UPDATE user_prefs SET updated_at = ?", (before,))
+    await db.execute("UPDATE user_profiles SET updated_at = ?", (before,))
+    new, _ = await match(db, config, NOW)
+    assert {(m.user_id, m.job_id) for m in new} == {(1, 1), (2, 1)}
+
+    queries: list[str] = []
+    real = db.query
+
+    async def spy(sql: str, params: Any = ()) -> Any:
+        queries.append(sql)
+        return await real(sql, params)
+
+    db.query = spy  # type: ignore[method-assign]
+    later = NOW + timedelta(minutes=10)
+    # Nothing changed: nothing is scored and no match row is read.
+    assert await match(db, config, later) == ([], {})
+    assert not any("FROM matches" in q for q in queries)
+
+    # A new job is scored for everyone; a user who changed settings, against all jobs.
+    await add_job(db, 2)
+    changed_at = (later + timedelta(seconds=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    await db.execute("UPDATE user_prefs SET updated_at = ? WHERE user_id = 2", (changed_at,))
+    await db.execute("DELETE FROM matches WHERE user_id = 2 AND job_id = 1")
+    new, _ = await match(db, config, later + timedelta(minutes=1))
+    assert {(m.user_id, m.job_id) for m in new} == {(1, 2), (2, 2), (2, 1)}
+    rows = await db.query("SELECT scored_at FROM jobs ORDER BY id")
+    assert all(row["scored_at"] for row in rows)
+
+
+async def test_re_gating_a_job_scores_it_again(db: SqliteBackend, config: Config) -> None:
+    from jobhunt.jobs.gating import outcome_statements
+
+    await add_job(db, 1)
+    await db.execute("UPDATE jobs SET scored_at = ?", ("2026-10-18T06:00:00Z",))
+    gates = JobGatesStub.outcome()
+    await db.batch(outcome_statements(1, gates))
+    assert (await db.query("SELECT scored_at FROM jobs"))[0]["scored_at"] is None
+
+
+class JobGatesStub:
+    @staticmethod
+    def outcome() -> Any:
+        from jobhunt.jobs.gating import GateOutcome
+        from jobhunt.taxonomy.matcher import TitleMatch
+
+        return GateOutcome("open", None, (), TitleMatch("x", None, "none"), False)

@@ -53,6 +53,7 @@ run-local: ## One pipeline run on data/jobhunt.db, with the test bot token from 
 
 guard: ## Repository rules: tracked files and the last commit message
 	python3 scripts/repo_guard.py tracked-files
+	python3 scripts/check_hardcoding.py
 	git log -1 --format=%B | python3 scripts/repo_guard.py attribution
 
 bot-dev: ## Run the Worker locally with wrangler dev

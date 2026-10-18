@@ -107,7 +107,7 @@ class LlmClient:
         if response.status_code == httpx.codes.TOO_MANY_REQUESTS:
             raise RateLimitedError(f"{entry.key}: rate limited")
         if not response.is_success:
-            raise LlmError(f"{entry.key}: HTTP {response.status_code}: {response.text[:300]}")
+            raise LlmError(f"{entry.key}: HTTP {response.status_code}: {_error_code(response)}")
         try:
             payload = response.json()
             content = payload["choices"][0]["message"]["content"]
@@ -118,3 +118,18 @@ class LlmClient:
         return Answer(
             data, int(usage.get("prompt_tokens") or 0), int(usage.get("completion_tokens") or 0)
         )
+
+
+def _error_code(response: httpx.Response) -> str:
+    """The provider's error code or type, never its message: a rejected answer
+    comes back quoted in the message (Groq's `failed_generation`), and for a CV
+    that is personal data headed for public CI logs."""
+    try:
+        error = response.json().get("error") or {}
+    except (ValueError, AttributeError):
+        return "no error details"
+    if isinstance(error, list):  # Gemini's OpenAI layer wraps it in a list
+        error = error[0] if error and isinstance(error[0], dict) else {}
+    if not isinstance(error, dict):
+        return "no error details"
+    return str(error.get("code") or error.get("type") or error.get("status") or "error")[:80]

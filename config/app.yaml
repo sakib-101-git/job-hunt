@@ -37,6 +37,9 @@ normalization:
   company_suffixes: [ltd, limited, inc, incorporated, llc, plc, pvt, private, co, corp, corporation, gmbh, bv, sa, ag, pte, bd]
   # Upserts per database batch.
   store_batch_size: 50
+  # A listing seen again unchanged has its last_seen_at refreshed at most this
+  # often, so polling every 10 minutes doesn't rewrite every row (D1 free tier).
+  last_seen_refresh_hours: 24
 
 # Dates such as deadlines are judged in this time zone.
 timezone: Asia/Dhaka

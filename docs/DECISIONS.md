@@ -694,3 +694,28 @@ rules for the rest:
 300,000 pairs, 83% of it normalizing the job title once per pair. The scorer now
 caches title keys and red-flag hits per job: 2.0 s on the development machine
 (brief target: under 5 s).
+
+### 2026-10-19: Staying inside D1's free tier
+
+D1 Free allows 5 million rows read and 100,000 rows written a day, counting
+every row a statement touches and every index entry it changes (checked in the
+database phase). Estimating the pipeline at 144 runs a day showed three
+problems, fixed in migration 0008:
+
+- Every run re-upserted every listing the sources returned (about 69,000 a
+  day, BDJobs alone ~300 every 10 minutes), each also rewriting the
+  `last_seen_at` index: ~140,000 rows written a day. Listings now carry a
+  `record_hash`; an unchanged one is written at most once a day
+  (`last_seen_refresh_hours`).
+- Matching read every stored match on every run (growing with users x jobs).
+  It now scores only jobs not yet scored against everyone (`jobs.scored_at`,
+  cleared whenever a job is gated again) and users whose settings changed
+  (`user_prefs.scored_at`), reading only their match rows.
+- The digest check ran a subquery over each pending user's sent notifications
+  on every run; `users.last_sent_at` replaces it.
+
+Estimate after the fixes, 1,000 users and ~400 new listings a day: about
+70,000 rows written a day (mostly new matches and notifications, with their
+indexes) and under 1 million read. With 100 users it is about 15,000 written.
+The write limit is the one to watch past ~1,000 active users; `/admin` and the
+Cloudflare dashboard show D1 usage.

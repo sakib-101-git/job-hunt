@@ -196,6 +196,19 @@ async def test_unexpected_errors_are_recorded(db: SqliteBackend, config: Config)
     assert report.error == "RuntimeError: boom"
 
 
+async def test_stage_errors_never_show_secrets(db: SqliteBackend, config: Config) -> None:
+    token = "123456:secret-bot-token"  # noqa: S105 (a fake)
+    pipeline = _pipeline(db, config, FakeTelegram(), {"TELEGRAM_BOT_TOKEN": token})
+
+    async def leaky() -> StageReport:
+        raise RuntimeError(f"cannot reach https://api.telegram.org/bot{token}/sendMessage")
+
+    report = await pipeline.run_stage(RunSummary("t", NOW), "x", leaky)
+    assert report.error is not None
+    assert token not in report.error
+    assert "bot***/sendMessage" in report.error
+
+
 async def test_backfill_sends_now_whatever_the_mode(db: SqliteBackend, config: Config) -> None:
     await add_job(db, 1, seeded=True)
     await add_user(db, 1, mode="digest")

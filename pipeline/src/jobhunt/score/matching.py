@@ -4,6 +4,12 @@ A pair is scored once (`matches` is unique per user and job). Pairs failing a
 hard gate are not stored; they are counted by reason in the run summary, which
 keeps the table from growing as jobs times users. Jobs whose facts came from the
 rules-only fallback are matched too, marked `quick` ("AI review pending").
+
+Each run scores only what changed: jobs not yet scored against every user (new,
+or re-gated after extraction: `jobs.scored_at` is NULL) against all users, and
+users whose settings or profile changed since they were last scored against all
+open jobs. Nothing else is read, which keeps D1's daily row reads flat as users
+and jobs grow.
 """
 
 import json
@@ -15,7 +21,7 @@ from decimal import Decimal
 from typing import Any
 
 from jobhunt.config import Config
-from jobhunt.db import Database, Row, timestamp
+from jobhunt.db import Database, Row, Statement, timestamp
 from jobhunt.extract.rules import PROVIDER as RULES
 from jobhunt.extract.schema import JobFacts
 from jobhunt.gates.base import GateResult
@@ -32,12 +38,16 @@ WHERE j.status = 'open' AND json_extract(j.gates_json, '$.needs_facts') = '[]'
 """
 
 _PROFILES = """
-SELECT u.id, p.*, COALESCE(pr.skills_json, '[]') AS skills_json, pr.years_experience AS cv_years
+SELECT u.id, p.*, COALESCE(pr.skills_json, '[]') AS skills_json, pr.years_experience AS cv_years,
+       (p.scored_at IS NULL OR p.scored_at <= p.updated_at
+        OR (pr.updated_at IS NOT NULL AND p.scored_at <= pr.updated_at)) AS needs_scoring
 FROM users u
 JOIN user_prefs p ON p.user_id = u.id
 LEFT JOIN user_profiles pr ON pr.user_id = u.id
 WHERE u.status IN ('active', 'paused')
 """
+# D1 binds at most 100 parameters per statement.
+_ID_CHUNK = 90
 
 
 @dataclass(frozen=True)
@@ -49,18 +59,41 @@ class NewMatch:
 
 
 async def load_jobs(
-    db: Database, config: Config, job_ids: Sequence[int] | None = None
+    db: Database,
+    config: Config,
+    job_ids: Sequence[int] | None = None,
+    *,
+    unscored_only: bool = False,
 ) -> list[JobView]:
-    rows = await db.query(_ELIGIBLE_JOBS)
-    wanted = set(job_ids) if job_ids is not None else None
-    rows = [r for r in rows if wanted is None or int(str(r["id"])) in wanted]
+    """Open jobs with facts that passed the job gates: all of them, those in
+    `job_ids`, or those not yet scored against every user."""
+    sql = _ELIGIBLE_JOBS + (" AND j.scored_at IS NULL" if unscored_only else "")
+    if job_ids is None:
+        rows = await db.query(sql)
+    else:
+        rows = [
+            row
+            for chunk in _chunks(sorted(set(job_ids)))
+            for row in await db.query(
+                f"{sql} AND j.id IN ({', '.join('?' for _ in chunk)})", tuple(chunk)
+            )
+        ]
     if not rows:
         return []
     domains: dict[int, list[Row]] = {}
-    for row in await db.query("SELECT * FROM job_domains"):
-        domains.setdefault(int(str(row["job_id"])), []).append(row)
+    for chunk in _chunks([int(str(row["id"])) for row in rows]):
+        marks = ", ".join("?" for _ in chunk)
+        for row in await db.query(
+            f"SELECT * FROM job_domains WHERE job_id IN ({marks})",  # noqa: S608
+            tuple(chunk),
+        ):
+            domains.setdefault(int(str(row["job_id"])), []).append(row)
     normalizer = JobNormalizer(config)
     return [_job_view(row, domains.get(int(str(row["id"])), []), normalizer) for row in rows]
+
+
+def _chunks(ids: Sequence[int]) -> list[Sequence[int]]:
+    return [ids[i : i + _ID_CHUNK] for i in range(0, len(ids), _ID_CHUNK)]
 
 
 def _job_view(row: Row, domain_rows: list[Row], normalizer: JobNormalizer) -> JobView:
@@ -93,9 +126,20 @@ def _job_view(row: Row, domain_rows: list[Row], normalizer: JobNormalizer) -> Jo
 
 
 async def load_profiles(db: Database, user_ids: Sequence[int] | None = None) -> list[UserProfile]:
+    return [profile for profile, _ in await _load_profiles(db, user_ids)]
+
+
+async def _load_profiles(
+    db: Database, user_ids: Sequence[int] | None
+) -> list[tuple[UserProfile, bool]]:
+    """Profiles, each with whether it needs scoring against every open job."""
     rows = await db.query(_PROFILES)
     wanted = set(user_ids) if user_ids is not None else None
-    return [_profile(row) for row in rows if wanted is None or int(str(row["id"])) in wanted]
+    return [
+        (_profile(row), bool(row["needs_scoring"]))
+        for row in rows
+        if wanted is None or int(str(row["id"])) in wanted
+    ]
 
 
 def _profile(row: Row) -> UserProfile:
@@ -124,61 +168,108 @@ async def match(
     db: Database,
     config: Config,
     now: datetime,
-    job_ids: Sequence[int] | None = None,
     user_ids: Sequence[int] | None = None,
 ) -> tuple[list[NewMatch], Counter[str]]:
-    """Score every (user, job) pair not scored yet; store the ones that pass."""
+    """Score the pairs that changed (see the module docstring); store the ones
+    that pass. With `user_ids`, only those users are scored (a backfill), and
+    new jobs stay marked unscored for everyone else."""
+    stamp = timestamp(now)
     # A /pause with an end date ends here: the user is active again.
     await db.execute(
         "UPDATE users SET status = 'active', paused_until = NULL, updated_at = ?1"
         " WHERE status = 'paused' AND paused_until IS NOT NULL AND paused_until <= ?1",
-        (timestamp(now),),
+        (stamp,),
     )
-    jobs = await load_jobs(db, config, job_ids)
-    users = await load_profiles(db, user_ids)
-    existing = {
-        (int(str(r["user_id"])), int(str(r["job_id"])))
-        for r in await db.query("SELECT user_id, job_id FROM matches")
-    }
+    profiles = await _load_profiles(db, user_ids)
+    users = [profile for profile, _ in profiles]
+    changed = [profile for profile, needs in profiles if needs]
+    new_jobs = await load_jobs(db, config, unscored_only=True)
+    all_jobs = await load_jobs(db, config) if changed else []
+    counts: Counter[str] = Counter()
+    if not users or not (new_jobs or all_jobs):
+        await _mark_scored(db, [] if user_ids else new_jobs, changed, stamp)
+        return [], counts
+
+    pairs: dict[tuple[int, int], tuple[JobView, UserProfile]] = {}
+    for job in new_jobs:
+        for user in users:
+            pairs[(user.user_id, job.job_id)] = (job, user)
+    for user in changed:
+        for job in all_jobs:
+            pairs[(user.user_id, job.job_id)] = (job, user)
+    existing = await _existing_pairs(db, [j.job_id for j in new_jobs], [u.user_id for u in changed])
+
     scorer = Scorer(config)
     renderer = Renderer.from_config(config)
-    counts: Counter[str] = Counter()
     new: list[NewMatch] = []
-    for job in jobs:
-        for user in users:
-            if (user.user_id, job.job_id) in existing:
-                continue
-            result = scorer.score(job, user)
-            if not result.passed:
-                failed = result.failed_gate
-                counts[
-                    f"not matched: {failed.gate}:{failed.reason}" if failed else "not matched"
-                ] += 1
-                continue
-            rows = await db.query(
-                """INSERT INTO matches (user_id, job_id, score, breakdown_json, explanation_json,
-                                        gate_results_json, scorer_version, why_html,
-                                        created_at)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                   ON CONFLICT (user_id, job_id) DO NOTHING
-                   RETURNING id""",
-                (
-                    user.user_id,
-                    job.job_id,
-                    float(result.score),
-                    json.dumps(result.breakdown() | {"quick": job.quick}),
-                    json.dumps(result.explanation(), ensure_ascii=False),
-                    json.dumps(result.gate_results(), ensure_ascii=False),
-                    result.scorer_version,
-                    renderer.why(job, result, user),
-                    timestamp(now),
-                ),
-            )
-            if not rows:  # an overlapping run stored this pair first
-                continue
-            new.append(NewMatch(int(str(rows[0]["id"])), user.user_id, job.job_id, result.score))
-            counts[f"matched ({result.label})"] += 1
+    for key, (job, user) in pairs.items():
+        if key in existing:
+            continue
+        result = scorer.score(job, user)
+        if not result.passed:
+            failed = result.failed_gate
+            counts[f"not matched: {failed.gate}:{failed.reason}" if failed else "not matched"] += 1
+            continue
+        rows = await db.query(
+            """INSERT INTO matches (user_id, job_id, score, breakdown_json, explanation_json,
+                                    gate_results_json, scorer_version, why_html, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+               ON CONFLICT (user_id, job_id) DO NOTHING
+               RETURNING id""",
+            (
+                user.user_id,
+                job.job_id,
+                float(result.score),
+                json.dumps(result.breakdown() | {"quick": job.quick}),
+                json.dumps(result.explanation(), ensure_ascii=False),
+                json.dumps(result.gate_results(), ensure_ascii=False),
+                result.scorer_version,
+                renderer.why(job, result, user),
+                stamp,
+            ),
+        )
+        if not rows:  # an overlapping run stored this pair first
+            continue
+        new.append(NewMatch(int(str(rows[0]["id"])), user.user_id, job.job_id, result.score))
+        counts[f"matched ({result.label})"] += 1
+    await _mark_scored(db, [] if user_ids else new_jobs, changed, stamp)
     return new, counts
+
+
+async def _existing_pairs(
+    db: Database, job_ids: Sequence[int], user_ids: Sequence[int]
+) -> set[tuple[int, int]]:
+    found: set[tuple[int, int]] = set()
+    for column, ids in (("job_id", job_ids), ("user_id", user_ids)):
+        for chunk in _chunks(sorted(set(ids))):
+            marks = ", ".join("?" for _ in chunk)
+            for row in await db.query(
+                f"SELECT user_id, job_id FROM matches WHERE {column} IN ({marks})",  # noqa: S608
+                tuple(chunk),
+            ):
+                found.add((int(str(row["user_id"])), int(str(row["job_id"]))))
+    return found
+
+
+async def _mark_scored(
+    db: Database, jobs: Sequence[JobView], users: Sequence[UserProfile], stamp: str | None
+) -> None:
+    statements = [
+        Statement(
+            f"UPDATE jobs SET scored_at = ? WHERE id IN ({', '.join('?' for _ in chunk)})",  # noqa: S608
+            (stamp, *chunk),
+        )
+        for chunk in _chunks([job.job_id for job in jobs])
+    ] + [
+        Statement(
+            "UPDATE user_prefs SET scored_at = ?"  # noqa: S608
+            f" WHERE user_id IN ({', '.join('?' for _ in chunk)})",
+            (stamp, *chunk),
+        )
+        for chunk in _chunks([user.user_id for user in users])
+    ]
+    if statements:
+        await db.batch(statements)
 
 
 def stored_result(row: Row, config: Config) -> ScoreResult:

@@ -289,7 +289,8 @@ class NormalizationSettings(Strict):
     jd_max_chars_llm: int = Field(ge=100)
     tracking_params: list[NonEmpty] = []
     company_suffixes: list[NonEmpty] = []
-    store_batch_size: int = Field(ge=1)
+    store_batch_size: int = Field(ge=1, le=90)  # one IN (...) per batch; D1 binds <= 100
+    last_seen_refresh_hours: float = Field(gt=0)
 
     @model_validator(mode="after")
     def _check(self) -> Self:
