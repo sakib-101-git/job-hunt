@@ -164,6 +164,7 @@ class Skill(Strict):
     id: Ident
     name: NonEmpty
     aliases: list[NonEmpty] = []
+    ambiguous: bool = False  # an ordinary word: the rules-only extractor skips it
 
     @property
     def spellings(self) -> list[str]:
@@ -334,6 +335,7 @@ class App(Strict):
     location_policy: LocationPolicy
     seniority_gate: SeniorityGate
     cse_gate: CseGateSettings
+    red_flags: list[NonEmpty] = []
 
     @model_validator(mode="after")
     def _known_timezone(self) -> Self:
@@ -555,3 +557,67 @@ class Sources(Strict):
     http: HttpSettings
     health: HealthSettings
     sources: dict[Ident, SourceSettings] = Field(min_length=1)
+
+
+# --- llm.yaml -----------------------------------------------------------------
+
+
+class LlmProvider(Strict):
+    base_url: HttpsUrl
+    api_key_env: EnvName
+    trains_on_inputs: bool
+
+
+class ChainEntry(Strict):
+    provider: Ident
+    model: NonEmpty
+    rpm: int | None = Field(ge=1)
+    tpm: int | None = Field(ge=1)
+    rpd: int | None = Field(ge=1)
+    tpd: int | None = Field(ge=1)
+    params: dict[NonEmpty, str | int | float | bool] = {}
+
+    @property
+    def key(self) -> str:
+        return f"{self.provider}/{self.model}"
+
+
+class LlmRequest(Strict):
+    timeout_seconds: float = Field(gt=0)
+    temperature: float = Field(ge=0, le=2)
+    max_output_tokens: int = Field(ge=1)
+    daily_safety_margin: float = Field(ge=0, lt=1)
+    max_wait_seconds: float = Field(ge=0)
+
+
+PromptPath = Annotated[str, StringConstraints(pattern=r"^prompts/[\w.-]+\.md$")]
+
+
+class ExtractionSettings(Strict):
+    prompt: PromptPath
+    prompt_version: NonEmpty
+    max_jobs_per_run: int = Field(ge=0)
+    min_evidence_score: float = Field(gt=0, le=100)
+    tokens_per_char: float = Field(gt=0)
+
+
+class TitleClassificationSettings(Strict):
+    prompt: PromptPath
+    prompt_version: NonEmpty
+    batch_size: int = Field(ge=1)
+
+
+class Llm(Strict):
+    version: Literal[1]
+    providers: dict[Ident, LlmProvider] = Field(min_length=1)
+    chain: list[ChainEntry] = Field(min_length=1)
+    request: LlmRequest
+    extraction: ExtractionSettings
+    title_classification: TitleClassificationSettings
+
+    @model_validator(mode="after")
+    def _check(self) -> Self:
+        _require_unique("chain entries", (entry.key for entry in self.chain))
+        if unknown := sorted({e.provider for e in self.chain} - set(self.providers)):
+            raise ValueError(f"chain uses unknown providers: {', '.join(unknown)}")
+        return self

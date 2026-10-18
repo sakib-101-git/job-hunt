@@ -30,6 +30,7 @@ def checkout(tmp_path: Path, repo_root: Path) -> Path:
     (tmp_path / "pipeline").mkdir()
     (tmp_path / "pipeline" / "pyproject.toml").write_text("", encoding="utf-8")
     shutil.copytree(repo_root / "config", tmp_path / "config")
+    shutil.copytree(repo_root / "prompts", tmp_path / "prompts")
     return tmp_path
 
 

@@ -150,6 +150,19 @@ def test_default_config_dir_outside_checkout(
         ("sources.yaml", "    kind: remoteok", "    kind: monster", "kind"),
         ("app.yaml", "timezone: Asia/Dhaka", "timezone: Mars/Olympus", "unknown timezone"),
         (
+            "llm.yaml",
+            "  - {provider: groq, model: openai/gpt-oss-20b,",
+            "  - {provider: openrouter, model: openai/gpt-oss-20b,",
+            "unknown providers",
+        ),
+        ("llm.yaml", "model: qwen/qwen3.8-27b,", "model: openai/gpt-oss-120b,", "duplicate chain"),
+        (
+            "llm.yaml",
+            "  prompt: prompts/extraction.v1.md",
+            "  prompt: prompts/missing.v9.md",
+            "not found",
+        ),
+        (
             "app.yaml",
             "  bangladesh_boards: [bdjobs]",
             "  bangladesh_boards: [nope]",

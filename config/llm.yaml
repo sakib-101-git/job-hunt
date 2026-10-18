@@ -1,0 +1,53 @@
+# LLM providers and the order they are tried in. Both speak the OpenAI chat
+# completions API with strict JSON-schema output (checked 2026-10-18).
+#
+# Free-tier limits change and Gemini's are shown only in AI Studio for the key's
+# project: the Gemini numbers below are conservative placeholders to check
+# against https://aistudio.google.com/rate-limit once a key exists. Groq's are
+# from its rate-limits page. A 429 always moves on to the next model.
+version: 1
+
+providers:
+  gemini:
+    base_url: https://generativelanguage.googleapis.com/v1beta/openai
+    api_key_env: GEMINI_API_KEY
+    # Free-tier inputs may be used to improve Google's products: job text only,
+    # never CVs (docs/PRIVACY.md, bot phase).
+    trains_on_inputs: true
+  groq:
+    base_url: https://api.groq.com/openai/v1
+    api_key_env: GROQ_API_KEY
+    trains_on_inputs: false
+
+# Tried in order. Limits: per minute (rpm, tpm) and per UTC day (rpd, tpd);
+# null means no limit of that kind is known.
+chain:
+  - {provider: gemini, model: gemini-3.5-flash-lite, rpm: 10, tpm: 200000, rpd: 500, tpd: null, params: {reasoning_effort: low}}
+  - {provider: gemini, model: gemini-3.8-flash, rpm: 5, tpm: 200000, rpd: 100, tpd: null, params: {reasoning_effort: low}}
+  - {provider: groq, model: openai/gpt-oss-120b, rpm: 30, tpm: 8000, rpd: 1000, tpd: 200000, params: {}}
+  - {provider: groq, model: qwen/qwen3.8-27b, rpm: 30, tpm: 8000, rpd: 1000, tpd: 200000, params: {}}
+  - {provider: groq, model: openai/gpt-oss-20b, rpm: 30, tpm: 8000, rpd: 1000, tpd: 200000, params: {}}
+
+request:
+  timeout_seconds: 90
+  temperature: 0
+  max_output_tokens: 2000
+  # Keep this share of each daily limit unused, for retries and other jobs.
+  daily_safety_margin: 0.05
+  # Per-minute limits: wait at most this long for room before trying the next model.
+  max_wait_seconds: 30
+
+extraction:
+  prompt: prompts/extraction.v1.md
+  prompt_version: extraction.v1
+  # Jobs extracted per run at most; the rest wait for the next run.
+  max_jobs_per_run: 60
+  # Grounding: an evidence quote must match the description at least this well (0-100).
+  min_evidence_score: 90
+  # Rough tokens per character, to budget a request before sending it.
+  tokens_per_char: 0.3
+
+title_classification:
+  prompt: prompts/title_classification.v1.md
+  prompt_version: titles.v1
+  batch_size: 25

@@ -10,6 +10,7 @@ from pydantic import BaseModel, ValidationError
 from jobhunt.config.models import (
     App,
     Geography,
+    Llm,
     Locations,
     Skills,
     Sources,
@@ -27,6 +28,7 @@ class ConfigError(Exception):
 
 @dataclass(frozen=True)
 class Config:
+    root: Path  # the checkout: config/, prompts/ and migrations/ live here
     app: App
     taxonomy: Taxonomy
     tracks: Tracks
@@ -35,6 +37,7 @@ class Config:
     locations: Locations
     sources: Sources
     geography: Geography
+    llm: Llm
 
 
 def find_repo_root(start: Path) -> Path | None:
@@ -106,7 +109,13 @@ def load_config(config_dir: Path | None = None) -> Config:
     sources = _load(directory / "sources.yaml", Sources)
     if problems := check_policies(app, sources):
         raise ConfigError(f"{directory / 'app.yaml'}: " + "; ".join(problems))
+    llm = _load(directory / "llm.yaml", Llm)
+    root = directory.parent
+    for prompt in (llm.extraction.prompt, llm.title_classification.prompt):
+        if not (root / prompt).is_file():
+            raise ConfigError(f"{directory / 'llm.yaml'}: prompt {prompt} not found")
     return Config(
+        root=root,
         app=app,
         taxonomy=taxonomy,
         tracks=tracks,
@@ -115,4 +124,5 @@ def load_config(config_dir: Path | None = None) -> Config:
         locations=_load(directory / "locations.yaml", Locations),
         sources=sources,
         geography=_load(directory / "geography.yaml", Geography),
+        llm=llm,
     )

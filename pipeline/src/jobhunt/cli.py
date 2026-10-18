@@ -8,6 +8,8 @@ Commands are added as each pipeline stage lands:
 - `sources` lists the configured sources; `fetch` runs some live, without a
   database, and can record their responses as test fixtures.
 - `collect` runs the due sources, stores what they return and gates new jobs.
+- `enrich` classifies unknown titles, extracts facts from open jobs and gates
+  them again.
 """
 
 import argparse
@@ -25,6 +27,8 @@ import httpx
 from jobhunt import __version__, shared
 from jobhunt.config import ConfigError, find_repo_root, load_config
 from jobhunt.db import DatabaseError, SqliteBackend, apply_migrations, open_database
+from jobhunt.extract.llm import LlmClient
+from jobhunt.jobs.enrich import enrich
 from jobhunt.jobs.gating import GateItem, JobGates, apply_gates
 from jobhunt.jobs.store import store_jobs
 from jobhunt.normalize.jobs import JobNormalizer
@@ -212,6 +216,27 @@ async def _collect(only: Sequence[str] | None, force: bool) -> int:
     return 1 if report.runs and len(failed) == len(report.runs) else 0
 
 
+async def _enrich(limit: int | None) -> int:
+    try:
+        config = load_config()
+        db = open_database(config.app.database, os.environ)
+    except (ConfigError, DatabaseError) as exc:
+        return _fail(str(exc))
+    client = LlmClient(config.llm, os.environ)
+    try:
+        if isinstance(db, SqliteBackend):
+            await apply_migrations(db, config.root / "migrations")
+        models = [entry.key for entry in config.llm.chain if client.available(entry)]
+        _write(f"models with a key: {', '.join(models) or 'none (rules-only facts)'}")
+        counts = await enrich(db, config, client, datetime.now(UTC), limit)
+    finally:
+        await client.aclose()
+        await db.aclose()
+    for outcome, count in sorted(counts.items()):
+        _write(f"{count:5} {outcome}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="jobhunt")
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -229,6 +254,8 @@ def build_parser() -> argparse.ArgumentParser:
     collect = commands.add_parser("collect", help="run the due sources and store their jobs")
     collect.add_argument("--source", action="append", dest="only", metavar="SOURCE")
     collect.add_argument("--force", action="store_true", help="run sources that are not due")
+    enrich_cmd = commands.add_parser("enrich", help="extract facts from open jobs")
+    enrich_cmd.add_argument("--limit", type=int, metavar="N", help="jobs to extract at most")
     return parser
 
 
@@ -246,6 +273,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         return asyncio.run(_fetch(args.names, args.bootstrap, args.record, args.show))
     if args.command == "collect":
         return asyncio.run(_collect(args.only, args.force))
+    if args.command == "enrich":
+        return asyncio.run(_enrich(args.limit))
     raise AssertionError(f"unhandled command {args.command!r}")  # argparse rejects unknown ones
 
 

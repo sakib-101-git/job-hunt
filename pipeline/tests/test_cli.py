@@ -215,3 +215,27 @@ def test_collect_fails_when_every_source_fails(
     monkeypatch.setattr(cli, "Fetcher", _replaying_fetcher([]))
     monkeypatch.setenv("JOBHUNT_SQLITE_PATH", str(tmp_path / "jobs.db"))
     assert main(["collect", "--source", "jobicy"]) == 1
+
+
+def test_enrich_without_keys_uses_rules(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    monkeypatch.setenv("JOBHUNT_SQLITE_PATH", str(tmp_path / "jobs.db"))
+    for name in ("GEMINI_API_KEY", "GROQ_API_KEY", "CLOUDFLARE_ACCOUNT_ID"):
+        monkeypatch.delenv(name, raising=False)
+    assert main(["enrich", "--limit", "5"]) == 0
+    assert "models with a key: none (rules-only facts)" in capsys.readouterr().out
+
+
+def test_enrich_without_database(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    for name in (
+        "JOBHUNT_SQLITE_PATH",
+        "CLOUDFLARE_ACCOUNT_ID",
+        "D1_DATABASE_ID",
+        "CLOUDFLARE_API_TOKEN",
+    ):
+        monkeypatch.delenv(name, raising=False)
+    assert main(["enrich"]) == 1
+    assert "no database configured" in capsys.readouterr().err

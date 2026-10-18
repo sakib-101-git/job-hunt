@@ -68,6 +68,8 @@ class CseGate:
             if llm_is_cse is None:
                 return GateResult(GATE, "needs_facts", "ambiguous_exclusion", entry)
         if match.primary_domain in self._selectable and not hit:
+            if match.method == "llm":
+                return GateResult(GATE, "pass", "title_classifier", match.primary_domain)
             return GateResult(
                 GATE, "pass", "taxonomy", f"{match.matched_title} ({match.primary_domain})"
             )

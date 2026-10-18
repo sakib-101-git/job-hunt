@@ -2,6 +2,9 @@
 # these ids through `name` and `aliases` (case-insensitive, whole-word), so
 # "ReactJS", "React.js" and "React" all count as the same skill.
 # Add a skill here, never in code. Ids are snake_case and never change once used.
+# `ambiguous: true` marks skills whose names are ordinary words or letters ("R",
+# "Unity", "Excel"): the rules-only extractor skips them, because a word in prose
+# is not a skill; an LLM that names one, with the posting backing it, is trusted.
 version: 1
 
 categories:
@@ -12,21 +15,21 @@ categories:
       - {id: java, name: Java}
       - {id: javascript, name: JavaScript, aliases: [JS, ECMAScript, ES6]}
       - {id: typescript, name: TypeScript, aliases: [TS]}
-      - {id: c, name: C, aliases: [C language, ANSI C]}
+      - {id: c, name: C, aliases: [C language, ANSI C], ambiguous: true}
       - {id: cpp, name: C++, aliases: [CPP, Cplusplus]}
       - {id: csharp, name: "C#", aliases: [C Sharp, CSharp]}
-      - {id: go, name: Go, aliases: [Golang]}
-      - {id: rust, name: Rust}
+      - {id: go, name: Go, aliases: [Golang], ambiguous: true}
+      - {id: rust, name: Rust, ambiguous: true}
       - {id: kotlin, name: Kotlin}
-      - {id: swift, name: Swift}
-      - {id: dart, name: Dart}
+      - {id: swift, name: Swift, ambiguous: true}
+      - {id: dart, name: Dart, ambiguous: true}
       - {id: php, name: PHP}
-      - {id: ruby, name: Ruby}
-      - {id: scala, name: Scala}
-      - {id: r, name: R, aliases: [R language, R programming]}
-      - {id: julia, name: Julia}
+      - {id: ruby, name: Ruby, ambiguous: true}
+      - {id: scala, name: Scala, ambiguous: true}
+      - {id: r, name: R, aliases: [R language, R programming], ambiguous: true}
+      - {id: julia, name: Julia, ambiguous: true}
       - {id: matlab, name: MATLAB}
-      - {id: perl, name: Perl}
+      - {id: perl, name: Perl, ambiguous: true}
       - {id: bash, name: Bash, aliases: [Shell scripting, Shell script, Bash scripting]}
       - {id: powershell, name: PowerShell}
       - {id: sql, name: SQL}
@@ -35,7 +38,7 @@ categories:
       - {id: haskell, name: Haskell}
       - {id: elixir, name: Elixir}
       - {id: objective_c, name: Objective-C, aliases: [ObjC]}
-      - {id: assembly, name: Assembly, aliases: [Assembly language, ASM]}
+      - {id: assembly, name: Assembly, aliases: [Assembly language, ASM], ambiguous: true}
       - {id: vhdl, name: VHDL}
       - {id: verilog, name: Verilog}
 
@@ -46,7 +49,7 @@ categories:
       - {id: css, name: CSS, aliases: [CSS3]}
       - {id: sass, name: Sass, aliases: [SCSS]}
       - {id: tailwind, name: Tailwind CSS, aliases: [Tailwind, TailwindCSS]}
-      - {id: bootstrap, name: Bootstrap}
+      - {id: bootstrap, name: Bootstrap, ambiguous: true}
       - {id: react, name: React, aliases: [ReactJS, React.js]}
       - {id: nextjs, name: Next.js, aliases: [NextJS, Next js]}
       - {id: vue, name: Vue.js, aliases: [Vue, VueJS]}
@@ -54,21 +57,21 @@ categories:
       - {id: angular, name: Angular, aliases: [AngularJS, Angular.js]}
       - {id: svelte, name: Svelte, aliases: [SvelteKit]}
       - {id: jquery, name: jQuery}
-      - {id: redux, name: Redux}
-      - {id: nodejs, name: Node.js, aliases: [NodeJS, Node]}
-      - {id: express, name: Express.js, aliases: [Express, ExpressJS]}
+      - {id: redux, name: Redux, ambiguous: true}
+      - {id: nodejs, name: Node.js, aliases: [NodeJS, Node], ambiguous: true}
+      - {id: express, name: Express.js, aliases: [Express, ExpressJS], ambiguous: true}
       - {id: nestjs, name: NestJS, aliases: [Nest.js]}
       - {id: django, name: Django}
-      - {id: flask, name: Flask}
+      - {id: flask, name: Flask, ambiguous: true}
       - {id: fastapi, name: FastAPI}
-      - {id: spring, name: Spring, aliases: [Spring Framework]}
+      - {id: spring, name: Spring, aliases: [Spring Framework], ambiguous: true}
       - {id: spring_boot, name: Spring Boot, aliases: [SpringBoot]}
       - {id: hibernate, name: Hibernate}
       - {id: laravel, name: Laravel}
       - {id: codeigniter, name: CodeIgniter}
       - {id: symfony, name: Symfony}
       - {id: wordpress, name: WordPress}
-      - {id: rails, name: Ruby on Rails, aliases: [Rails, RoR]}
+      - {id: rails, name: Ruby on Rails, aliases: [Rails, RoR], ambiguous: true}
       - {id: dotnet, name: .NET, aliases: [Dotnet, .NET Core, ASP.NET, ASP.NET Core]}
       - {id: graphql, name: GraphQL}
       - {id: rest_api, name: REST API, aliases: [REST, RESTful, RESTful API, RESTful APIs, REST APIs]}
@@ -86,8 +89,8 @@ categories:
       - {id: jetpack_compose, name: Jetpack Compose}
       - {id: swiftui, name: SwiftUI}
       - {id: xamarin, name: Xamarin}
-      - {id: electron, name: Electron}
-      - {id: qt, name: Qt}
+      - {id: electron, name: Electron, ambiguous: true}
+      - {id: qt, name: Qt, ambiguous: true}
 
   - id: data_ai
     name: Data, AI and machine learning
@@ -111,20 +114,20 @@ categories:
       - {id: numpy, name: NumPy}
       - {id: matplotlib, name: Matplotlib}
       - {id: jupyter, name: Jupyter, aliases: [Jupyter Notebook]}
-      - {id: statistics, name: Statistics, aliases: [Statistical analysis]}
-      - {id: data_analysis, name: Data Analysis, aliases: [Data analytics]}
+      - {id: statistics, name: Statistics, aliases: [Statistical analysis], ambiguous: true}
+      - {id: data_analysis, name: Data Analysis, aliases: [Data analytics], ambiguous: true}
       - {id: data_visualization, name: Data Visualization}
       - {id: power_bi, name: Power BI, aliases: [PowerBI]}
       - {id: tableau, name: Tableau}
-      - {id: excel, name: Excel, aliases: [Microsoft Excel, MS Excel, Advanced Excel]}
-      - {id: spark, name: Apache Spark, aliases: [Spark, PySpark]}
+      - {id: excel, name: Excel, aliases: [Microsoft Excel, MS Excel, Advanced Excel], ambiguous: true}
+      - {id: spark, name: Apache Spark, aliases: [Spark, PySpark], ambiguous: true}
       - {id: hadoop, name: Hadoop}
-      - {id: kafka, name: Apache Kafka, aliases: [Kafka]}
-      - {id: airflow, name: Apache Airflow, aliases: [Airflow]}
+      - {id: kafka, name: Apache Kafka, aliases: [Kafka], ambiguous: true}
+      - {id: airflow, name: Apache Airflow, aliases: [Airflow], ambiguous: true}
       - {id: dbt, name: dbt}
       - {id: etl, name: ETL, aliases: [ELT, ETL pipelines]}
       - {id: data_warehouse, name: Data Warehousing, aliases: [Data warehouse]}
-      - {id: snowflake, name: Snowflake}
+      - {id: snowflake, name: Snowflake, ambiguous: true}
       - {id: bigquery, name: BigQuery}
       - {id: mlops, name: MLOps}
 
@@ -133,11 +136,11 @@ categories:
     skills:
       - {id: mysql, name: MySQL}
       - {id: postgresql, name: PostgreSQL, aliases: [Postgres]}
-      - {id: oracle_db, name: Oracle Database, aliases: [Oracle DB, Oracle]}
+      - {id: oracle_db, name: Oracle Database, aliases: [Oracle DB, Oracle], ambiguous: true}
       - {id: sql_server, name: SQL Server, aliases: [MS SQL, MSSQL, Microsoft SQL Server]}
       - {id: sqlite, name: SQLite}
       - {id: mongodb, name: MongoDB, aliases: [Mongo]}
-      - {id: redis, name: Redis}
+      - {id: redis, name: Redis, ambiguous: true}
       - {id: elasticsearch, name: Elasticsearch, aliases: [Elastic Search, ELK]}
       - {id: cassandra, name: Cassandra}
       - {id: dynamodb, name: DynamoDB}
@@ -153,14 +156,14 @@ categories:
       - {id: gcp, name: Google Cloud, aliases: [GCP, Google Cloud Platform]}
       - {id: docker, name: Docker}
       - {id: kubernetes, name: Kubernetes, aliases: [K8s]}
-      - {id: helm, name: Helm}
+      - {id: helm, name: Helm, ambiguous: true}
       - {id: terraform, name: Terraform}
       - {id: ansible, name: Ansible}
       - {id: jenkins, name: Jenkins}
       - {id: github_actions, name: GitHub Actions}
       - {id: gitlab_ci, name: GitLab CI, aliases: [GitLab CI/CD]}
       - {id: ci_cd, name: CI/CD, aliases: [CICD, Continuous Integration]}
-      - {id: linux, name: Linux, aliases: [Ubuntu, CentOS, RHEL]}
+      - {id: linux, name: Linux, aliases: [Ubuntu, CentOS, RHEL], ambiguous: true}
       - {id: nginx, name: Nginx}
       - {id: apache_http, name: Apache HTTP Server, aliases: [Apache2]}
       - {id: prometheus, name: Prometheus}
@@ -183,7 +186,7 @@ categories:
       - {id: metasploit, name: Metasploit}
       - {id: splunk, name: Splunk}
       - {id: iso_27001, name: ISO 27001, aliases: [ISO/IEC 27001]}
-      - {id: firewall, name: Firewalls, aliases: [Firewall]}
+      - {id: firewall, name: Firewalls, aliases: [Firewall], ambiguous: true}
       - {id: cryptography, name: Cryptography}
       - {id: iam, name: Identity and Access Management, aliases: [IAM]}
 
@@ -195,9 +198,9 @@ categories:
       - {id: ccnp, name: CCNP}
       - {id: routing_switching, name: Routing and Switching, aliases: [Routing & Switching]}
       - {id: mikrotik, name: MikroTik}
-      - {id: cisco, name: Cisco}
-      - {id: dns, name: DNS}
-      - {id: vpn, name: VPN}
+      - {id: cisco, name: Cisco, ambiguous: true}
+      - {id: dns, name: DNS, ambiguous: true}
+      - {id: vpn, name: VPN, ambiguous: true}
       - {id: active_directory, name: Active Directory}
       - {id: windows_server, name: Windows Server}
       - {id: vmware, name: VMware, aliases: [vSphere]}
@@ -209,17 +212,17 @@ categories:
       - {id: manual_testing, name: Manual Testing}
       - {id: automation_testing, name: Test Automation, aliases: [Automation Testing]}
       - {id: selenium, name: Selenium}
-      - {id: cypress, name: Cypress}
-      - {id: playwright, name: Playwright}
+      - {id: cypress, name: Cypress, ambiguous: true}
+      - {id: playwright, name: Playwright, ambiguous: true}
       - {id: appium, name: Appium}
       - {id: jmeter, name: JMeter, aliases: [Apache JMeter]}
-      - {id: postman, name: Postman}
+      - {id: postman, name: Postman, ambiguous: true}
       - {id: junit, name: JUnit}
       - {id: pytest, name: pytest}
-      - {id: jest, name: Jest}
+      - {id: jest, name: Jest, ambiguous: true}
       - {id: api_testing, name: API Testing}
       - {id: performance_testing, name: Performance Testing, aliases: [Load testing]}
-      - {id: jira, name: Jira}
+      - {id: jira, name: Jira, ambiguous: true}
 
   - id: embedded
     name: Embedded and systems
@@ -229,20 +232,20 @@ categories:
       - {id: arduino, name: Arduino}
       - {id: raspberry_pi, name: Raspberry Pi}
       - {id: microcontrollers, name: Microcontrollers, aliases: [MCU, STM32, ESP32]}
-      - {id: iot, name: IoT, aliases: [Internet of Things]}
-      - {id: ros, name: ROS, aliases: [Robot Operating System, ROS2]}
+      - {id: iot, name: IoT, aliases: [Internet of Things], ambiguous: true}
+      - {id: ros, name: ROS, aliases: [Robot Operating System, ROS2], ambiguous: true}
       - {id: linux_kernel, name: Linux Kernel}
       - {id: fpga, name: FPGA}
 
   - id: games_graphics
     name: Games and graphics
     skills:
-      - {id: unity, name: Unity, aliases: [Unity3D]}
+      - {id: unity, name: Unity, aliases: [Unity3D], ambiguous: true}
       - {id: unreal, name: Unreal Engine, aliases: [Unreal, UE5]}
-      - {id: godot, name: Godot}
+      - {id: godot, name: Godot, ambiguous: true}
       - {id: opengl, name: OpenGL}
       - {id: vulkan, name: Vulkan}
-      - {id: blender, name: Blender}
+      - {id: blender, name: Blender, ambiguous: true}
       - {id: three_js, name: Three.js, aliases: [ThreeJS]}
 
   - id: blockchain
@@ -266,14 +269,14 @@ categories:
   - id: practices
     name: Tools and practices
     skills:
-      - {id: git, name: Git, aliases: [GitHub, GitLab, Bitbucket]}
+      - {id: git, name: Git, aliases: [GitHub, GitLab, Bitbucket], ambiguous: true}
       - {id: oop, name: Object-Oriented Programming, aliases: [OOP, OOPs, Object Oriented Programming]}
       - {id: data_structures, name: Data Structures, aliases: [DSA, Data Structures and Algorithms]}
-      - {id: algorithms, name: Algorithms}
+      - {id: algorithms, name: Algorithms, ambiguous: true}
       - {id: design_patterns, name: Design Patterns}
       - {id: system_design, name: System Design}
-      - {id: agile, name: Agile, aliases: [Scrum, Kanban]}
+      - {id: agile, name: Agile, aliases: [Scrum, Kanban], ambiguous: true}
       - {id: unit_testing, name: Unit Testing}
       - {id: tdd, name: Test-Driven Development, aliases: [TDD]}
-      - {id: figma, name: Figma}
+      - {id: figma, name: Figma, ambiguous: true}
       - {id: ui_ux, name: UI/UX Design, aliases: [UI/UX, UX Design, UI Design]}

@@ -15,6 +15,7 @@ from datetime import datetime
 
 from jobhunt.config import Config
 from jobhunt.db import Database, Statement
+from jobhunt.extract.schema import JobFacts
 from jobhunt.gates.base import GateResult
 from jobhunt.gates.cse import CseGate
 from jobhunt.gates.freshness import FreshnessGate
@@ -50,10 +51,12 @@ class GateOutcome:
             None,
         )
 
-    def gates_json(self) -> str:
+    def gates_json(self, flags: tuple[str, ...] = ()) -> str:
         data: dict[str, object] = {r.gate: r.as_dict() for r in self.results}
         data["needs_facts"] = self.needs_facts
         data["seeded"] = self.seeded
+        if flags:
+            data["audit_flags"] = list(flags)
         return json.dumps(data, ensure_ascii=False, sort_keys=True)
 
 
@@ -64,19 +67,47 @@ class JobGates:
         self._location = LocationGate(config)
         self._freshness = FreshnessGate(config)
 
-    def evaluate(self, item: GateItem, now: datetime) -> GateOutcome:
+    def evaluate(
+        self,
+        item: GateItem,
+        now: datetime,
+        facts: JobFacts | None = None,
+        title_class: str | None = None,
+    ) -> GateOutcome:
+        """The gates on the listing alone, or, with `facts` (and an LLM title
+        class), again on what extraction found."""
         listing = item.listing
         match = self._matcher.match(listing.title)
+        if title_class and match.primary_domain is None:
+            match = TitleMatch(match.normalized, match.seniority, "llm", title_class, (), 1.0, None)
         posted = listing.posted_at or _alert_time(listing)
+        deadline = listing.deadline
+        if facts is not None:
+            if posted is None and facts.posted_date_in_text is not None:
+                posted = datetime.combine(
+                    facts.posted_date_in_text, datetime.min.time(), now.tzinfo
+                )
+            deadline = deadline or facts.application_deadline
+            cse = self._cse(
+                listing.title,
+                match,
+                llm_is_cse=facts.is_cse_role,
+                llm_evidence=facts.is_cse_role_evidence,
+            )
+            location = self._location.with_facts(listing, facts)
+        else:
+            cse = self._cse(listing.title, match)
+            location = self._location(listing)
         results = (
-            self._cse(listing.title, match),
-            self._location(listing),
+            cse,
+            location,
             self._freshness(
                 now=now,
                 posted_at=posted,
-                deadline=listing.deadline,
+                deadline=deadline,
                 first_seen_at=item.first_seen_at,
                 bootstrap=item.bootstrap,
+                facts_checked=facts is not None,
             ),
         )
         failed = next((r for r in results if r.status == "fail"), None)
@@ -98,7 +129,7 @@ async def apply_gates(
         statements: list[Statement] = []
         for item in items[start : start + batch_size]:
             outcome = gates.evaluate(item, now)
-            statements += _statements(item.job_id, outcome)
+            statements += outcome_statements(item.job_id, outcome)
             if outcome.status == "filtered":
                 counts[f"filtered {outcome.filter_reason}"] += 1
             elif outcome.needs_facts:
@@ -109,7 +140,10 @@ async def apply_gates(
     return counts
 
 
-def _statements(job_id: int, outcome: GateOutcome) -> list[Statement]:
+def outcome_statements(
+    job_id: int, outcome: GateOutcome, flags: tuple[str, ...] = ()
+) -> list[Statement]:
+    """Store `outcome` on the job: status, reason, evidence, gates_json, domains."""
     statements = [
         Statement(
             "UPDATE jobs SET status = ?, filter_reason = ?, remote_eligibility_evidence = ?,"
@@ -118,7 +152,7 @@ def _statements(job_id: int, outcome: GateOutcome) -> list[Statement]:
                 outcome.status,
                 outcome.filter_reason,
                 outcome.location_evidence,
-                outcome.gates_json(),
+                outcome.gates_json(flags),
                 job_id,
             ),
         ),

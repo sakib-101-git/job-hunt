@@ -71,3 +71,7 @@ cse_gate:
   # A title the taxonomy doesn't know goes to the LLM classifier only if it (or the
   # listing's tags) contains one of these; otherwise it is not a CSE role.
   tech_signals: [software, developer, engineer, engineering, engr, programmer, programming, coder, data, database, dba, IT, ICT, MIS, computer, CSE, technical, technology, tech, cloud, devops, SRE, security, cyber, cybersecurity, infosec, AI, ML, machine learning, deep learning, NLP, LLM, web, frontend, front-end, backend, back-end, full stack, full-stack, fullstack, mobile, android, iOS, app, application, network, networking, system, systems, sysadmin, QA, SQA, test, testing, tester, automation, platform, infrastructure, API, blockchain, web3, game, unity, embedded, firmware, IoT, robotics, analytics, BI, python, java, javascript, typescript, react, node, PHP, laravel, ".NET", "C#", "C++", golang, rust, flutter, kotlin, swift, SQL, linux, kubernetes, docker, AWS, azure, GCP, ERP, SAP, salesforce, odoo, CRM, UI, UX, digital, solutions, architect, scientist, research, lecturer, instructor]
+
+# Scam and exploitation markers (brief §12). The rules-only extractor looks for
+# them; scoring treats any of them as a hard gate.
+red_flags: [training fee, registration fee, processing fee, pay to apply, application fee, security deposit, refundable deposit, unpaid, without salary, no salary, commission only, commission-based only, bond, service bond]
