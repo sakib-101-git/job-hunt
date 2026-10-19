@@ -27,7 +27,7 @@
 {"job": "remoteok:1137474", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "ai_fresh_grad"}
 {"job": "company_boards:greenhouse:canonical:5937947", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "ai_fresh_grad"}
 {"job": "company_boards:ashby:supabase:6b314e83-6617-49fc-8c73-021ebae9a757", "label": 0, "label_status": "silver", "notes": "outside tracks", "profile": "ai_fresh_grad"}
-{"job": "bdjobs:1545569", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "ai_fresh_grad"}
+{"job": "bdjobs:1545569", "label": 0, "label_status": "silver", "notes": "bank data-analytics role, outside this track", "profile": "ai_fresh_grad"}
 {"job": "weworkremotely:https://weworkremotely.com/remote-jobs/lemon-io-senior-react-full-stack-developer-7", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "ai_fresh_grad"}
 {"job": "weworkremotely:https://weworkremotely.com/remote-jobs/airbnb-engineering-manager-payments", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "ai_fresh_grad"}
 {"job": "bdjobs:1543825", "label": 1, "label_status": "silver", "notes": "adjacent", "profile": "security_junior"}
@@ -88,7 +88,7 @@
 {"job": "weworkremotely:https://weworkremotely.com/remote-jobs/maven-clinic-client-success-manager", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "web_intern"}
 {"job": "remoteok:1137523", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "web_intern"}
 {"job": "bdjobs:1543604", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "web_intern"}
-{"job": "bdjobs:1545569", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "web_intern"}
+{"job": "bdjobs:1545569", "label": 0, "label_status": "silver", "notes": "bank data-analytics role, outside this track", "profile": "web_intern"}
 {"job": "himalayas:https://himalayas.app/companies/xperteez-technology/jobs/app-security-expert-remote-contract", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "web_intern"}
 {"job": "jobicy:153321", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "web_intern"}
 {"job": "bdjobs:1544075", "label": 0, "label_status": "silver", "notes": "outside tracks", "profile": "web_intern"}
@@ -142,7 +142,7 @@
 {"job": "jobicy:146254", "label": 1, "label_status": "silver", "notes": "adjacent, few skills", "profile": "devops_mid_remote"}
 {"job": "remoteok:1137374", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "devops_mid_remote"}
 {"job": "weworkremotely:https://weworkremotely.com/remote-jobs/sanctuary-computer-head-of-technology", "label": 0, "label_status": "silver", "notes": "outside tracks", "profile": "devops_mid_remote"}
-{"job": "bdjobs:1545569", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "devops_mid_remote"}
+{"job": "bdjobs:1545569", "label": 0, "label_status": "silver", "notes": "bank data-analytics role, outside this track", "profile": "devops_mid_remote"}
 {"job": "bdjobs:1540760", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "devops_mid_remote"}
 {"job": "workingnomads:1878435", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "devops_mid_remote"}
 {"job": "weworkremotely:https://weworkremotely.com/remote-jobs/vercel-software-engineer-data-platform", "label": 0, "label_status": "silver", "notes": "outside tracks", "profile": "devops_mid_remote"}
@@ -203,7 +203,7 @@
 {"job": "bdjobs:1544253", "label": 0, "label_status": "silver", "notes": "outside tracks", "profile": "network_it_fresh"}
 {"job": "company_boards:ashby:supabase:5d09daeb-2d7e-42de-9151-81a1341195c4", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "network_it_fresh"}
 {"job": "himalayas:https://himalayas.app/companies/ewor-gmbh/jobs/deeptech-co-founder-head-of-sales-100-remote-m-f-d-3769700121", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "network_it_fresh"}
-{"job": "bdjobs:1545569", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "network_it_fresh"}
+{"job": "bdjobs:1545569", "label": 0, "label_status": "silver", "notes": "bank data-analytics role, outside this track", "profile": "network_it_fresh"}
 {"job": "himalayas:https://himalayas.app/companies/xperteez-technology/jobs/app-security-expert-remote-contract", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "network_it_fresh"}
 {"job": "bdjobs:1545609", "label": 0, "label_status": "silver", "notes": "outside tracks", "profile": "network_it_fresh"}
 {"job": "remoteok:1137538", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "network_it_fresh"}
@@ -303,7 +303,7 @@
 {"job": "workingnomads:1885527", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "data_engineer_mid"}
 {"job": "company_boards:greenhouse:canonical:6300377", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "data_engineer_mid"}
 {"job": "jobicy:153452", "label": 0, "label_status": "silver", "notes": "outside tracks", "profile": "data_engineer_mid"}
-{"job": "bdjobs:1545569", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "data_engineer_mid"}
+{"job": "bdjobs:1545569", "label": 1, "label_status": "silver", "notes": "bank data-analytics role (SQL, Python, BI), next to this track", "profile": "data_engineer_mid"}
 {"job": "bdjobs:1544163", "label": 0, "label_status": "silver", "notes": "outside tracks", "profile": "data_engineer_mid"}
 {"job": "himalayas:https://himalayas.app/companies/barkleyokrp/jobs/senior-software-engineer-java-backend", "label": 0, "label_status": "silver", "notes": "outside tracks", "profile": "data_engineer_mid"}
 {"job": "remoteok:1137527", "label": 0, "label_status": "silver", "notes": "ineligible or location", "profile": "data_engineer_mid"}

@@ -96,12 +96,29 @@ def _chunks(ids: Sequence[int]) -> list[Sequence[int]]:
     return [ids[i : i + _ID_CHUNK] for i in range(0, len(ids), _ID_CHUNK)]
 
 
+def job_domains(
+    domain_rows: Sequence[Row], facts: JobFacts, provider: str | None
+) -> tuple[str | None, list[str]]:
+    """The job's primary and secondary domains. A taxonomy match decides the
+    primary domain. A title class (method "llm") was judged from the title
+    alone, so a model that read the whole posting overrides it ("Associate
+    Manager, Branch Governance, Distribution Network" is not networking)."""
+    primary_row = next((d for d in domain_rows if d["is_primary"]), None)
+    primary = str(primary_row["domain_slug"]) if primary_row else None
+    secondary = [str(d["domain_slug"]) for d in domain_rows if not d["is_primary"]]
+    by_model = provider not in (None, RULES) and facts.primary_domain is not None
+    if primary_row is not None and primary_row["method"] == "llm" and by_model:
+        primary = facts.primary_domain
+    secondary += [s for s in facts.secondary_domains if s not in secondary]
+    primary = primary or facts.primary_domain
+    return primary, [s for s in dict.fromkeys(secondary) if s != primary]
+
+
 def _job_view(row: Row, domain_rows: list[Row], normalizer: JobNormalizer) -> JobView:
     listing = listing_from_row(row)
     facts = JobFacts.model_validate_json(str(row["facts_json"]))
-    primary = next((str(d["domain_slug"]) for d in domain_rows if d["is_primary"]), None)
-    secondary = [str(d["domain_slug"]) for d in domain_rows if not d["is_primary"]]
-    secondary += [s for s in facts.secondary_domains if s not in secondary]
+    provider = str(row["facts_provider"]) if row["facts_provider"] else None
+    primary, secondary = job_domains(domain_rows, facts, provider)
     gates = json.loads(str(row["gates_json"]))
     location = gates.get("location", {})
     return JobView(
@@ -112,8 +129,8 @@ def _job_view(row: Row, domain_rows: list[Row], normalizer: JobNormalizer) -> Jo
         source=listing.source,
         location_raw=listing.location,
         facts=facts,
-        primary_domain=primary or facts.primary_domain,
-        secondary_domains=tuple(dict.fromkeys(secondary))[:3],
+        primary_domain=primary,
+        secondary_domains=tuple(secondary)[:3],
         location_reason=str(location.get("reason", "")),
         location_evidence=location.get("evidence"),
         city=normalizer.city_key(listing) or None,

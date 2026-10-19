@@ -455,3 +455,17 @@ def test_each_title_is_normalized_once_per_scorer(
             scorer.score(job, user)
     assert len(calls) == len({job.title for job in views})
     assert bench(config, users=4, jobs=5).pairs == 20
+
+
+def test_a_model_that_read_the_posting_overrides_a_title_class() -> None:
+    from jobhunt.db import Row
+    from jobhunt.score.matching import job_domains
+
+    facts = _facts(primary_domain="data-science-analytics", secondary_domains=["ai-ml"])
+    title_class: list[Row] = [{"domain_slug": "networking", "method": "llm", "is_primary": 1}]
+    assert job_domains(title_class, facts, "groq") == ("data-science-analytics", ["ai-ml"])
+    # Rules-only facts don't read the posting; a taxonomy match always decides.
+    assert job_domains(title_class, facts, "rules")[0] == "networking"
+    taxonomy: list[Row] = [{"domain_slug": "networking", "method": "exact", "is_primary": 1}]
+    assert job_domains(taxonomy, facts, "groq")[0] == "networking"
+    assert job_domains([], facts, None)[0] == "data-science-analytics"

@@ -158,7 +158,7 @@ def test_default_config_dir_outside_checkout(
         ("llm.yaml", "model: qwen/qwen3.8-27b,", "model: openai/gpt-oss-120b,", "duplicate chain"),
         (
             "llm.yaml",
-            "  prompt: prompts/extraction.v2.md",
+            "  prompt: prompts/extraction.v3.md",
             "  prompt: prompts/missing.v9.md",
             "not found",
         ),

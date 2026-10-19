@@ -36,7 +36,7 @@ from jobhunt.jobs.gating import GateItem, JobGates, apply_gates
 from jobhunt.jobs.store import store_jobs
 from jobhunt.normalize.jobs import JobNormalizer
 from jobhunt.normalize.titles import TitleNormalizer
-from jobhunt.score.matching import load_jobs
+from jobhunt.score.matching import job_domains, load_jobs
 from jobhunt.score.model import JobView, UserProfile
 from jobhunt.score.scorer import Scorer
 
@@ -167,7 +167,7 @@ async def _job_results(
         int(str(row["id"])): row
         for row in await db.query(
             "SELECT j.id, j.status, j.filter_reason, j.gates_json, f.facts_json, f.provider,"
-            " f.grounding_failures_json, d.domain_slug"
+            " f.grounding_failures_json, d.domain_slug, d.method"
             " FROM jobs j LEFT JOIN job_facts f ON f.job_id = j.id"
             " LEFT JOIN job_domains d ON d.job_id = j.id AND d.is_primary = 1"
         )
@@ -178,8 +178,10 @@ async def _job_results(
         gates: dict[str, Any] = json.loads(str(row["gates_json"] or "{}"))
         facts = JobFacts.model_validate_json(str(row["facts_json"])) if row["facts_json"] else None
         domain = str(row["domain_slug"]) if row["domain_slug"] else None
-        if domain is None and facts is not None:
-            domain = facts.primary_domain
+        provider = str(row["provider"]) if row["provider"] else None
+        if facts is not None:  # as the scorer will see it
+            primary = {"domain_slug": domain, "method": row["method"], "is_primary": 1}
+            domain, _ = job_domains([primary] if domain else [], facts, provider)
         listing = job.listing.raw()
         verdict = location(listing)
         decided = verdict.status != "needs_facts"
@@ -190,7 +192,7 @@ async def _job_results(
                 filter_reason=str(row["filter_reason"]) if row["filter_reason"] else None,
                 needs_facts=tuple(gates.get("needs_facts", [])),
                 facts=facts,
-                facts_provider=str(row["provider"]) if row["provider"] else None,
+                facts_provider=provider,
                 grounding_failures=tuple(json.loads(str(row["grounding_failures_json"] or "[]"))),
                 system_domain=domain,
                 listing_eligibility=eligibility(verdict, listing.work_mode) if decided else None,

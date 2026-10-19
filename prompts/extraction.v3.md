@@ -25,6 +25,9 @@ Rules:
    the employer's product or industry: packaging, deploying, CI/CD and running
    infrastructure is devops-sre-infra even at a database or developer-tools
    company. The board's tags, when given, show how the board files the job.
+   A secondary domain is other work the role itself does for a real part of
+   the time. A product, feature or technology the posting only mentions ("our
+   AI tools", "a mobile app") is not a domain of the role. At most two.
    Use null and an empty list when `is_cse_role` is false.
 6. `seniority`: intern, entry (0-1 years, trainee, graduate), junior (1-3),
    mid (3-5), senior (5+), lead_plus (lead, principal, staff, head), or unknown.
