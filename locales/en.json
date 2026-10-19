@@ -73,6 +73,8 @@
     "skills.missing": "missing: {skills}",
     "skills.none_matched": "none of yours listed",
     "skills.few_listed": "only {count} listed",
+    "skills.many_listed": "{listed} listed, {counted} count",
+    "skills.more": "{skills} +{count} more",
     "skills.none_listed": "Skills: the posting lists none",
     "experience.met": "Experience: asks {asks}; you're {level}",
     "experience.gap": "Experience: asks {asks}; you're {level}",

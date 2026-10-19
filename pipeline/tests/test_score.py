@@ -112,6 +112,14 @@ def test_security_user_never_gets_frontend(scorer: Scorer) -> None:
     )
 
 
+def test_model_secondary_domains_do_not_match_a_track(scorer: Scorer) -> None:
+    guessed = _job(primary_domain="software-engineering", facts=_facts(secondary_domains=["ai-ml"]))
+    assert not scorer.score(guessed, _user()).passed
+    curated = _job(primary_domain="software-engineering", secondary_domains=("ai-ml",))
+    role = next(c for c in scorer.score(curated, _user()).components if c.name == "role")
+    assert role.rule == "role.secondary_or_include"
+
+
 def test_adjacent_toggle_and_deselected_domains(scorer: Scorer) -> None:
     adjacent = _job(primary_domain="data-science-analytics")
     assert not scorer.score(adjacent, _user(include_adjacent=False)).passed
@@ -129,6 +137,12 @@ def test_adjacent_toggle_and_deselected_domains(scorer: Scorer) -> None:
         # One skill listed (the duplicate counts once): matching it is capped.
         ({"required_skills": ["Python"], "preferred_skills": ["python"]}, {"python"}, "2.25"),
         ({"required_skills": ["python", "sql"], "preferred_skills": []}, {"sql"}, "1.50"),
+        # 12 listed, 10 count: 5 of them matched is half marks, not 5/12.
+        (
+            {"required_skills": [f"s{i}" for i in range(12)], "preferred_skills": []},
+            {f"s{i}" for i in range(5)},
+            "1.50",
+        ),
     ],
 )
 def test_skills_fit(scorer: Scorer, facts: dict[str, Any], skills: set[str], points: str) -> None:
@@ -291,6 +305,14 @@ def test_alert_says_when_few_skills_are_listed(config: Config, scorer: Scorer) -
     job = _job(facts=_facts(required_skills=["python"], preferred_skills=[]))
     text = Renderer.from_config(config).alert(job, scorer.score(job, _user()), _user(), NOW)
     assert "Skills: Python ✓ · only 1 listed (2.25/3)" in text
+
+
+def test_alert_names_a_few_missing_skills(config: Config, scorer: Scorer) -> None:
+    skills = ["python", *(f"Tool{i}" for i in range(11))]
+    job = _job(facts=_facts(required_skills=skills, preferred_skills=[]))
+    text = Renderer.from_config(config).alert(job, scorer.score(job, _user()), _user(), NOW)
+    assert "missing: Tool0, Tool1, Tool2, Tool3, Tool4, Tool5 +5 more" in text
+    assert "12 listed, 10 count" in text
 
 
 def test_alert_escapes_values_and_marks_quick_matches(config: Config, scorer: Scorer) -> None:
@@ -463,7 +485,7 @@ def test_a_model_that_read_the_posting_overrides_a_title_class() -> None:
 
     facts = _facts(primary_domain="data-science-analytics", secondary_domains=["ai-ml"])
     title_class: list[Row] = [{"domain_slug": "networking", "method": "llm", "is_primary": 1}]
-    assert job_domains(title_class, facts, "groq") == ("data-science-analytics", ["ai-ml"])
+    assert job_domains(title_class, facts, "groq") == ("data-science-analytics", [])
     # Rules-only facts don't read the posting; a taxonomy match always decides.
     assert job_domains(title_class, facts, "rules")[0] == "networking"
     taxonomy: list[Row] = [{"domain_slug": "networking", "method": "exact", "is_primary": 1}]

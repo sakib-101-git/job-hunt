@@ -101,15 +101,32 @@ class LocationGate:
     def with_facts(self, listing: RawListing, facts: JobFacts) -> GateResult:
         """The listing's own verdict if it decided; otherwise the extracted
         (grounded) eligibility. An unstated eligibility now fails: the
-        description was read and says nothing."""
+        description was read and says nothing.
+
+        Two checks on the model's answer. A restriction quoted from the text
+        ("100% Remoto LATAM") overrides a listing that only looked worldwide
+        (a source with no restriction field). And an answer stands only when its
+        quote says it: "worldwide" needs a worldwide phrase ("Remote work is an
+        option" is not one), "Bangladesh included" a Bangladeshi place (a model
+        once answered it for a list of Asian countries without Bangladesh)."""
         listing_result = self(listing)
-        if listing_result.status != "needs_facts":
-            return listing_result
         warnings = listing_result.warnings
         evidence = facts.remote_eligibility_evidence
+        if listing_result.status != "needs_facts":
+            restricted = facts.remote_eligibility == "region_restricted" and evidence
+            if listing_result.reason == "worldwide" and restricted:
+                return GateResult(GATE, "fail", "region_restricted_in_text", evidence, warnings)
+            return listing_result
+        if facts.remote_eligibility == "bangladesh_included" and not (
+            evidence and self._bangladesh.find(evidence)
+        ):
+            return GateResult(GATE, "fail", "bangladesh_not_named", evidence, warnings)
         if facts.country == "BD" or facts.remote_eligibility == "bangladesh_included":
             return GateResult(GATE, "pass", "bangladesh", evidence or "country: BD", warnings)
         if facts.remote_eligibility == "worldwide" and evidence:
+            if not self._worldwide.find(evidence):
+                # "Remote work is an option" says nothing about who may apply.
+                return GateResult(GATE, "fail", "worldwide_not_stated", evidence, warnings)
             if listing_result.reason == "worldwide_in_doubt" and self._is_tag(listing, evidence):
                 # The model only repeated the tag that was in doubt.
                 return GateResult(GATE, "fail", "worldwide_unconfirmed", evidence, warnings)

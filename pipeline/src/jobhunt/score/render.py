@@ -64,6 +64,7 @@ class Renderer:
     skill_names: dict[str, str]
     zone: ZoneInfo
     full_mark: float
+    max_missing_skills: int
 
     @classmethod
     def from_config(cls, config: Config, locale: str = "en") -> "Renderer":
@@ -76,6 +77,7 @@ class Renderer:
             skill_names={s.id: s.name for s in config.skills.all_skills},
             zone=ZoneInfo(config.app.timezone),
             full_mark=config.scoring.marks.full,
+            max_missing_skills=config.app.notifications.max_missing_skills_shown,
         )
 
     # --- alert ----------------------------------------------------------------
@@ -152,10 +154,15 @@ class Renderer:
                 parts.append(t("component.skills.matched_mark", skills=matched))
             else:
                 parts.append(_escape(t.text("component.skills.none_matched")))
-            if detail["missing"]:
-                parts.append(t("component.skills.missing", skills=self._skills(detail["missing"])))
+            if missing := detail["missing"]:
+                shown = self._skills(missing[: self.max_missing_skills])
+                if (extra := len(missing) - self.max_missing_skills) > 0:
+                    shown = str(t("component.skills.more", skills=shown, count=extra))
+                parts.append(t("component.skills.missing", skills=shown))
             if few := detail.get("few_listed"):
                 parts.append(t("component.skills.few_listed", count=few))
+            if many := detail.get("many_listed"):
+                parts.append(t("component.skills.many_listed", **many))
             return t(key, matched=Safe(str(t.text("alert.separator")).join(parts)))
         if rule.startswith("experience."):
             return t(key, asks=self._years(detail), level=t.text("levels")[user.level])

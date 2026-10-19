@@ -676,7 +676,54 @@ when the listing decides the location by itself (a source that only lists
 worldwide jobs, a Bangladeshi city, a named country), the model's answer is
 unused, and scoring it measured nothing (0.68 then; 0.90 on the same answers).
 
+### 2026-10-19: Extraction v3, and which domain wins
+
+The v2 recordings showed two more domain problems. The model listed products
+the posting mentions as secondary domains ("our AI tools" made a full-stack job
+an AI job), so `extraction.v3` defines a secondary domain as work the role
+itself does, at most two. And a title class, judged from the title alone,
+overrode the domain of a model that had read the whole posting ("Distribution
+Network" at a bank read as networking). Now a taxonomy match decides the
+primary domain, a model's extraction comes next, and a title class only counts
+when no model has read the posting (`score.matching.job_domains`, used by the
+scorer and the evaluator alike).
+
+### 2026-10-19: A model's answer stands only on a quote that says it
+
+With Gemini's answers in the golden set, three location answers were wrong in
+ways the grounder can't catch, because the quotes were real:
+"worldwide" quoting "Remote work is an option for this role";
+"bangladesh_included" quoting a list of Asian countries without Bangladesh;
+and a listing with no restriction field passing as worldwide while the model
+quoted "100% Remoto LATAM". `LocationGate.with_facts` now requires a phrase
+from `worldwide_phrases` in a worldwide quote (`worldwide_not_stated`) and a
+Bangladeshi place in a bangladesh_included quote (`bangladesh_not_named`), and
+lets a quoted region restriction override a listing that only looked
+worldwide (`region_restricted_in_text`).
+
+### 2026-10-19: The model's secondary domains don't match tracks
+
+Model-listed secondary domains stayed noisy with every model tried (a Supabase
+auth engineer as "cloud", a full-stack job as "ai-ml"). The tracks gate is a
+hard rule, so it now rests on the primary domain, the taxonomy's own
+secondary domains (from the owner's `job_titles.yaml`) and the tracks'
+include titles. The model's secondary domains stay in `job_facts` for the
+auditor.
+
+### 2026-10-19: CI thresholds after the recordings
+
+With 82 recorded answers (`extraction.v3`, `titles.v2`), the thresholds in
+`scoring.yaml` were raised to just under the measured values
+(docs/EVAL_REPORT.md). The rules-only baseline is below several of them, so a
+change that loses the recordings fails CI, as it should.
+
 ### 2026-10-19: Few listed skills cap the skills marks (scorer.v2)
+
+Coverage is also bounded from the other side: a posting listing 27 skills
+(editors and app stores included) gave a matching Flutter developer 0.68/3.
+At most `max_counted` (10) listed skills count, required ones first, and the
+alert names at most `max_missing_skills_shown` (6, app.yaml) missing skills,
+then "+N more". Skills outside skills.yaml keep the posting's spelling.
 
 In the manual review of live pairs, Supabase's "Postgres Engineer" listed one
 skill the rules recognise, so a data engineer who knows PostgreSQL got 3/3 for

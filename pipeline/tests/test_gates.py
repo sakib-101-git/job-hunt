@@ -117,6 +117,48 @@ def test_worldwide_tag_in_doubt_needs_the_text(config: Config, quote: str, expec
     assert gate.with_facts(listing, facts).reason == expect
 
 
+def test_a_restriction_quoted_from_the_text_beats_a_silent_listing(config: Config) -> None:
+    listing = _listing(source="himalayas", extra={"location_policy": "worldwide"})
+    gate = LocationGate(config)
+    assert gate(listing).reason == "worldwide"
+    facts = _facts(
+        remote_eligibility="region_restricted", remote_eligibility_evidence="100% Remoto LATAM"
+    )
+    assert gate.with_facts(listing, facts).reason == "region_restricted_in_text"
+    unspecified = _facts(remote_eligibility="unspecified")
+    assert gate.with_facts(listing, unspecified).reason == "worldwide"
+
+
+@pytest.mark.parametrize(
+    ("quote", "expect"),
+    [
+        ("selected countries in Asia (Japan, Singapore, the Philippines)", "bangladesh_not_named"),
+        (None, "bangladesh_not_named"),
+        ("Open to candidates in India, Pakistan and Bangladesh", "bangladesh"),
+    ],
+)
+def test_bangladesh_included_must_name_bangladesh(
+    config: Config, quote: str | None, expect: str
+) -> None:
+    listing = _listing(location_restrictions=("Remote",))
+    facts = _facts(remote_eligibility="bangladesh_included", remote_eligibility_evidence=quote)
+    assert LocationGate(config).with_facts(listing, facts).reason == expect
+
+
+@pytest.mark.parametrize(
+    ("quote", "expect"),
+    [
+        ("Remote work is an option for this role.", "worldwide_not_stated"),
+        ("100% remote", "worldwide_not_stated"),
+        ("We hire globally.", "worldwide"),
+    ],
+)
+def test_worldwide_must_be_stated(config: Config, quote: str, expect: str) -> None:
+    listing = _listing(location_restrictions=("Remote",))
+    facts = _facts(remote_eligibility="worldwide", remote_eligibility_evidence=quote)
+    assert LocationGate(config).with_facts(listing, facts).reason == expect
+
+
 def test_phrase_finder_case_rules() -> None:
     finder = PhraseFinder(["US", "United States", "anywhere"])
     assert finder.find("Remote - US") == "US"

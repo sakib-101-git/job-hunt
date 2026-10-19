@@ -160,6 +160,21 @@ GitHub secret names can't start with `GITHUB_`, so this token is stored as the
 repository secret `GH_DISPATCH_TOKEN`; the deploy workflow hands it to the Worker
 as `GITHUB_DISPATCH_TOKEN`.
 
+If the "Generate token" button does nothing, the form usually has a field
+that isn't filled in: a repository must be picked under "Only select
+repositories", Contents must be set to "Read and write", and the name must not
+match an existing token. GitHub also asks for your password or 2FA code just
+before it generates the token, and a blocked pop-up or an ad blocker can hide
+that prompt. If it still fails, a classic token works too
+(<https://github.com/settings/tokens/new>, scope **repo**, with an expiry), but
+it can reach all your repositories, so prefer the fine-grained one.
+
+The token is optional. Without it the bot works and deploys, but it can't
+start pipeline runs. The pipeline then runs on its 30-minute schedule instead
+of every 10 minutes, new users get their first matches at the next run, and
+reading CVs and `/broadcast` are unavailable (the bot says so). Add the secret
+later and run the deploy workflow again.
+
 ## 11. GitHub secrets and variables
 
 Repository → Settings → Secrets and variables → Actions. With the GitHub CLI:
@@ -171,7 +186,7 @@ gh secret set ADMIN_TELEGRAM_IDS
 gh secret set CLOUDFLARE_ACCOUNT_ID
 gh secret set CLOUDFLARE_API_TOKEN
 gh secret set D1_DATABASE_ID
-gh secret set GH_DISPATCH_TOKEN
+gh secret set GH_DISPATCH_TOKEN      # recommended; see section 10 if it won't generate
 gh secret set GROQ_API_KEY
 gh secret set GEMINI_API_KEY
 # optional

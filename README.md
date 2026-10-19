@@ -9,21 +9,22 @@ Everything runs on free tiers.
 ## What an alert looks like
 
 This one was rendered by the production code from a real BDJobs posting in the
-golden set and a synthetic profile (a Flutter developer with two years'
-experience in Dhaka):
+golden set, with the facts a free LLM extracted from it, for a synthetic profile
+(a Flutter developer with two years' experience):
 
 ```
 🎯 Flutter Developer (Android & iOS)
-🏢 Regnum · 📍 Anywhere in Bangladesh · 🕒 Full-time
+🏢 Regnum · 📍 Anywhere in Bangladesh (On-site)
 📅 Posted 4 days ago · ⏳ Apply by 13 Nov
 
-⭐ 8.0/10 · Strong match for you
+⭐ 7.9/10 · Good match for you
 ✅ Role: Mobile, Desktop & Cross-Platform Applications, in your 📱 Mobile & Desktop Apps track (3/3)
-➖ Skills: Flutter, Android, REST API, Firebase, Kotlin ✓ · missing: iOS, UI/UX Design, SQLite, Java, CI/CD (1.5/3)
+➖ Skills: Flutter, Dart, REST API, Git, Kotlin ✓ · missing: Provider, Riverpod, Bloc, GetX, SQLite, Hive +16 more · 27 listed, 10 count (1.35/3)
 ✅ Experience: asks 2–5 yrs; you're a junior (1-3 yrs) (2/2)
-✅ Education: CSE, CS, IT ✓ (1/1)
-➖ Preferences: in Bangladesh ✓ · salary shown (0.5/1)
+✅ Education: CSE ✓ (1/1)
+➖ Preferences: On-site ✓ · salary shown (0.5/1)
 
+💬 Develop and maintain high-quality Flutter mobile applications for Android and iOS platforms.
 🔗 via BDJobs
 
 [🔗 Apply]  [❓ Why this score?]

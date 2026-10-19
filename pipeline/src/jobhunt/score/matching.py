@@ -99,17 +99,18 @@ def _chunks(ids: Sequence[int]) -> list[Sequence[int]]:
 def job_domains(
     domain_rows: Sequence[Row], facts: JobFacts, provider: str | None
 ) -> tuple[str | None, list[str]]:
-    """The job's primary and secondary domains. A taxonomy match decides the
-    primary domain. A title class (method "llm") was judged from the title
-    alone, so a model that read the whole posting overrides it ("Associate
-    Manager, Branch Governance, Distribution Network" is not networking)."""
+    """The job's primary domain and the taxonomy's secondary domains. A
+    taxonomy match decides the primary domain. A title class (method "llm") was
+    judged from the title alone, so a model that read the whole posting
+    overrides it ("Associate Manager, Branch Governance, Distribution Network"
+    is not networking). The model's own secondary domains stay in the facts
+    and are not used for matching: they are guesses."""
     primary_row = next((d for d in domain_rows if d["is_primary"]), None)
     primary = str(primary_row["domain_slug"]) if primary_row else None
     secondary = [str(d["domain_slug"]) for d in domain_rows if not d["is_primary"]]
     by_model = provider not in (None, RULES) and facts.primary_domain is not None
     if primary_row is not None and primary_row["method"] == "llm" and by_model:
         primary = facts.primary_domain
-    secondary += [s for s in facts.secondary_domains if s not in secondary]
     primary = primary or facts.primary_domain
     return primary, [s for s in dict.fromkeys(secondary) if s != primary]
 
