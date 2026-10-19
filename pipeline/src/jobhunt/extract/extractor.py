@@ -95,17 +95,19 @@ class Extractor:
 
     def input_hash(self, listing: RawListing, text: str) -> str:
         parts = [self.prompt_version, listing.title, listing.company or "", listing.location or ""]
+        parts += listing.tags
         parts.append(truncate(text, self._llm_chars))
         return hashlib.sha256("\x1f".join(parts).encode("utf-8")).hexdigest()
 
     async def extract(self, listing: RawListing, text: str) -> Extraction | None:
-        system, user = self._prompt.render(
-            domains=", ".join(self._slugs),
-            title=listing.title,
-            company=listing.company or "unknown",
-            location=listing.location or ", ".join(listing.location_restrictions) or "unknown",
-            posting=truncate(text, self._llm_chars),
-        )
+        values = {
+            "domains": ", ".join(self._slugs),
+            "title": listing.title,
+            "company": listing.company or "unknown",
+            "location": listing.location or ", ".join(listing.location_restrictions) or "unknown",
+            "posting": truncate(text, self._llm_chars),
+        }
+        system, user = self._prompt.render(**values, tags=", ".join(listing.tags) or "none")
         result = await self._caller.call(
             self._prompt, system, user, "job_facts", self._schema, JobFacts, self._max_out
         )
@@ -114,7 +116,9 @@ class Extractor:
         facts, provider, model = result
         if facts.primary_domain is not None and facts.primary_domain not in self._slugs:
             facts = facts.model_copy(update={"primary_domain": None})
-        # Quotes are checked against exactly what the model was shown: the
-        # header lines (title, company, location) as well as the posting.
-        grounded = self._grounder.ground(facts, user, listing.deadline)
+        # Quotes are checked against what the model was shown: the header lines
+        # (title, company, location) as well as the posting, but not the board's
+        # tags, which some boards generate and which only hint at the domain.
+        _, shown = self._prompt.render(**values, tags="")
+        grounded = self._grounder.ground(facts, shown, listing.deadline)
         return Extraction(grounded, provider, model)

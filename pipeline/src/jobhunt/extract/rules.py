@@ -92,7 +92,7 @@ class RulesExtractor:
             work_mode=_first(_WORK_MODE, listing.work_mode, "unknown"),
             country="BD" if location.reason == "bangladesh" else None,
             city=None,
-            remote_eligibility=_eligibility(location, listing.work_mode),
+            remote_eligibility=eligibility(location, listing.work_mode),
             remote_eligibility_evidence=location.evidence if location.status == "pass" else None,
             timezone_requirement=", ".join(location.warnings) or None,
             salary=None,
@@ -115,7 +115,8 @@ def _first[T](table: list[tuple[T, re.Pattern[str]]], text: str | None, default:
     return default
 
 
-def _eligibility(location: GateResult, work_mode: str | None) -> RemoteEligibility:
+def eligibility(location: GateResult, work_mode: str | None) -> RemoteEligibility:
+    """The remote eligibility a location verdict on the listing implies."""
     remote = (work_mode or "").casefold() in {"remote", "home"}
     if location.status == "pass":
         if location.reason == "worldwide":

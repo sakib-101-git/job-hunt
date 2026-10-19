@@ -26,6 +26,7 @@ import re
 from dataclasses import dataclass
 
 from jobhunt.config import Config
+from jobhunt.extract.grounding import ELLIPSIS, normalize
 from jobhunt.extract.schema import JobFacts
 from jobhunt.gates.base import GateResult, PhraseFinder
 from jobhunt.sources.models import RawListing
@@ -125,14 +126,15 @@ class LocationGate:
 
     @staticmethod
     def _is_tag(listing: RawListing, evidence: str) -> bool:
-        """The quote comes from the listing's location tags, not its text."""
-        quote = re.sub(r"^\s*location\s*:\s*", "", evidence, flags=re.IGNORECASE).casefold()
-        tags = " ".join([listing.location or "", *listing.location_restrictions]).casefold()
-        return (
-            bool(quote.strip())
-            and quote.strip() in tags
-            and quote.strip() not in (listing.description.casefold())
-        )
+        """The quote comes from the listing's location tags, not its text. Each
+        piece of a quote joined with an ellipsis ("Anywhere in the World, ...")
+        is judged on its own."""
+        quote = re.sub(r"^\s*location\s*:\s*", "", evidence, flags=re.IGNORECASE)
+        pieces = [p.strip(" ,;.") for p in ELLIPSIS.split(normalize(quote))]
+        pieces = [p for p in pieces if p]
+        tags = normalize(" ".join([listing.location or "", *listing.location_restrictions]))
+        description = normalize(listing.description)
+        return bool(pieces) and all(p in tags and p not in description for p in pieces)
 
     def _doubt(self, listing: RawListing, judged: list[_Entry]) -> str | None:
         """Why a worldwide tag can't be trusted on its own, or None."""

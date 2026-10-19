@@ -26,7 +26,7 @@ from jobhunt.gates.base import PhraseFinder
 _QUOTES = str.maketrans({"‘": "'", "’": "'", "“": '"', "”": '"', "–": "-", "—": "-"})  # noqa: RUF001
 _SPACE = re.compile(r"\s+")
 _NUMBER = re.compile(r"\d+")
-_ELLIPSIS = re.compile(r"\s*(?:\.{3}|…)\s*")
+ELLIPSIS = re.compile(r"\s*(?:\.{3}|…)\s*")
 YEARS = re.compile(
     r"(?<![\d.])(\d{1,2})\s*\+?\s*(?:(?:-|to)\s*(\d{1,2})\s*)?(?:years?|yrs?)\b", re.IGNORECASE
 )
@@ -107,7 +107,7 @@ class Grounder:
         least MIN_QUOTE characters must match on its own."""
         if quote is None:
             return False
-        pieces = [p for p in _ELLIPSIS.split(quote) if len(p.strip()) >= MIN_QUOTE]
+        pieces = [p for p in ELLIPSIS.split(quote) if len(p.strip()) >= MIN_QUOTE]
         return bool(pieces) and all(self._quoted_piece(piece, text) for piece in pieces)
 
     def _quoted_piece(self, quote: str, text: str) -> bool:

@@ -7,6 +7,7 @@ import yaml
 
 from jobhunt.config import Config
 from jobhunt.config.models import ExperienceLevel, Seniority
+from jobhunt.extract.schema import JobFacts
 from jobhunt.gates.base import PhraseFinder
 from jobhunt.gates.cse import CseGate
 from jobhunt.gates.freshness import FreshnessGate
@@ -29,6 +30,23 @@ def _listing(**fields: Any) -> RawListing:
     }
     base.update(fields)
     return RawListing(**base)
+
+
+def _facts(**changes: Any) -> JobFacts:
+    base: dict[str, Any] = {
+        "is_cse_role": True, "is_cse_role_evidence": None, "primary_domain": None,
+        "secondary_domains": [], "normalized_title": "Software Engineer", "seniority": "unknown",
+        "seniority_evidence": None, "min_years": None, "max_years": None, "years_evidence": None,
+        "education": {"level": "unknown", "fields": [], "required": False},
+        "education_evidence": None, "required_skills": [], "preferred_skills": [],
+        "employment_type": "unknown", "work_mode": "remote", "country": None, "city": None,
+        "remote_eligibility": "unspecified", "remote_eligibility_evidence": None,
+        "timezone_requirement": None, "salary": None, "application_deadline": None,
+        "deadline_evidence": None, "posted_date_in_text": None, "language_requirements": [],
+        "red_flags": [], "summary": "",
+    }  # fmt: skip
+    base.update(changes)
+    return JobFacts.model_validate(base)
 
 
 # --- location -----------------------------------------------------------------
@@ -75,6 +93,28 @@ def test_location_policies(config: Config) -> None:
     assert (asia.status, asia.reason) == ("pass", "region_with_bangladesh")
     remote = gate(_listing(location_restrictions=("Remote",)))
     assert (remote.status, remote.reason) == ("pass", "unspecified_remote_accepted")
+
+
+@pytest.mark.parametrize(
+    ("quote", "expect"),
+    [
+        ("Location: Anywhere in the World", "worldwide_unconfirmed"),
+        # Models join tag pieces with an ellipsis; each piece is still a tag.
+        ("Location: Anywhere in the World, ...", "worldwide_unconfirmed"),
+        ("Anywhere in the World … Germany", "worldwide_unconfirmed"),
+        ("We hire globally, from any country", "worldwide"),
+    ],
+)
+def test_worldwide_tag_in_doubt_needs_the_text(config: Config, quote: str, expect: str) -> None:
+    listing = _listing(
+        source="weworkremotely",
+        location_restrictions=("Anywhere in the World", "Germany"),
+        description="Senior role. We hire globally, from any country.",
+    )
+    gate = LocationGate(config)
+    assert gate(listing).reason == "worldwide_in_doubt"
+    facts = _facts(remote_eligibility="worldwide", remote_eligibility_evidence=quote)
+    assert gate.with_facts(listing, facts).reason == expect
 
 
 def test_phrase_finder_case_rules() -> None:

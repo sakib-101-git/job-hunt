@@ -162,7 +162,9 @@ def test_strict_schema_shape(config: Config) -> None:
 
 def test_prompts_load_and_render(config: Config) -> None:
     prompt = Prompt.load(config.root / config.llm.extraction.prompt)
-    system, user = prompt.render(domains="ai-ml", title="T", company="C", location="L", posting="P")
+    system, user = prompt.render(
+        domains="ai-ml", title="T", company="C", location="L", tags="dev", posting="P"
+    )
     assert "ai-ml" in system
     assert "{{" not in system + user
     assert user.startswith("Title: T")

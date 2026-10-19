@@ -28,7 +28,9 @@ from jobhunt.db import Row, SqliteBackend, apply_migrations
 from jobhunt.eval.dataset import Dataset, GoldenJob, GoldenProfile
 from jobhunt.extract.llm import LlmClient
 from jobhunt.extract.rules import PROVIDER as RULES
-from jobhunt.extract.schema import JobFacts
+from jobhunt.extract.rules import eligibility
+from jobhunt.extract.schema import JobFacts, RemoteEligibility
+from jobhunt.gates.location import LocationGate
 from jobhunt.jobs.enrich import enrich
 from jobhunt.jobs.gating import GateItem, JobGates, apply_gates
 from jobhunt.jobs.store import store_jobs
@@ -51,6 +53,9 @@ class JobResult:
     facts_provider: str | None
     grounding_failures: tuple[str, ...]
     system_domain: str | None
+    # Eligibility the listing alone decides (its tags, the source's own
+    # restriction); None when the location gate needs the description.
+    listing_eligibility: RemoteEligibility | None = None
 
     @property
     def by_llm(self) -> bool:
@@ -134,7 +139,7 @@ async def run_eval(
             await enrich(db, config, client, as_of, limit=len(dataset.jobs))
         finally:
             await client.aclose()
-        job_results = await _job_results(db, dataset.jobs, ids)
+        job_results = await _job_results(db, dataset.jobs, ids, LocationGate(config))
         views = {view.job_id: view for view in await load_jobs(db, config)}
     finally:
         await db.aclose()
@@ -156,7 +161,7 @@ async def _store(db: SqliteBackend, config: Config, jobs: Sequence[GoldenJob]) -
 
 
 async def _job_results(
-    db: SqliteBackend, jobs: Sequence[GoldenJob], ids: Mapping[str, int]
+    db: SqliteBackend, jobs: Sequence[GoldenJob], ids: Mapping[str, int], location: LocationGate
 ) -> list[JobResult]:
     rows = {
         int(str(row["id"])): row
@@ -175,6 +180,9 @@ async def _job_results(
         domain = str(row["domain_slug"]) if row["domain_slug"] else None
         if domain is None and facts is not None:
             domain = facts.primary_domain
+        listing = job.listing.raw()
+        verdict = location(listing)
+        decided = verdict.status != "needs_facts"
         results.append(
             JobResult(
                 job=job,
@@ -185,6 +193,7 @@ async def _job_results(
                 facts_provider=str(row["provider"]) if row["provider"] else None,
                 grounding_failures=tuple(json.loads(str(row["grounding_failures_json"] or "[]"))),
                 system_domain=domain,
+                listing_eligibility=eligibility(verdict, listing.work_mode) if decided else None,
             )
         )
     return results
@@ -291,6 +300,9 @@ def _field_value(result: JobResult, name: str) -> object:
         return None
     if name == "deadline":
         return result.job.listing.deadline or facts.application_deadline
+    if name == "remote_eligibility" and result.listing_eligibility is not None:
+        # The gates act on the listing's own verdict; the model's answer is unused.
+        return result.listing_eligibility
     return getattr(facts, name)
 
 
