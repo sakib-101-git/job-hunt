@@ -78,7 +78,7 @@ def test_full_marks(scorer: Scorer) -> None:
         "preference": "0.80", "score": "9.8",
     }  # fmt: skip
     assert result.label == "strong"
-    assert result.scorer_version == "scorer.v1"
+    assert result.scorer_version == "scorer.v2"
 
 
 @pytest.mark.parametrize(
@@ -126,7 +126,9 @@ def test_adjacent_toggle_and_deselected_domains(scorer: Scorer) -> None:
         ({}, {"python"}, "1.20"),  # (2*1 + 0) / (2*2 + 1) * 3
         ({}, set(), "0.00"),
         ({"required_skills": [], "preferred_skills": []}, set(), "1.50"),
-        ({"required_skills": ["Python"], "preferred_skills": ["python"]}, {"python"}, "3.00"),
+        # One skill listed (the duplicate counts once): matching it is capped.
+        ({"required_skills": ["Python"], "preferred_skills": ["python"]}, {"python"}, "2.25"),
+        ({"required_skills": ["python", "sql"], "preferred_skills": []}, {"sql"}, "1.50"),
     ],
 )
 def test_skills_fit(scorer: Scorer, facts: dict[str, Any], skills: set[str], points: str) -> None:
@@ -285,6 +287,12 @@ def test_alert_follows_the_brief_layout(config: Config, scorer: Scorer) -> None:
     assert text.endswith("🔗 via BDJobs")
 
 
+def test_alert_says_when_few_skills_are_listed(config: Config, scorer: Scorer) -> None:
+    job = _job(facts=_facts(required_skills=["python"], preferred_skills=[]))
+    text = Renderer.from_config(config).alert(job, scorer.score(job, _user()), _user(), NOW)
+    assert "Skills: Python ✓ · only 1 listed (2.25/3)" in text
+
+
 def test_alert_escapes_values_and_marks_quick_matches(config: Config, scorer: Scorer) -> None:
     job = _job(title="Dev <script>", company="A & B", quick=True)
     text = Renderer.from_config(config).alert(job, scorer.score(job, _user()), _user(), NOW)
@@ -300,7 +308,7 @@ def test_why_shows_rules_quotes_and_version(config: Config, scorer: Scorer) -> N
     assert "“0-1 years”" in text
     assert "“BSc in CSE”" in text
     assert "Location: Dhaka" in text
-    assert "scorer.v1" in text
+    assert "scorer.v2" in text
     assert "&amp;amp;" not in text
 
 
@@ -380,7 +388,7 @@ async def test_match_stores_passing_pairs_once(db: SqliteBackend, config: Config
     assert [(m.user_id, m.job_id) for m in new] == [(1, 1)]
     assert counts["not matched: tracks:outside_chosen_tracks"] == 1
     row = (await db.query("SELECT * FROM matches"))[0]
-    assert row["scorer_version"] == "scorer.v1"
+    assert row["scorer_version"] == "scorer.v2"
     breakdown = json.loads(str(row["breakdown_json"]))
     assert breakdown["score"] == str(new[0].score)
     assert breakdown["quick"] is False

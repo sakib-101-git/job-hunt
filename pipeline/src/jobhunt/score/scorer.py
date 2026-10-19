@@ -206,11 +206,15 @@ class Scorer:
         nice_hit = [s for s in nice if s in have]
         total = cfg.must_weight * len(must) + cfg.nice_weight * len(nice)
         got = cfg.must_weight * len(must_hit) + cfg.nice_weight * len(nice_hit)
-        detail = {
+        detail: dict[str, Any] = {
             "matched": must_hit + nice_hit,
             "missing": [s for s in must + nice if s not in have],
         }
-        return Component("skills", q2(d(got) / d(total) * cap), cap, "skills.coverage", detail)
+        points = d(got) / d(total) * cap
+        if len(must) + len(nice) < cfg.few_listed:
+            detail["few_listed"] = len(must) + len(nice)
+            points = min(points, d(cfg.few_listed_cap))
+        return Component("skills", q2(points), cap, "skills.coverage", detail)
 
     def _experience(self, job: JobView, user: UserProfile) -> Component:
         cfg, cap = self._s.experience, d(self._s.weights.experience)

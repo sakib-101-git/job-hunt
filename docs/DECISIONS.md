@@ -352,7 +352,7 @@ the chain.
 
 ### 2026-10-18: Facts are grounded
 
-- `prompts/extraction.v1.md`: facts only, a verbatim quote next to every fact,
+- `prompts/extraction.v1.md` (v2 since, below): facts only, a verbatim quote next to every fact,
   temperature 0, the schema pinned to the taxonomy's domain slugs. A schema miss
   gets one retry with the validation error.
 - The grounding validator resets any fact whose quote isn't in the posting
@@ -377,7 +377,7 @@ skipped by the rules.
 ### 2026-10-18: Title classification
 
 Tech titles the taxonomy doesn't know are classified in batches of 25 into a
-domain slug or "none" (`prompts/title_classification.v1.md`), cached per
+domain slug or "none" (`prompts/title_classification.v1.md`, v2 since), cached per
 normalized title in `title_classes` (migration 0005). "none" filters the job
 without spending an extraction call; a slug becomes a `job_domains` row with
 method `llm`.
@@ -647,6 +647,43 @@ Fixed in the evaluation PR, each with a regression test:
 - Gender markers "(m/f/d)" blocked European titles; they are noise words now.
 - Reading JSONL with `str.splitlines()` broke on U+2028 inside descriptions;
   the readers split on `\n` only.
+
+### 2026-10-19: Prompts v2, from the first live recordings
+
+The first 74 recorded answers showed three prompt problems, fixed in
+`extraction.v2` and `titles.v2` (a new version invalidates every cached fact and
+title class, so the golden set was recorded again):
+
+- The title classifier answered "none" for Head of IT, IT Assistant, CTO,
+  Manager - MIS and Engineering Manager, because the prompt said an ambiguous
+  title is "none". These are common Bangladeshi computing jobs. The prompt now
+  names IT, MIS and ERP roles and technology leads as computing roles; only
+  titles like "Analyst", "Consultant" or "Executive" alone stay "none".
+- The model chose the employer's field over the role's work ("Postgres
+  Deployment Engineer (Nix)" at a database company as software-engineering, a
+  track leak in the golden set). The prompt now defines the primary domain as
+  the role's daily work and shows the board's tags ("DevOps & Infrastructure").
+  Tags are not part of the text quotes are grounded in: some boards generate
+  them.
+- Skills came back as phrases ("AWS EC2 and S3", "writing queries"), which the
+  grounder rightly dropped. The prompt asks for one name per entry.
+
+Two evaluator fixes came with it. A quote joined with an ellipsis ("Location:
+Anywhere in the World, ...") wasn't recognised as the doubted We Work Remotely
+tag, so a region-locked job reached a user; each piece is now checked on its
+own. And `remote_eligibility` accuracy now scores the value the gates act on:
+when the listing decides the location by itself (a source that only lists
+worldwide jobs, a Bangladeshi city, a named country), the model's answer is
+unused, and scoring it measured nothing (0.68 then; 0.90 on the same answers).
+
+### 2026-10-19: Few listed skills cap the skills marks (scorer.v2)
+
+In the manual review of live pairs, Supabase's "Postgres Engineer" listed one
+skill the rules recognise, so a data engineer who knows PostgreSQL got 3/3 for
+skills and 8.8 overall for a senior role. Coverage over one or two skills says
+little about fit. A posting naming fewer than `few_listed` (3) skills now earns
+at most `few_listed_cap` (2.25) for skills, and the alert says "only 1 listed".
+Weights are unchanged, so most scores are unchanged.
 
 ### 2026-10-19: Thresholds are regression guards
 

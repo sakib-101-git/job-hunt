@@ -154,6 +154,8 @@ class Renderer:
                 parts.append(_escape(t.text("component.skills.none_matched")))
             if detail["missing"]:
                 parts.append(t("component.skills.missing", skills=self._skills(detail["missing"])))
+            if few := detail.get("few_listed"):
+                parts.append(t("component.skills.few_listed", count=few))
             return t(key, matched=Safe(str(t.text("alert.separator")).join(parts)))
         if rule.startswith("experience."):
             return t(key, asks=self._years(detail), level=t.text("levels")[user.level])
