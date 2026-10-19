@@ -42,8 +42,8 @@ request:
   max_wait_seconds: 30
 
 extraction:
-  prompt: prompts/extraction.v1.md
-  prompt_version: extraction.v1
+  prompt: prompts/extraction.v3.md
+  prompt_version: extraction.v3
   # Jobs extracted per run at most; the rest wait for the next run.
   max_jobs_per_run: 60
   # Grounding: an evidence quote must match the description at least this well (0-100).
@@ -55,8 +55,8 @@ extraction:
   expected_output_tokens: 900
 
 title_classification:
-  prompt: prompts/title_classification.v1.md
-  prompt_version: titles.v1
+  prompt: prompts/title_classification.v2.md
+  prompt_version: titles.v2
   batch_size: 25
 
 # CV parsing (brief §6.10). CV text goes only to providers with

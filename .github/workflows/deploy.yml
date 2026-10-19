@@ -65,10 +65,17 @@ jobs:
         run: |
           secrets="$RUNNER_TEMP/worker-secrets.json"
           trap 'rm -f "$secrets"' EXIT
+          # Without the dispatch token the bot still works, but it can't start
+          # runs: the pipeline runs on the 30-minute schedule fallback, and
+          # CV reading and /broadcast are unavailable (docs/SETUP.md section 10).
           node -e '
-            const names = ["TELEGRAM_BOT_TOKEN", "TELEGRAM_WEBHOOK_SECRET", "GITHUB_DISPATCH_TOKEN", "ADMIN_TELEGRAM_IDS"];
-            const missing = names.filter((n) => !process.env[n]);
+            const required = ["TELEGRAM_BOT_TOKEN", "TELEGRAM_WEBHOOK_SECRET", "ADMIN_TELEGRAM_IDS"];
+            const missing = required.filter((n) => !process.env[n]);
             if (missing.length) { console.error("missing secrets: " + missing.join(", ")); process.exit(1); }
+            const names = [...required, "GITHUB_DISPATCH_TOKEN"].filter((n) => process.env[n]);
+            if (!process.env.GITHUB_DISPATCH_TOKEN) {
+              console.error("::warning::GH_DISPATCH_TOKEN is not set: runs every 30 minutes, no CV reading");
+            }
             process.stdout.write(JSON.stringify(Object.fromEntries(names.map((n) => [n, process.env[n]]))));
           ' > "$secrets"
           npx wrangler deploy --secrets-file "$secrets"

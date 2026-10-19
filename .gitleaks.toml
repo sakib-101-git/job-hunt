@@ -1,0 +1,13 @@
+# gitleaks: the default rules, plus one narrow exception.
+[extend]
+useDefault = true
+
+# Each recorded LLM answer is keyed by the SHA-256 of its request
+# (jobhunt.eval.replay.request_key), and the rule generic-api-key reads
+# `"key": "<64 hex>"` as a secret. Only a match of exactly that shape is
+# allowed; any other secret, in eval/golden/llm_answers.jsonl or elsewhere, is
+# still reported. (A path allowlist would skip the whole file in gitleaks 8.24.)
+[allowlist]
+description = "request hashes in recorded LLM answers"
+regexTarget = "match"
+regexes = ['''^key"\s*:\s*"[0-9a-f]{64}"$''']

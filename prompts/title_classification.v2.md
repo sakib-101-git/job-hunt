@@ -4,8 +4,11 @@ that fits the role best, or "none" when the title is not a computing role a
 computer-science graduate would do (sales, marketing, finance, operations,
 design-only, civil, mechanical and similar).
 
-Judge the title alone; do not guess beyond it. When a title could be either a
-computing role or not ("Analyst", "Consultant"), answer "none".
+Judge the title alone; do not guess beyond it. IT, MIS and ERP officers,
+assistants, executives and managers are computing roles, and so are people who
+lead technology teams (Head of IT, Head of Technology, CTO, Engineering
+Manager). When a title could be either a computing role or not ("Analyst",
+"Consultant", "Executive"), answer "none".
 
 Slugs:
 {{domains}}

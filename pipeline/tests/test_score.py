@@ -78,7 +78,7 @@ def test_full_marks(scorer: Scorer) -> None:
         "preference": "0.80", "score": "9.8",
     }  # fmt: skip
     assert result.label == "strong"
-    assert result.scorer_version == "scorer.v1"
+    assert result.scorer_version == "scorer.v2"
 
 
 @pytest.mark.parametrize(
@@ -112,6 +112,14 @@ def test_security_user_never_gets_frontend(scorer: Scorer) -> None:
     )
 
 
+def test_model_secondary_domains_do_not_match_a_track(scorer: Scorer) -> None:
+    guessed = _job(primary_domain="software-engineering", facts=_facts(secondary_domains=["ai-ml"]))
+    assert not scorer.score(guessed, _user()).passed
+    curated = _job(primary_domain="software-engineering", secondary_domains=("ai-ml",))
+    role = next(c for c in scorer.score(curated, _user()).components if c.name == "role")
+    assert role.rule == "role.secondary_or_include"
+
+
 def test_adjacent_toggle_and_deselected_domains(scorer: Scorer) -> None:
     adjacent = _job(primary_domain="data-science-analytics")
     assert not scorer.score(adjacent, _user(include_adjacent=False)).passed
@@ -126,7 +134,15 @@ def test_adjacent_toggle_and_deselected_domains(scorer: Scorer) -> None:
         ({}, {"python"}, "1.20"),  # (2*1 + 0) / (2*2 + 1) * 3
         ({}, set(), "0.00"),
         ({"required_skills": [], "preferred_skills": []}, set(), "1.50"),
-        ({"required_skills": ["Python"], "preferred_skills": ["python"]}, {"python"}, "3.00"),
+        # One skill listed (the duplicate counts once): matching it is capped.
+        ({"required_skills": ["Python"], "preferred_skills": ["python"]}, {"python"}, "2.25"),
+        ({"required_skills": ["python", "sql"], "preferred_skills": []}, {"sql"}, "1.50"),
+        # 12 listed, 10 count: 5 of them matched is half marks, not 5/12.
+        (
+            {"required_skills": [f"s{i}" for i in range(12)], "preferred_skills": []},
+            {f"s{i}" for i in range(5)},
+            "1.50",
+        ),
     ],
 )
 def test_skills_fit(scorer: Scorer, facts: dict[str, Any], skills: set[str], points: str) -> None:
@@ -285,6 +301,20 @@ def test_alert_follows_the_brief_layout(config: Config, scorer: Scorer) -> None:
     assert text.endswith("🔗 via BDJobs")
 
 
+def test_alert_says_when_few_skills_are_listed(config: Config, scorer: Scorer) -> None:
+    job = _job(facts=_facts(required_skills=["python"], preferred_skills=[]))
+    text = Renderer.from_config(config).alert(job, scorer.score(job, _user()), _user(), NOW)
+    assert "Skills: Python ✓ · only 1 listed (2.25/3)" in text
+
+
+def test_alert_names_a_few_missing_skills(config: Config, scorer: Scorer) -> None:
+    skills = ["python", *(f"Tool{i}" for i in range(11))]
+    job = _job(facts=_facts(required_skills=skills, preferred_skills=[]))
+    text = Renderer.from_config(config).alert(job, scorer.score(job, _user()), _user(), NOW)
+    assert "missing: Tool0, Tool1, Tool2, Tool3, Tool4, Tool5 +5 more" in text
+    assert "12 listed, 10 count" in text
+
+
 def test_alert_escapes_values_and_marks_quick_matches(config: Config, scorer: Scorer) -> None:
     job = _job(title="Dev <script>", company="A & B", quick=True)
     text = Renderer.from_config(config).alert(job, scorer.score(job, _user()), _user(), NOW)
@@ -300,8 +330,24 @@ def test_why_shows_rules_quotes_and_version(config: Config, scorer: Scorer) -> N
     assert "“0-1 years”" in text
     assert "“BSc in CSE”" in text
     assert "Location: Dhaka" in text
-    assert "scorer.v1" in text
+    assert "scorer.v2" in text
     assert "&amp;amp;" not in text
+
+
+def test_unstated_work_mode_and_multiline_quotes_render_cleanly(
+    config: Config, scorer: Scorer
+) -> None:
+    # Found by rendering a golden-set alert: an on-site Bangladesh job with no
+    # stated work mode read "Preferences: unknown ✓", and BDJobs quotes kept
+    # their line breaks.
+    facts = _facts(work_mode="unknown", years_evidence="Experience\n\n• 0-1 years")
+    job = _job(facts=facts, city=None)
+    renderer = Renderer.from_config(config)
+    text = renderer.alert(job, scorer.score(job, _user()), _user(), NOW)
+    assert "Preferences: in Bangladesh ✓" in text
+    assert "unknown" not in text
+    why = renderer.why(job, scorer.score(job, _user()), _user())
+    assert "“Experience • 0-1 years”" in why
 
 
 def test_alert_ages_and_missing_parts(config: Config, scorer: Scorer) -> None:
@@ -364,7 +410,7 @@ async def test_match_stores_passing_pairs_once(db: SqliteBackend, config: Config
     assert [(m.user_id, m.job_id) for m in new] == [(1, 1)]
     assert counts["not matched: tracks:outside_chosen_tracks"] == 1
     row = (await db.query("SELECT * FROM matches"))[0]
-    assert row["scorer_version"] == "scorer.v1"
+    assert row["scorer_version"] == "scorer.v2"
     breakdown = json.loads(str(row["breakdown_json"]))
     assert breakdown["score"] == str(new[0].score)
     assert breakdown["quick"] is False
@@ -431,3 +477,17 @@ def test_each_title_is_normalized_once_per_scorer(
             scorer.score(job, user)
     assert len(calls) == len({job.title for job in views})
     assert bench(config, users=4, jobs=5).pairs == 20
+
+
+def test_a_model_that_read_the_posting_overrides_a_title_class() -> None:
+    from jobhunt.db import Row
+    from jobhunt.score.matching import job_domains
+
+    facts = _facts(primary_domain="data-science-analytics", secondary_domains=["ai-ml"])
+    title_class: list[Row] = [{"domain_slug": "networking", "method": "llm", "is_primary": 1}]
+    assert job_domains(title_class, facts, "groq") == ("data-science-analytics", [])
+    # Rules-only facts don't read the posting; a taxonomy match always decides.
+    assert job_domains(title_class, facts, "rules")[0] == "networking"
+    taxonomy: list[Row] = [{"domain_slug": "networking", "method": "exact", "is_primary": 1}]
+    assert job_domains(taxonomy, facts, "groq")[0] == "networking"
+    assert job_domains([], facts, None)[0] == "data-science-analytics"

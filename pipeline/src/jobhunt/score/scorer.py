@@ -190,6 +190,8 @@ class Scorer:
             return d(cfg.primary), "primary"
         if primary & set(job.secondary_domains) or title_key in self._include[track.id]:
             return d(cfg.secondary_or_include), "secondary_or_include"
+        # The model's own secondary domains are not used: they are guesses
+        # ("our AI tools" is not AI work), and the tracks gate is a hard rule.
         domains = {job.primary_domain, *job.secondary_domains}
         if include_adjacent and adjacent & domains:
             return d(cfg.adjacent), "adjacent"
@@ -197,20 +199,29 @@ class Scorer:
 
     def _skills(self, job: JobView, user: UserProfile) -> Component:
         cfg, cap = self._s.skills, d(self._s.weights.skills)
-        must = [s.casefold() for s in job.facts.required_skills]
-        nice = [s.casefold() for s in job.facts.preferred_skills if s.casefold() not in must]
+        must = _unique(job.facts.required_skills)
+        nice = _unique(job.facts.preferred_skills, skip={key for key, _ in must})
         if not must and not nice:
             return Component("skills", q2(d(cfg.none_listed)), cap, "skills.none_listed")
         have = {s.casefold() for s in user.skills}
-        must_hit = [s for s in must if s in have]
-        nice_hit = [s for s in nice if s in have]
-        total = cfg.must_weight * len(must) + cfg.nice_weight * len(nice)
+        must_hit = [s for key, s in must if key in have]
+        nice_hit = [s for key, s in nice if key in have]
+        counted_must = min(len(must), cfg.max_counted)
+        counted_nice = min(len(nice), cfg.max_counted - counted_must)
+        total = cfg.must_weight * counted_must + cfg.nice_weight * counted_nice
         got = cfg.must_weight * len(must_hit) + cfg.nice_weight * len(nice_hit)
-        detail = {
+        listed = len(must) + len(nice)
+        detail: dict[str, Any] = {
             "matched": must_hit + nice_hit,
-            "missing": [s for s in must + nice if s not in have],
+            "missing": [s for key, s in must + nice if key not in have],
         }
-        return Component("skills", q2(d(got) / d(total) * cap), cap, "skills.coverage", detail)
+        points = min(d(got) / d(total), Decimal(1)) * cap
+        if listed < cfg.few_listed:
+            detail["few_listed"] = listed
+            points = min(points, d(cfg.few_listed_cap))
+        if listed > cfg.max_counted:
+            detail["many_listed"] = {"listed": listed, "counted": cfg.max_counted}
+        return Component("skills", q2(points), cap, "skills.coverage", detail)
 
     def _experience(self, job: JobView, user: UserProfile) -> Component:
         cfg, cap = self._s.experience, d(self._s.weights.experience)
@@ -275,3 +286,12 @@ class Scorer:
             "preferred_cities": list(user.preferred_cities),
         }
         return Component("preference", q2(min(points, cap)), cap, "preference.sum", detail)
+
+
+def _unique(skills: list[str], skip: set[str] | None = None) -> list[tuple[str, str]]:
+    """(casefolded key, the posting's spelling) for each skill, first spelling
+    kept, in order, leaving out keys in `skip`."""
+    found: dict[str, str] = {}
+    for skill in skills:
+        found.setdefault(skill.casefold(), skill)
+    return [(key, skill) for key, skill in found.items() if key not in (skip or set())]

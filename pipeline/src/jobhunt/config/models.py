@@ -346,6 +346,7 @@ class NotificationSettings(Strict):
     retries_per_send: int = Field(ge=0)
     retry_backoff_seconds: float = Field(ge=0)
     max_listed_extras: int = Field(ge=0)
+    max_missing_skills_shown: int = Field(ge=1)
     digest_time: Annotated[str, StringConstraints(pattern=r"^([01]\d|2[0-3]):[0-5]\d$")]
     backfill_top_n: int = Field(ge=1)
     lease_minutes: int = Field(ge=1)
@@ -806,6 +807,9 @@ class SkillsScoring(Strict):
     must_weight: int = Field(ge=1)
     nice_weight: int = Field(ge=0)
     none_listed: Points
+    few_listed: int = Field(ge=0)
+    few_listed_cap: Points
+    max_counted: int = Field(ge=1)
 
 
 class ExperienceScoring(Strict):
@@ -882,7 +886,10 @@ class Scoring(Strict):
         for name, (value, cap) in caps.items():
             if abs(value - cap) > 1e-9:
                 raise ValueError(f"{name} must equal its weight ({cap})")
-        if self.skills.none_listed > w.skills or self.experience.unknown > w.experience:
+        if (
+            max(self.skills.none_listed, self.skills.few_listed_cap) > w.skills
+            or self.experience.unknown > w.experience
+        ):
             raise ValueError("default points cannot exceed the component weight")
         if missing := sorted(set(EXPERIENCE_LEVELS) - set(self.experience.fitting_seniority)):
             raise ValueError(f"fitting_seniority is missing levels: {', '.join(missing)}")

@@ -97,6 +97,8 @@ notifications:
   retry_backoff_seconds: 2.0
   # Extra matches beyond the user's per-cycle cap are listed in one message, up to this many.
   max_listed_extras: 10
+  # An alert names at most this many missing skills, then "+N more".
+  max_missing_skills_shown: 6
   # Digest users get their waiting matches once a day, at the first run after
   # this local time.
   digest_time: "09:00"

@@ -2,7 +2,7 @@
 # it from extracted facts, the user's profile and these numbers. Change a number
 # here, bump scorer_version, and re-check the golden set (evaluation phase).
 version: 1
-scorer_version: scorer.v1
+scorer_version: scorer.v2
 
 # Component maxima; they sum to 10.
 weights: {role: 3.0, skills: 3.0, experience: 2.0, education: 1.0, preference: 1.0}
@@ -16,6 +16,13 @@ skills:
   must_weight: 2            # coverage = (2 * must matched + nice matched) / (2 * must + nice)
   nice_weight: 1
   none_listed: 1.5          # the posting lists no skills
+  # A posting that names fewer than `few_listed` skills says little about fit:
+  # matching its one skill must not earn full marks. Coverage is capped here.
+  few_listed: 3
+  few_listed_cap: 2.25
+  # A long list (one posting named 27, editors and app stores included) would
+  # dilute coverage: at most this many listed skills count, required first.
+  max_counted: 10
 
 experience:
   met: 2.0                  # asks at most the user's years
@@ -61,15 +68,15 @@ marks: {full: 0.75}
 eval:
   max_hard_gate_violations: 0
   min_accuracy:
-    is_cse_role: 0.75
-    primary_domain: 0.60
-    min_years: 0.75
-    remote_eligibility: 0.75
+    is_cse_role: 0.85
+    primary_domain: 0.70
+    min_years: 0.90
+    remote_eligibility: 0.85
     country: 0.95
     deadline: 0.95
-  min_skills_f1: 0.75
-  max_grounding_failure_rate: 0.6
-  min_spearman: 0.55
+  min_skills_f1: 0.80
+  max_grounding_failure_rate: 0.3
+  min_spearman: 0.65
   precision_k: 5
-  min_precision_at_k: 0.8
-  max_false_positive_rate: 0.15
+  min_precision_at_k: 0.9
+  max_false_positive_rate: 0.05

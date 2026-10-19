@@ -1,8 +1,8 @@
 # Setup
 
-How to get a development machine ready for JobHunt (sections 1-6), and how to
-set up the free accounts that run it in production (sections 7-12). Everything
-runs on free plans with no card.
+How to get a development machine ready for JobHunt (sections 1-6), how to set
+up the free accounts that run it in production (sections 7-12), and what only
+the owner can do (section 13). Everything runs on free plans with no card.
 
 ## Requirements
 
@@ -160,6 +160,21 @@ GitHub secret names can't start with `GITHUB_`, so this token is stored as the
 repository secret `GH_DISPATCH_TOKEN`; the deploy workflow hands it to the Worker
 as `GITHUB_DISPATCH_TOKEN`.
 
+If the "Generate token" button does nothing, the form usually has a field
+that isn't filled in: a repository must be picked under "Only select
+repositories", Contents must be set to "Read and write", and the name must not
+match an existing token. GitHub also asks for your password or 2FA code just
+before it generates the token, and a blocked pop-up or an ad blocker can hide
+that prompt. If it still fails, a classic token works too
+(<https://github.com/settings/tokens/new>, scope **repo**, with an expiry), but
+it can reach all your repositories, so prefer the fine-grained one.
+
+The token is optional. Without it the bot works and deploys, but it can't
+start pipeline runs. The pipeline then runs on its 30-minute schedule instead
+of every 10 minutes, new users get their first matches at the next run, and
+reading CVs and `/broadcast` are unavailable (the bot says so). Add the secret
+later and run the deploy workflow again.
+
 ## 11. GitHub secrets and variables
 
 Repository → Settings → Secrets and variables → Actions. With the GitHub CLI:
@@ -171,7 +186,7 @@ gh secret set ADMIN_TELEGRAM_IDS
 gh secret set CLOUDFLARE_ACCOUNT_ID
 gh secret set CLOUDFLARE_API_TOKEN
 gh secret set D1_DATABASE_ID
-gh secret set GH_DISPATCH_TOKEN
+gh secret set GH_DISPATCH_TOKEN      # recommended; see section 10 if it won't generate
 gh secret set GROQ_API_KEY
 gh secret set GEMINI_API_KEY
 # optional
@@ -206,3 +221,37 @@ From then on the Worker asks for a run every 10 minutes, and every merge to
 
 To invite friends, share `https://t.me/<your bot username>`; each of them runs
 `/start` and gets alerts for their own tracks.
+
+## 13. Owner checklist
+
+One-time steps that only the owner can do, in order:
+
+- [ ] Sections 7-11: create the bot, the Cloudflare database and token, the LLM
+      keys and the GitHub token, and set the repository secrets and variables.
+      A Gemini key matters: without it, Groq's free tier covers only about
+      50-60 job extractions per model per day.
+- [ ] Section 12: run the first deploy and the first pipeline run; finish
+      `/start` yourself and check `/admin`.
+- [ ] End-to-end test with at least two friends: each picks different tracks,
+      and each should get alerts only for theirs (`/why` shows why).
+- [ ] Delete the obsolete v1 secret: `gh secret delete TELEGRAM_CHAT_ID`.
+- [ ] Ask GitHub Support to garbage-collect the pre-rewrite commits and refresh
+      the contributors cache (Support portal → "Removing sensitive data"), if
+      any old commit is still reachable by SHA.
+- [ ] Delete the old v1 workflow runs (Actions → filter "JobHunt" → delete),
+      which the coding agent was not allowed to do.
+- [ ] Optional: forward one real LinkedIn job-alert email, with personal data
+      removed, so the parser can be checked against a real one; then set the
+      `IMAP_*` secrets.
+- [ ] Optional: decide on Remotive (its terms ask for at most four requests a
+      day and forbid using its jobs to collect signups; it is off).
+- [ ] Turn silver labels gold: `uv run jobhunt eval label` and
+      `uv run jobhunt eval label --pairs` (stop and resume any time).
+- [ ] After 2026-10-28: move to Node 26 LTS (`.nvmrc`, `engines`, `@types/node`).
+
+### Inviting friends
+
+Share `https://t.me/<your bot username>`. For a QR code, open the bot's profile
+in Telegram, tap the share icon and choose "QR Code"; print it or post it in a
+group. Each person runs `/start` and sets up their own tracks; nobody sees
+anyone else's data.

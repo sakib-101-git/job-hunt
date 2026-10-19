@@ -148,7 +148,7 @@ async def test_enrich_extracts_classifies_and_regates(
     )
     assert domains == [{"domain_slug": "data-engineering", "method": "llm"}]
     stored = await db.query("SELECT provider, grounding_ok, prompt_version FROM job_facts")
-    assert {(r["provider"], r["prompt_version"]) for r in stored} == {("groq", "extraction.v1")}
+    assert {(r["provider"], r["prompt_version"]) for r in stored} == {("groq", "extraction.v3")}
 
     # A second run finds nothing to do: facts are current.
     again = await enrich(db, config, client, NOW)

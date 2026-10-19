@@ -10,13 +10,24 @@ Rules:
    from the posting (not paraphrased), at most 200 characters, that supports the
    field next to it. Use null when the field is null or unknown.
 3. `required_skills` and `preferred_skills` list only skills, tools or
-   technologies written in the posting, spelled as the posting spells them.
+   technologies written in the posting, spelled exactly as the posting spells
+   them: one name per entry ("AWS", not "AWS EC2 and S3"), never a description
+   of a duty ("writing queries", "unit testing of APIs").
 4. `is_cse_role` is true only for software, data, AI, IT, networking, security,
-   QA or other computing roles that a computer-science graduate would do. It is
-   false for sales, marketing, design-only, civil, mechanical, electrical
-   hardware or other non-computing roles, even if the posting mentions software.
+   QA or other computing roles that a computer-science graduate would do. IT
+   support and administration, MIS, ERP, and leading technology teams (head of
+   IT, CTO, engineering manager) are computing roles. It is false for sales,
+   marketing, design-only, civil, mechanical, electrical hardware or other
+   non-computing roles, even if the posting mentions software.
 5. `primary_domain` and `secondary_domains` must be slugs from this list:
    {{domains}}
+   The primary domain is the work the person in this role does every day, not
+   the employer's product or industry: packaging, deploying, CI/CD and running
+   infrastructure is devops-sre-infra even at a database or developer-tools
+   company. The board's tags, when given, show how the board files the job.
+   A secondary domain is other work the role itself does for a real part of
+   the time. A product, feature or technology the posting only mentions ("our
+   AI tools", "a mobile app") is not a domain of the role. At most two.
    Use null and an empty list when `is_cse_role` is false.
 6. `seniority`: intern, entry (0-1 years, trainee, graduate), junior (1-3),
    mid (3-5), senior (5+), lead_plus (lead, principal, staff, head), or unknown.
@@ -42,6 +53,7 @@ Answer with JSON that matches the given schema exactly.
 Title: {{title}}
 Company: {{company}}
 Location: {{location}}
+Tags: {{tags}}
 
 Posting:
 <<<

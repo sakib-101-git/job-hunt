@@ -48,14 +48,16 @@ class Report:
         return not self.failures
 
 
-def _metrics(jobs: Sequence[JobResult], pairs: Sequence[PairResult], k: int) -> Metrics:
+def _metrics(
+    jobs: Sequence[JobResult], pairs: Sequence[PairResult], k: int, known: set[str]
+) -> Metrics:
     labelled = [p for p in pairs if p.label is not None]
     return Metrics(
         jobs=len(jobs),
         jobs_by_llm=sum(1 for r in jobs if r.by_llm),
         pairs=len(labelled),
         accuracy=field_accuracy(jobs),
-        skills=skills_scores(jobs),
+        skills=skills_scores(jobs, known),
         grounding_failure_rate=grounding_failure_rate(jobs),
         spearman=spearman(
             [float(p.score_or_zero) for p in labelled], [float(p.label or 0) for p in labelled]
@@ -67,11 +69,12 @@ def _metrics(jobs: Sequence[JobResult], pairs: Sequence[PairResult], k: int) -> 
 
 def build_report(config: Config, run: EvalRun) -> Report:
     k = config.scoring.eval.precision_k
-    metrics = {"all": _metrics(run.jobs, run.pairs, k)}
+    known = {skill.id for skill in config.skills.all_skills}
+    metrics = {"all": _metrics(run.jobs, run.pairs, k, known)}
     for status in ("gold", "silver"):
         jobs = [r for r in run.jobs if r.job.label_status == status]
         pairs = [p for p in run.pairs if p.label_status == status]
-        metrics[status] = _metrics(jobs, pairs, k)
+        metrics[status] = _metrics(jobs, pairs, k, known)
     violations = hard_gate_violations(run.pairs, Oracle(config))
     report = Report(
         metrics=metrics,

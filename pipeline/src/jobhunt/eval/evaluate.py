@@ -14,7 +14,7 @@ in one sitting, so its jobs are fresh at that moment.
 import dataclasses
 import json
 from collections import Counter
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
@@ -28,13 +28,15 @@ from jobhunt.db import Row, SqliteBackend, apply_migrations
 from jobhunt.eval.dataset import Dataset, GoldenJob, GoldenProfile
 from jobhunt.extract.llm import LlmClient
 from jobhunt.extract.rules import PROVIDER as RULES
-from jobhunt.extract.schema import JobFacts
+from jobhunt.extract.rules import eligibility
+from jobhunt.extract.schema import JobFacts, RemoteEligibility
+from jobhunt.gates.location import LocationGate
 from jobhunt.jobs.enrich import enrich
 from jobhunt.jobs.gating import GateItem, JobGates, apply_gates
 from jobhunt.jobs.store import store_jobs
 from jobhunt.normalize.jobs import JobNormalizer
 from jobhunt.normalize.titles import TitleNormalizer
-from jobhunt.score.matching import load_jobs
+from jobhunt.score.matching import job_domains, load_jobs
 from jobhunt.score.model import JobView, UserProfile
 from jobhunt.score.scorer import Scorer
 
@@ -51,6 +53,9 @@ class JobResult:
     facts_provider: str | None
     grounding_failures: tuple[str, ...]
     system_domain: str | None
+    # Eligibility the listing alone decides (its tags, the source's own
+    # restriction); None when the location gate needs the description.
+    listing_eligibility: RemoteEligibility | None = None
 
     @property
     def by_llm(self) -> bool:
@@ -134,7 +139,7 @@ async def run_eval(
             await enrich(db, config, client, as_of, limit=len(dataset.jobs))
         finally:
             await client.aclose()
-        job_results = await _job_results(db, dataset.jobs, ids)
+        job_results = await _job_results(db, dataset.jobs, ids, LocationGate(config))
         views = {view.job_id: view for view in await load_jobs(db, config)}
     finally:
         await db.aclose()
@@ -156,13 +161,13 @@ async def _store(db: SqliteBackend, config: Config, jobs: Sequence[GoldenJob]) -
 
 
 async def _job_results(
-    db: SqliteBackend, jobs: Sequence[GoldenJob], ids: Mapping[str, int]
+    db: SqliteBackend, jobs: Sequence[GoldenJob], ids: Mapping[str, int], location: LocationGate
 ) -> list[JobResult]:
     rows = {
         int(str(row["id"])): row
         for row in await db.query(
             "SELECT j.id, j.status, j.filter_reason, j.gates_json, f.facts_json, f.provider,"
-            " f.grounding_failures_json, d.domain_slug"
+            " f.grounding_failures_json, d.domain_slug, d.method"
             " FROM jobs j LEFT JOIN job_facts f ON f.job_id = j.id"
             " LEFT JOIN job_domains d ON d.job_id = j.id AND d.is_primary = 1"
         )
@@ -173,8 +178,13 @@ async def _job_results(
         gates: dict[str, Any] = json.loads(str(row["gates_json"] or "{}"))
         facts = JobFacts.model_validate_json(str(row["facts_json"])) if row["facts_json"] else None
         domain = str(row["domain_slug"]) if row["domain_slug"] else None
-        if domain is None and facts is not None:
-            domain = facts.primary_domain
+        provider = str(row["provider"]) if row["provider"] else None
+        if facts is not None:  # as the scorer will see it
+            primary = {"domain_slug": domain, "method": row["method"], "is_primary": 1}
+            domain, _ = job_domains([primary] if domain else [], facts, provider)
+        listing = job.listing.raw()
+        verdict = location(listing)
+        decided = verdict.status != "needs_facts"
         results.append(
             JobResult(
                 job=job,
@@ -182,9 +192,10 @@ async def _job_results(
                 filter_reason=str(row["filter_reason"]) if row["filter_reason"] else None,
                 needs_facts=tuple(gates.get("needs_facts", [])),
                 facts=facts,
-                facts_provider=str(row["provider"]) if row["provider"] else None,
+                facts_provider=provider,
                 grounding_failures=tuple(json.loads(str(row["grounding_failures_json"] or "[]"))),
                 system_domain=domain,
+                listing_eligibility=eligibility(verdict, listing.work_mode) if decided else None,
             )
         )
     return results
@@ -291,6 +302,9 @@ def _field_value(result: JobResult, name: str) -> object:
         return None
     if name == "deadline":
         return result.job.listing.deadline or facts.application_deadline
+    if name == "remote_eligibility" and result.listing_eligibility is not None:
+        # The gates act on the listing's own verdict; the model's answer is unused.
+        return result.listing_eligibility
     return getattr(facts, name)
 
 
@@ -328,13 +342,19 @@ def field_accuracy(results: Sequence[JobResult]) -> dict[str, float | None]:
     return accuracy
 
 
-def skills_scores(results: Sequence[JobResult]) -> dict[str, float | None]:
-    """Micro-averaged precision, recall and F1 of the skills the posting asks for."""
+def skills_scores(
+    results: Sequence[JobResult], known: Collection[str] | None = None
+) -> dict[str, float | None]:
+    """Micro-averaged precision, recall and F1 of the skills the posting asks
+    for. Only skills.yaml ids (`known`) are compared: labels use them, and only
+    they can ever meet a user's skills; a skill named as written ("SLOs") is
+    neither right nor wrong here."""
     tp = fp = fn = 0
     for r in results:
         if r.facts is None:
             continue
-        found = {s.casefold() for s in (r.facts.required_skills + r.facts.preferred_skills)}
+        named = r.facts.required_skills + r.facts.preferred_skills
+        found = {s.casefold() for s in named if known is None or s in known}
         gold = {s.casefold() for s in r.job.labels.skills}
         tp += len(found & gold)
         fp += len(found - gold)
