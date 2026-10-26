@@ -37,6 +37,7 @@ class SourceRun:
     error: str | None = None
     seconds: float = 0.0
     warnings: tuple[str, ...] = ()
+    failures: int = 0  # failed runs in a row, this one included
 
 
 @dataclass
@@ -108,7 +109,15 @@ async def _run_one(
         log.warning("source %s failed: %s", source.name, error)
         alerts = record_failure(st, error, now, interval, sources.health)
         await save_state(db, st, now)
-        return SourceRun(source.name, "failed", ctx.bootstrap, [], error, _since(started)), alerts
+        run = SourceRun(
+            source.name,
+            "failed",
+            ctx.bootstrap,
+            error=error,
+            seconds=_since(started),
+            failures=st.consecutive_failures,
+        )
+        return run, alerts
     alerts = record_success(st, result, ctx.state, now, interval, sources.health)
     await save_state(db, st, now)
     status: RunStatus = "unchanged" if result.unchanged else "ok"

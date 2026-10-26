@@ -5,7 +5,7 @@ import pytest
 
 from jobhunt import __version__, shared
 from jobhunt.cli import main, run_checks
-from jobhunt.config import find_repo_root, load_config
+from jobhunt.config import Config, find_repo_root, load_config
 from jobhunt.sources.http import Fetcher
 
 
@@ -207,15 +207,23 @@ def test_collect_without_database(
     assert "no database configured" in capsys.readouterr().err
 
 
-def test_collect_fails_when_every_source_fails(
-    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
+def test_collect_fails_when_every_source_keeps_failing(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+    config: Config,
 ) -> None:
     from jobhunt.automation import pipeline
 
     monkeypatch.setattr(pipeline, "Fetcher", _replaying_fetcher([]))
     monkeypatch.setenv("JOBHUNT_SQLITE_PATH", str(tmp_path / "jobs.db"))
-    assert main(["collect", "--source", "jobicy"]) == 1
-    assert "FAILED: every source that ran failed" in capsys.readouterr().out
+    args = ["collect", "--source", "jobicy", "--force"]
+    # A failure or two is a blip (a timeout, a 5xx); the run still passes.
+    for _ in range(config.sources.health.failures_before_alert - 1):
+        assert main(args) == 0
+        assert "jobicy: failed" in capsys.readouterr().out
+    assert main(args) == 1
+    assert "FAILED: every source that ran failed, 3+ runs in a row" in capsys.readouterr().out
 
 
 def test_enrich_without_keys_uses_rules(

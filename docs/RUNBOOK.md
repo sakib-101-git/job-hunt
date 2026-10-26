@@ -47,6 +47,9 @@ phone numbers from job text, and copy the directory over.
 A source that fails `failures_before_alert` runs in a row, or returns nothing for
 `empty_runs_before_alert` runs after it used to return jobs, raises one alert (and
 another when it recovers). A feed answering 304 Not Modified is not "empty".
+The collect stage, and so the workflow run, fails only when every source that ran
+has failed that many runs in a row: one BDJobs timeout between two good runs is
+logged and retried at its next interval, not reported as a failed run.
 
 ### BDJobs (primary Bangladesh source)
 
