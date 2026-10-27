@@ -6,6 +6,7 @@
 .dev.vars.*
 profile.yaml
 *.pem
+.gitignore
 
 # Local databases and runtime output
 *.db

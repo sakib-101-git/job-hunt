@@ -21,6 +21,7 @@ from jobhunt.notify.outbox import first_time_users, split_backfill
 from jobhunt.notify.telegram import TelegramClient
 from jobhunt.score.matching import NewMatch
 from jobhunt.sources.http import Fetcher
+from jobhunt.sources.state import SourceState, save_state
 
 pytestmark = pytest.mark.anyio
 
@@ -145,7 +146,9 @@ async def test_cycle_records_the_run_and_heartbeat(db: SqliteBackend, config: Co
     await add_user(db, 1)
     fake = FakeTelegram()
     pipeline = _pipeline(db, config, fake)
-    # Every source fails offline: collect fails, the other stages still run.
+    # Every source has failed before and fails again offline: collect fails,
+    # the other stages still run.
+    await _failing_streak(db, config, config.sources.health.failures_before_alert - 1)
     summary = await pipeline.cycle("schedule")
     assert [s.name for s in summary.stages] == [
         "collect",
@@ -154,13 +157,26 @@ async def test_cycle_records_the_run_and_heartbeat(db: SqliteBackend, config: Co
         "notify",
         "maintenance",
     ]
-    assert summary.stages[0].error == "every source that ran failed"
+    assert summary.stages[0].error == "every source that ran failed, 3+ runs in a row"
     assert summary.stages[3].counts == {"sent": 1}
     assert not summary.ok
     run = (await db.query("SELECT * FROM runs"))[0]
     assert (run["trigger"], run["status"]) == ("schedule", "failed")
     assert json.loads(str(run["stats_json"]))["notify"]["counts"] == {"sent": 1}
     assert await get_kv(db, config.app.heartbeat.kv_key) is None  # a failed run: no heartbeat
+
+
+async def _failing_streak(db: SqliteBackend, config: Config, failures: int) -> None:
+    for name in config.sources.sources:
+        await save_state(db, SourceState(name, consecutive_failures=failures), NOW)
+
+
+async def test_one_failed_fetch_does_not_fail_collect(db: SqliteBackend, config: Config) -> None:
+    pipeline = _pipeline(db, config, FakeTelegram())
+    report = await pipeline.collect()  # every source fails offline, for the first time
+    assert report.error is None
+    assert report.counts["sources failed"] > 0
+    assert report.counts["sources ok"] == 0
 
 
 async def test_successful_cycle_writes_the_heartbeat(

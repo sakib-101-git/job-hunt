@@ -159,9 +159,13 @@ class Pipeline:
         await self.alert_admins(
             [self._locale("admin.source_alert", message=a.message) for a in sources.alerts]
         )
-        tried = [run.status for run in sources.runs if run.status not in _NOT_TRIED]
-        if tried and all(status == "failed" for status in tried):
-            raise StageFailedError("every source that ran failed")
+        # One timeout is not an outage: the next run usually recovers. The stage
+        # fails only when every source that ran has failed as often in a row as
+        # it takes to raise a health alert.
+        streak = config.sources.health.failures_before_alert
+        tried = [run for run in sources.runs if run.status not in _NOT_TRIED]
+        if tried and all(run.status == "failed" and run.failures >= streak for run in tried):
+            raise StageFailedError(f"every source that ran failed, {streak}+ runs in a row")
         return report
 
     async def enrich(self, limit: int | None = None) -> StageReport:
